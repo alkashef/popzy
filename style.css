@@ -1,0 +1,409 @@
+/* Dashboard Buttons Styling */
+.dashboard-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+/* Make pause and stop buttons half their size */
+#pause-button, #stop-button {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #222;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,255,136,0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 25px;
+    text-align: center;
+}
+
+#pause-button:hover, #stop-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px rgba(0,255,136,0.6);
+}
+
+#pause-button:active, #stop-button:active {
+    transform: scale(0.95);
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    overflow: hidden;
+    height: 100vh;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    z-index: 1; /* Ensure canvas has a lower z-index than overlays */
+    position: relative;
+}
+
+/* Play Button Overlay */
+#play-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.3s ease;
+}
+
+#play-overlay.hidden, #game-over-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none; /* Add this to completely hide the element */
+}
+
+#play-button {
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    padding: 20px 30px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 255, 136, 0.4);
+    transition: all 0.3s ease;
+    min-width: 100px;
+    position: relative;
+    z-index: 2100; /* Ensure play button is above overlays */
+}
+
+/* Game Over Overlay */
+#game-over-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1900;
+    transition: opacity 0.3s ease;
+}
+
+.game-over-content {
+    background: rgba(0, 0, 0, 0.8);
+    border: 3px solid #ff4444;
+    border-radius: 15px;
+    padding: 30px 50px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(255, 68, 68, 0.6);
+    max-width: 80%;
+}
+
+.game-over-content h2 {
+    color: #ff4444;
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+#final-player-name {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#final-score {
+    font-size: 32px;
+    color: #00ff88;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.game-over-message {
+    font-size: 18px;
+    opacity: 0.8;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+#play-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px rgba(0, 255, 136, 0.6);
+}
+
+#play-button:active {
+    transform: scale(0.95);
+}
+
+.play-icon {
+    font-size: 40px;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Scoreboard */
+#scoreboard {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    min-width: 120px;
+}
+
+#score {
+    color: #00ff88;
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+#timer-container {
+    color: #ffffff;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 5px;
+}
+
+#timer {
+    color: #ffffff;
+}
+
+#game-over {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    color: #ff4444;
+    font-weight: bold;
+}
+
+#game-over.hidden {
+    display: none;
+}
+
+#game-over-score {
+    font-size: 18px;
+    color: #00ff88;
+}
+
+/* Settings Panel */
+#settings-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+#settings-panel details {
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+#settings-panel summary {
+    padding: 15px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px 8px 0 0;
+    transition: background 0.2s;
+}
+
+#settings-panel summary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#settings-panel summary::marker {
+    color: #00ff88;
+}
+
+.settings-content {
+    padding: 20px;
+}
+
+.setting-group {
+    margin-bottom: 20px;
+}
+
+.setting-group:last-child {
+    margin-bottom: 0;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #00ff88;
+}
+
+.setting-group input[type="range"] {
+    width: 100%;
+    margin-bottom: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    height: 6px;
+    outline: none;
+}
+
+.setting-group input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #00ff88;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.setting-group input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #00ff88;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.setting-group textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: white;
+    padding: 8px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.setting-group span {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    color: white;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #00ff88;
+}
+
+/* Color picker styles */
+.color-pickers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.color-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.color-picker-container label {
+    margin: 0;
+    color: white;
+    font-size: 0.9em;
+}
+
+.color-options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="color"] {
+    width: 40px;
+    height: 25px;
+    padding: 0;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.color-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 200px;
+}
+
+.color-preset {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.1s ease;
+}
+
+.color-preset:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #scoreboard {
+        top: 10px;
+        left: 10px;
+        padding: 8px 16px;
+        font-size: 16px;
+    }
+    
+    #settings-panel {
+        top: 10px;
+        right: 10px;
+        max-width: 250px;
+    }
+    
+    .settings-content {
+        padding: 15px;
+    }
+}

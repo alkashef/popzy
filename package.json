@@ -1,0 +1,12 @@
+{
+  "name": "browser-shooter",
+  "version": "1.0.0",
+  "description": "Simple HTML5 canvas shooter",
+  "private": true,
+  "scripts": {
+    "start": "npx http-server -c-1 -p 8080"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+} 

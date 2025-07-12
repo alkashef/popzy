@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Shooter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- Play Button Overlay -->
+        <div id="play-overlay">
+            <button id="play-button" class="big-button" tabindex="0">
+                <span class="play-icon">▶</span>
+            </button>
+        </div>
+        
+        <!-- Game Over Overlay -->
+        <div id="game-over-overlay" class="hidden">
+            <div class="game-over-content">
+                <h2>Game Over!</h2>
+                <div id="final-player-name">Player: Anonymous</div>
+                <div id="final-score">Score: 0</div>
+                <div class="game-over-message">Click Play to start again</div>
+            </div>
+        </div>
+        
+        <!-- Scoreboard / Dashboard -->
+        <div id="scoreboard">
+            <div id="score">Score: 0</div>
+            <div id="timer-container"><span>Time: </span><span id="timer">00:00</span></div>
+            <div id="player-name-display"></div>
+            <div class="dashboard-buttons">
+                <button id="pause-button" title="Pause/Resume">⏸️</button>
+                <button id="stop-button" title="Stop">⏹️</button>
+            </div>
+        </div>
+        
+        <!-- Settings Panel -->
+        <div id="settings-panel">
+            <details>
+                <summary>Settings</summary>
+                <div class="settings-content">
+                    <div class="setting-group">
+                        <label for="player-name">Player Name:</label>
+                        <input type="text" id="player-name" maxlength="20" placeholder="Enter your name">
+                    </div>
+                    <div class="setting-group">
+                        <label for="speed">Speed:</label>
+                        <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
+                        <span id="speed-value">1.0x</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="randomness">Path Randomness:</label>
+                        <input type="range" id="randomness" min="0" max="1" step="0.1" value="0.5">
+                        <span id="randomness-value">0.5</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="spawnRate">Objects / min:</label>
+                        <input type="range" id="spawnRate" min="10" max="120" step="5" value="60">
+                        <span id="spawnRate-value">60</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="object-size">Object Size:</label>
+                        <input type="range" id="object-size" min="10" max="80" step="1" value="20">
+                        <span id="object-size-value">20</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="ratio">Target/Friendly Ratio:</label>
+                        <input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5">
+                        <span id="ratio-value">0.50</span>
+                        <div style="font-size: 0.9em; color: #888;">0 = all friendlies, 1 = all targets</div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="target-words">Target Words:</label>
+                        <textarea id="target-words" placeholder="Enter words separated by spaces (e.g. apple banana cherry)" rows="2"></textarea>
+                        <div style="font-size: 0.9em; color: #888;">These words will appear inside red targets</div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="friendly-words">Friendly Words:</label>
+                        <textarea id="friendly-words" placeholder="Enter words separated by spaces (e.g. friend buddy ally)" rows="2"></textarea>
+                        <div style="font-size: 0.9em; color: #888;">These words will appear inside blue friendlies</div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="background-image">Background Image:</label>
+                        <input type="file" id="background-image" accept="image/*">
+                    </div>
+                    <!-- Color Selection Settings -->
+                    <div class="setting-group">
+                        <label>Circle Colors:</label>
+                        <div class="color-pickers">
+                            <!-- Target Color -->
+                            <div class="color-picker-container">
+                                <label for="target-color">Target:</label>
+                                <div class="color-options">
+                                    <input type="color" id="target-color" value="#ff4444">
+                                    <div class="color-presets" id="target-color-presets"></div>
+                                </div>
+                            </div>
+                            <!-- Friendly Color -->
+                            <div class="color-picker-container">
+                                <label for="friendly-color">Friendly:</label>
+                                <div class="color-options">
+                                    <input type="color" id="friendly-color" value="#4444ff">
+                                    <div class="color-presets" id="friendly-color-presets"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
