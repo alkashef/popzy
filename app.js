@@ -13,13 +13,21 @@ const GAME_CONFIG = {
     DEFAULT_FRIENDLY_WORDS: '1 3 5 7 9',
     DEFAULT_TARGET_COLOR: '#ff4444',
     DEFAULT_FRIENDLY_COLOR: '#4444ff',
+    DEFAULT_FRIENDLY_MODE: 'both', // 'images', 'words', 'both'
+    DEFAULT_SIZE_VARIATION: 0.3, // 30% size variation around average
+    DEFAULT_MISS_PENALTY_ENABLED: false, // Enable penalty for missed targets
+    DEFAULT_TIME_LIMIT_ENABLED: false, // Enable time limit for game end
+    DEFAULT_TIME_LIMIT: 120, // Time limit in seconds (2 minutes)
+    DEFAULT_SCORE_LIMIT_ENABLED: false, // Enable score limit for game end
+    DEFAULT_SCORE_LIMIT: 50, // Score limit for game end
     // Object properties
     BASE_SPEED: 100, // pixels per second
     SPAWN_MARGIN: 50, // pixels from edge
     // Asset paths
     ASSETS: {
         TARGET_FOLDER: 'assets/target/',
-        FRIENDLY_FOLDER: 'assets/friendly/'
+        FRIENDLY_FOLDER: 'assets/friendly/',
+        SOUNDS_FOLDER: 'assets/sounds/'
     }
 };
 
@@ -40,10 +48,18 @@ let gameConfig = {
     targetWords: GAME_CONFIG.DEFAULT_TARGET_WORDS,
     friendlyWords: GAME_CONFIG.DEFAULT_FRIENDLY_WORDS,
     targetColor: GAME_CONFIG.DEFAULT_TARGET_COLOR,
-    friendlyColor: GAME_CONFIG.DEFAULT_FRIENDLY_COLOR
+    friendlyColor: GAME_CONFIG.DEFAULT_FRIENDLY_COLOR,
+    friendlyMode: GAME_CONFIG.DEFAULT_FRIENDLY_MODE,
+    sizeVariation: GAME_CONFIG.DEFAULT_SIZE_VARIATION,
+    missPenaltyEnabled: GAME_CONFIG.DEFAULT_MISS_PENALTY_ENABLED,
+    timeLimitEnabled: GAME_CONFIG.DEFAULT_TIME_LIMIT_ENABLED,
+    timeLimit: GAME_CONFIG.DEFAULT_TIME_LIMIT,
+    scoreLimitEnabled: GAME_CONFIG.DEFAULT_SCORE_LIMIT_ENABLED,
+    scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT
 };
 let targetImages = [];
 let friendlyImages = [];
+let sounds = {};
 
 let gameStarted = false;
 let gameStartTime = 0;
@@ -66,6 +82,16 @@ function updateSettingsUI() {
     document.getElementById('object-size').value = gameConfig.objectSize;
     document.getElementById('object-size-value').textContent = gameConfig.objectSize;
     
+    document.getElementById('size-variation').value = gameConfig.sizeVariation;
+    document.getElementById('size-variation-value').textContent = gameConfig.sizeVariation.toFixed(1);
+    
+    // Update size variation description
+    const percentage = Math.round(gameConfig.sizeVariation * 100);
+    const descElement = document.querySelector('#size-variation').parentNode.querySelector('div');
+    if (descElement) {
+        descElement.textContent = `Objects will vary ±${percentage}% from base size`;
+    }
+    
     document.getElementById('ratio').value = gameConfig.ratio;
     document.getElementById('ratio-value').textContent = gameConfig.ratio.toFixed(2);
     
@@ -76,6 +102,41 @@ function updateSettingsUI() {
     // Set color picker values
     document.getElementById('target-color').value = gameConfig.targetColor;
     document.getElementById('friendly-color').value = gameConfig.friendlyColor;
+    
+    // Set friendly mode
+    document.getElementById('friendly-mode').value = gameConfig.friendlyMode;
+    
+    // Set miss penalty checkbox
+    const missPenaltyCheckbox = document.getElementById('miss-penalty-enabled');
+    if (missPenaltyCheckbox) {
+        missPenaltyCheckbox.checked = gameConfig.missPenaltyEnabled;
+    }
+    
+    // Set time limit settings
+    const timeLimitEnabledCheckbox = document.getElementById('time-limit-enabled');
+    if (timeLimitEnabledCheckbox) {
+        timeLimitEnabledCheckbox.checked = gameConfig.timeLimitEnabled;
+    }
+    
+    const timeLimitInput = document.getElementById('time-limit');
+    const timeLimitValue = document.getElementById('time-limit-value');
+    if (timeLimitInput && timeLimitValue) {
+        timeLimitInput.value = gameConfig.timeLimit;
+        timeLimitValue.textContent = `${Math.floor(gameConfig.timeLimit / 60)}:${(gameConfig.timeLimit % 60).toString().padStart(2, '0')}`;
+    }
+    
+    // Set score limit settings
+    const scoreLimitEnabledCheckbox = document.getElementById('score-limit-enabled');
+    if (scoreLimitEnabledCheckbox) {
+        scoreLimitEnabledCheckbox.checked = gameConfig.scoreLimitEnabled;
+    }
+    
+    const scoreLimitInput = document.getElementById('score-limit');
+    const scoreLimitValue = document.getElementById('score-limit-value');
+    if (scoreLimitInput && scoreLimitValue) {
+        scoreLimitInput.value = gameConfig.scoreLimit;
+        scoreLimitValue.textContent = gameConfig.scoreLimit;
+    }
     
     updatePlayerNameDisplay();
 }
@@ -101,19 +162,18 @@ function setupCanvas() {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
     
-    // Set canvas size to viewport
+    // Set canvas size to viewport minus left panel
     function resizeCanvas() {
-        canvas.width = window.innerWidth;
+        const leftPanelWidth = 200; // Match CSS left panel width
+        canvas.width = window.innerWidth - leftPanelWidth;
         canvas.height = window.innerHeight;
     }
     
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    // Make sure canvas doesn't block click events when the game is not started
-    if (canvas && !gameStarted) {
-        canvas.style.pointerEvents = 'none';
-    }
+    // Canvas should always allow pointer events since game controls are in left panel
+    canvas.style.pointerEvents = 'auto';
 }
 
 // Load game assets
@@ -128,6 +188,10 @@ async function loadAssets() {
         // Load friendly images
         friendlyImages = await loadImagesFromFolder(GAME_CONFIG.ASSETS.FRIENDLY_FOLDER);
         console.log(`Loaded ${friendlyImages.length} friendly images`);
+        
+        // Load sounds
+        sounds = await loadSounds();
+        console.log('Loaded sounds:', Object.keys(sounds));
         
         console.log('Assets loaded successfully');
     } catch (error) {
@@ -147,12 +211,20 @@ async function loadImagesFromFolder(folderPath) {
     const images = [];
     
     try {
-        // For friendly folder, load actual images
+        // For friendly folder, load all available images
         if (folderPath === GAME_CONFIG.ASSETS.FRIENDLY_FOLDER) {
-            const imagePath = folderPath + 'unicorn_256.png';
-            const image = await loadImage(imagePath);
-            images.push(image);
-            console.log(`Loaded image from ${imagePath}`);
+            const imageNames = ['unicorn_02.png', 'unicorn_03.png', 'unicorn_256.png'];
+            
+            for (const imageName of imageNames) {
+                try {
+                    const imagePath = folderPath + imageName;
+                    const image = await loadImage(imagePath);
+                    images.push(image);
+                    console.log(`Loaded image from ${imagePath}`);
+                } catch (error) {
+                    console.warn(`Failed to load ${imageName}:`, error);
+                }
+            }
         } else {
             // For other folders, we'll still use fallback circles for now
             console.log(`Using fallback circles for ${folderPath}`);
@@ -174,6 +246,48 @@ function loadImage(src) {
     });
 }
 
+// Load sounds helper
+async function loadSounds() {
+    const soundFiles = {
+        gameStart: 'game-start.mp3',
+        gameOver: 'game-over.mp3',
+        oww: 'oww.mp3',
+        cymbal: 'cymbal.mp3',
+        snare: 'snare.mp3'
+    };
+    
+    const loadedSounds = {};
+    
+    for (const [key, filename] of Object.entries(soundFiles)) {
+        try {
+            const audio = new Audio(`${GAME_CONFIG.ASSETS.SOUNDS_FOLDER}${filename}`);
+            audio.preload = 'auto';
+            loadedSounds[key] = audio;
+            console.log(`Loaded sound: ${key} (${filename})`);
+        } catch (error) {
+            console.warn(`Failed to load sound: ${key} (${filename})`, error);
+        }
+    }
+    
+    return loadedSounds;
+}
+
+// Play sound helper
+function playSound(soundKey) {
+    if (sounds[soundKey]) {
+        try {
+            sounds[soundKey].currentTime = 0; // Reset to beginning
+            sounds[soundKey].play().catch(error => {
+                console.warn(`Failed to play sound: ${soundKey}`, error);
+            });
+        } catch (error) {
+            console.warn(`Error playing sound: ${soundKey}`, error);
+        }
+    } else {
+        console.warn(`Sound not found: ${soundKey}`);
+    }
+}
+
 // Setup event listeners
 function setupEventListeners() {
     console.log('Setting up event listeners...');
@@ -181,14 +295,9 @@ function setupEventListeners() {
     // Play button click
     const playButton = document.getElementById('play-button');
     if (playButton) {
-        // Use a more explicit event handler to debug any issues
         playButton.addEventListener('click', function(event) {
             console.log('Play button clicked!');
             startGame();
-        });
-        // Also add event listeners for mouseover to verify button is interactive
-        playButton.addEventListener('mouseover', function() {
-            console.log('Play button mouseover');
         });
     } else {
         console.error('Play button not found!');
@@ -199,12 +308,40 @@ function setupEventListeners() {
     if (pauseButton) {
         pauseButton.addEventListener('click', pauseGame);
     }
+    
     // Stop button
     const stopButton = document.getElementById('stop-button');
     if (stopButton) {
         stopButton.addEventListener('click', stopGame);
     }
 
+    // Settings button - opens modal and pauses game
+    const settingsButton = document.getElementById('settings-button');
+    if (settingsButton) {
+        settingsButton.addEventListener('click', openSettingsModal);
+    }
+
+    // Settings OK button
+    const settingsOkButton = document.getElementById('settings-ok-button');
+    if (settingsOkButton) {
+        settingsOkButton.addEventListener('click', closeSettingsModal);
+    }
+
+    // Close settings modal when clicking outside
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal) {
+        settingsModal.addEventListener('click', function(event) {
+            if (event.target === settingsModal) {
+                closeSettingsModal();
+            }
+        });
+    }
+
+    // Game Over OK button
+    const gameOverOkButton = document.getElementById('game-over-ok-button');
+    if (gameOverOkButton) {
+        gameOverOkButton.addEventListener('click', dismissGameOverOverlay);
+    }
     // Mouse click for shooting (only when game is started)
     canvas.addEventListener('click', handleClick);
 
@@ -215,6 +352,8 @@ function setupEventListeners() {
 
     // Object size
     document.getElementById('object-size').addEventListener('input', updateObjectSize);
+    // Size variation
+    document.getElementById('size-variation').addEventListener('input', updateSizeVariation);
     // Ratio
     document.getElementById('ratio').addEventListener('input', updateRatio);
     // Player name
@@ -223,6 +362,37 @@ function setupEventListeners() {
     document.getElementById('target-words').addEventListener('input', updateTargetWords);
     // Friendly words
     document.getElementById('friendly-words').addEventListener('input', updateFriendlyWords);
+    
+    // Friendly mode
+    document.getElementById('friendly-mode').addEventListener('change', updateFriendlyMode);
+
+    // Miss penalty enabled
+    const missPenaltyCheckbox = document.getElementById('miss-penalty-enabled');
+    if (missPenaltyCheckbox) {
+        missPenaltyCheckbox.addEventListener('change', updateMissPenaltyEnabled);
+    }
+
+    // Time limit settings
+    const timeLimitEnabledCheckbox = document.getElementById('time-limit-enabled');
+    if (timeLimitEnabledCheckbox) {
+        timeLimitEnabledCheckbox.addEventListener('change', updateTimeLimitEnabled);
+    }
+    
+    const timeLimitInput = document.getElementById('time-limit');
+    if (timeLimitInput) {
+        timeLimitInput.addEventListener('input', updateTimeLimit);
+    }
+
+    // Score limit settings
+    const scoreLimitEnabledCheckbox = document.getElementById('score-limit-enabled');
+    if (scoreLimitEnabledCheckbox) {
+        scoreLimitEnabledCheckbox.addEventListener('change', updateScoreLimitEnabled);
+    }
+    
+    const scoreLimitInput = document.getElementById('score-limit');
+    if (scoreLimitInput) {
+        scoreLimitInput.addEventListener('input', updateScoreLimit);
+    }
 
     // Background image selector
     document.getElementById('background-image').addEventListener('change', updateBackgroundImage);
@@ -258,35 +428,97 @@ function updateBackgroundImage(event) {
     reader.readAsDataURL(file);
 }
 
+// Settings modal functionality
+let wasGameRunningBeforeSettings = false;
+
+function openSettingsModal() {
+    console.log('Opening settings modal');
+    
+    // Remember if game was running before opening settings
+    wasGameRunningBeforeSettings = gameStarted && !gamePaused;
+    
+    // Pause the game if it's running
+    if (gameStarted && !gamePaused) {
+        pauseGame();
+    }
+    
+    // Show settings modal
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal) {
+        settingsModal.classList.remove('hidden');
+    }
+}
+
+function closeSettingsModal() {
+    console.log('Closing settings modal');
+    
+    // Hide settings modal
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal) {
+        settingsModal.classList.add('hidden');
+    }
+    
+    // Resume game if it was running before settings were opened
+    if (wasGameRunningBeforeSettings && gameStarted && gamePaused) {
+        resumeGame(); // Use the new resumeGame function instead of pauseGame
+    }
+    
+    wasGameRunningBeforeSettings = false;
+}
+
+// Dismiss game over overlay and return to main game view
+function dismissGameOverOverlay() {
+    console.log('Dismissing game over overlay');
+    
+    // Hide the game over overlay
+    const gameOverOverlay = document.getElementById('game-over-overlay');
+    if (gameOverOverlay) {
+        gameOverOverlay.classList.add('hidden');
+    }
+    
+    // Reset game state to initial state (not started)
+    gameStarted = false;
+    gamePaused = false;
+    gameObjects = [];
+    score = 0;
+    updateScoreDisplay();
+    updateTimer();
+    updatePlayerNameDisplay();
+    
+    // Reset pause button to initial state (always shows pause icon)
+    const pauseButton = document.getElementById('pause-button');
+    if (pauseButton) {
+        pauseButton.title = 'Pause';
+    }
+    
+    // Clear any game over message
+    const gameOverMsg = document.querySelector('.game-over-message');
+    if (gameOverMsg) {
+        gameOverMsg.textContent = '';
+    }
+}
+
 // Start the game
 function startGame() {
     console.log('startGame() called');
 
-    // Check if DOM elements exist
-    const overlayCheck = document.getElementById('play-overlay');
-    const gameOverOverlayCheck = document.getElementById('game-over-overlay');
-    console.log('DOM check:', {
-        overlay: overlayCheck ? 'found' : 'missing',
-        gameOverOverlay: gameOverOverlayCheck ? 'found' : 'missing',
-        canvas: canvas ? 'found' : 'missing'
-    });
-
+    if (gameStarted && gamePaused) {
+        // If game was paused, just resume it
+        resumeGame();
+        return;
+    }
+    
+    // Starting a new game
     gameStarted = true;
     gamePaused = false;
     gameStartTime = Date.now();
     totalPausedTime = 0;
     pauseStartTime = 0;
     
-    // Hide the play overlay
-    const overlay = document.getElementById('play-overlay');
-    if (overlay) {
-        overlay.classList.add('hidden');
-        console.log('Play overlay hidden');
-    } else {
-        console.error('Play overlay element not found!');
-    }
+    // Play game start sound
+    playSound('gameStart');
     
-    // Hide the game over overlay
+    // Hide the game over overlay if visible
     const gameOverOverlay = document.getElementById('game-over-overlay');
     if (gameOverOverlay) {
         gameOverOverlay.classList.add('hidden');
@@ -301,18 +533,17 @@ function startGame() {
     updateTimer();
     updatePlayerNameDisplay();
 
-    // Ensure canvas is properly sized
-    canvas.width = window.innerWidth;
+    // Ensure canvas is properly sized (account for left panel)
+    const leftPanelWidth = 200;
+    canvas.width = window.innerWidth - leftPanelWidth;
     canvas.height = window.innerHeight;
-    
-    // Enable pointer events on the canvas now that the game is starting
-    if (canvas) {
-        canvas.style.pointerEvents = 'auto';
-    }
 
     // Start the game loop if not already running
     lastTimestamp = undefined;
     requestAnimationFrame(gameLoop);
+
+    // Play the game start sound
+    playSound('gameStart');
 
     console.log('Game started!', {
         gameStarted,
@@ -322,37 +553,37 @@ function startGame() {
 }
 
 let gamePaused = false;
+
 function pauseGame() {
-    if (!gameStarted) return;
+    if (!gameStarted || gamePaused) return; // Only pause if game is running
     
-    if (!gamePaused) {
-        // Pausing the game
-        pauseStartTime = Date.now();
-    } else {
-        // Resuming the game - add the pause duration to totalPausedTime
-        totalPausedTime += (Date.now() - pauseStartTime);
-    }
+    // Pausing the game
+    pauseStartTime = Date.now();
+    gamePaused = true;
     
-    gamePaused = !gamePaused;
+    console.log('Game paused');
+}
+
+function resumeGame() {
+    if (!gameStarted || !gamePaused) return; // Only resume if game is paused
     
-    // Update pause button to show correct icon
-    const pauseButton = document.getElementById('pause-button');
-    if (pauseButton) {
-        if (gamePaused) {
-            pauseButton.innerHTML = '▶️'; // Play icon
-            pauseButton.title = 'Resume';
-        } else {
-            pauseButton.innerHTML = '⏸️'; // Pause icon
-            pauseButton.title = 'Pause';
-            lastTimestamp = undefined;
-            requestAnimationFrame(gameLoop);
-        }
-    }
+    // Resuming the game - add the pause duration to totalPausedTime
+    totalPausedTime += (Date.now() - pauseStartTime);
+    gamePaused = false;
+    
+    // Restart the game loop
+    lastTimestamp = undefined;
+    requestAnimationFrame(gameLoop);
+    
+    console.log('Game resumed');
 }
 
 // Game loop function is defined further down
 function stopGame() {
     if (!gameStarted) return;
+    
+    // Play game over sound
+    playSound('gameOver');
     
     // Calculate game duration (accounting for paused time)
     const endTime = Date.now();
@@ -379,16 +610,11 @@ function stopGame() {
     updateTimer();
     updatePlayerNameDisplay();
     
-    // Reset pause button if needed
+    // Reset pause button to initial state (no need to change it since it always shows pause icon)
     const pauseButton = document.getElementById('pause-button');
     if (pauseButton) {
-        pauseButton.innerHTML = '⏸️';
         pauseButton.title = 'Pause';
     }
-    
-    // Show play button overlay
-    const overlay = document.getElementById('play-overlay');
-    if (overlay) overlay.classList.remove('hidden');
 }
 
 function formatDuration(ms) {
@@ -420,48 +646,58 @@ function spawnObject() {
     const edge = Math.floor(Math.random() * 4);
 
     // Calculate spawn position
-    let x, y;
+    let startX, startY;
     const margin = GAME_CONFIG.SPAWN_MARGIN;
 
     switch (edge) {
         case 0: // top
-            x = Math.random() * canvas.width;
-            y = -gameConfig.objectSize;
+            startX = Math.random() * canvas.width;
+            startY = -gameConfig.objectSize;
             break;
         case 1: // right
-            x = canvas.width + gameConfig.objectSize;
-            y = Math.random() * canvas.height;
+            startX = canvas.width + gameConfig.objectSize;
+            startY = Math.random() * canvas.height;
             break;
         case 2: // bottom
-            x = Math.random() * canvas.width;
-            y = canvas.height + gameConfig.objectSize;
+            startX = Math.random() * canvas.width;
+            startY = canvas.height + gameConfig.objectSize;
             break;
         case 3: // left
-            x = -gameConfig.objectSize;
-            y = Math.random() * canvas.height;
+            startX = -gameConfig.objectSize;
+            startY = Math.random() * canvas.height;
             break;
     }
 
-    // Calculate velocity with randomness
+    // Calculate object size with variation around the average
+    const sizeVariation = gameConfig.sizeVariation || 0.3;
+    const minSize = gameConfig.objectSize * (1 - sizeVariation);
+    const maxSize = gameConfig.objectSize * (1 + sizeVariation);
+    const objectRadius = minSize + Math.random() * (maxSize - minSize);
+
+    // Calculate movement path - straight line only
     const baseSpeed = GAME_CONFIG.BASE_SPEED * gameConfig.speed;
     const randomness = gameConfig.randomness;
 
-    // Target position (opposite side of screen)
+    // Target position (opposite side of screen with randomness)
     const targetX = canvas.width / 2 + (Math.random() - 0.5) * canvas.width * randomness;
     const targetY = canvas.height / 2 + (Math.random() - 0.5) * canvas.height * randomness;
 
     // Calculate direction vector
-    const dx = targetX - x;
-    const dy = targetY - y;
+    const dx = targetX - startX;
+    const dy = targetY - startY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     // Normalize and apply speed
     const vx = (dx / distance) * baseSpeed;
     const vy = (dy / distance) * baseSpeed;
 
-    // Create object
     const object = {
-        x, y, vx, vy, type, radius: gameConfig.objectSize,
+        x: startX, 
+        y: startY, 
+        vx, 
+        vy, 
+        type, 
+        radius: objectRadius,
         points: type === 'target' ? 1 : -1
     };
 
@@ -474,20 +710,34 @@ function spawnObject() {
         }
     }
     
-    // For friendlies, randomly choose between image or word
+    // For friendlies, handle display mode based on settings
     if (type === 'friendly') {
-        const useFriendlyImage = friendlyImages.length > 0 && Math.random() < 0.5;
+        const mode = gameConfig.friendlyMode;
         
-        if (useFriendlyImage) {
-            // Use an image for this friendly object
+        if (mode === 'images' && friendlyImages.length > 0) {
+            // Images only mode
             object.image = friendlyImages[Math.floor(Math.random() * friendlyImages.length)];
-            object.isFriendlyImage = true;  // Flag to identify image-based friendlies
-        } else if (gameConfig.friendlyWords) {
-            // Use a word for this friendly object
+            object.isFriendlyImage = true;
+        } else if (mode === 'words' && gameConfig.friendlyWords) {
+            // Words only mode
             const words = gameConfig.friendlyWords.trim().split(/\s+/);
             if (words.length > 0 && words[0] !== '') {
                 const randomIndex = Math.floor(Math.random() * words.length);
                 object.word = words[randomIndex];
+            }
+        } else if (mode === 'both') {
+            // Both images and words mode - randomly choose
+            const useImage = friendlyImages.length > 0 && Math.random() < 0.5;
+            
+            if (useImage) {
+                object.image = friendlyImages[Math.floor(Math.random() * friendlyImages.length)];
+                object.isFriendlyImage = true;
+            } else if (gameConfig.friendlyWords) {
+                const words = gameConfig.friendlyWords.trim().split(/\s+/);
+                if (words.length > 0 && words[0] !== '') {
+                    const randomIndex = Math.floor(Math.random() * words.length);
+                    object.word = words[randomIndex];
+                }
             }
         }
     }
@@ -517,6 +767,9 @@ function handleClick(event) {
             
             // Game over if a friendly image is hit
             if (object.isFriendlyImage) {
+                // Play oww sound for friendly image hit
+                playSound('oww');
+                
                 // Show game over message with "Don't shoot the unicorn!" message
                 stopGame();
                 const gameOverMsg = document.querySelector('.game-over-message');
@@ -525,7 +778,15 @@ function handleClick(event) {
                 }
                 return;
             } else {
-                // Otherwise update score based on object points
+                // Play appropriate sound based on object type
+                if (object.type === 'target') {
+                    playSound('snare');
+                } else if (object.type === 'friendly' && object.word) {
+                    // Friendly word hit
+                    playSound('cymbal');
+                }
+                
+                // Update score based on object points
                 score += object.points;
                 updateScoreDisplay();
                 
@@ -543,7 +804,19 @@ function handleClick(event) {
 
 // Update score display
 function updateScoreDisplay() {
-    document.getElementById('score').textContent = `Score: ${score}`;
+    const scoreNumberElement = document.querySelector('.score-number');
+    if (scoreNumberElement) {
+        scoreNumberElement.textContent = score;
+    }
+    
+    // Check score limit
+    if (gameConfig.scoreLimitEnabled && gameStarted && score >= gameConfig.scoreLimit) {
+        stopGame();
+        const gameOverMsg = document.querySelector('.game-over-message');
+        if (gameOverMsg) {
+            gameOverMsg.textContent = `Congratulations! You reached the target score of ${gameConfig.scoreLimit}!`;
+        }
+    }
 }
 
 // Update timer display
@@ -568,6 +841,19 @@ function updateTimer() {
     const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     document.getElementById('timer').textContent = timeString;
     
+    // Check time limit
+    if (gameConfig.timeLimitEnabled && !gamePaused) {
+        const elapsedSeconds = Math.floor(elapsed / 1000);
+        if (elapsedSeconds >= gameConfig.timeLimit) {
+            stopGame();
+            const gameOverMsg = document.querySelector('.game-over-message');
+            if (gameOverMsg) {
+                gameOverMsg.textContent = `Time's up! You played for ${Math.floor(gameConfig.timeLimit / 60)} minutes.`;
+            }
+            return;
+        }
+    }
+    
     // Debug timer less frequently
     if (seconds % 15 === 0 && seconds > 0 && minutes % 2 === 0) {
         console.log('Timer update:', { elapsed, timeString });
@@ -579,14 +865,33 @@ function updateObjects(deltaTime) {
     for (let i = gameObjects.length - 1; i >= 0; i--) {
         const object = gameObjects[i];
         
-        // Update position
+        // Update position - straight line movement only
         object.x += object.vx * (deltaTime / 1000);
         object.y += object.vy * (deltaTime / 1000);
         
         // Remove if off screen
-        const margin = GAME_CONFIG.OBJECT_RADIUS * 2;
-        if (object.x < -margin || object.x > canvas.width + margin ||
-            object.y < -margin || object.y > canvas.height + margin) {
+        const margin = gameConfig.objectSize * 2;
+        const shouldRemove = object.x < -margin || object.x > canvas.width + margin ||
+                           object.y < -margin || object.y > canvas.height + margin;
+        
+        if (shouldRemove) {
+            // Apply miss penalty if enabled and it's a target
+            if (gameConfig.missPenaltyEnabled && object.type === 'target') {
+                score -= 1; // Subtract 1 point for missed target
+                updateScoreDisplay();
+                console.log('Target missed! Score reduced by 1');
+                
+                // End game if score goes negative
+                if (score < 0) {
+                    stopGame();
+                    const gameOverMsg = document.querySelector('.game-over-message');
+                    if (gameOverMsg) {
+                        gameOverMsg.textContent = "Score went negative! Try to hit more targets.";
+                    }
+                    return;
+                }
+            }
+            
             gameObjects.splice(i, 1);
         }
     }
@@ -669,6 +974,18 @@ function updateObjectSize(event) {
     document.getElementById('object-size-value').textContent = gameConfig.objectSize;
 }
 
+function updateSizeVariation(event) {
+    gameConfig.sizeVariation = parseFloat(event.target.value);
+    document.getElementById('size-variation-value').textContent = gameConfig.sizeVariation.toFixed(1);
+    
+    // Update the description text to show the percentage
+    const percentage = Math.round(gameConfig.sizeVariation * 100);
+    const descElement = document.querySelector('#size-variation').parentNode.querySelector('div');
+    if (descElement) {
+        descElement.textContent = `Objects will vary ±${percentage}% from base size`;
+    }
+}
+
 function updateRatio(event) {
     gameConfig.ratio = parseFloat(event.target.value);
     document.getElementById('ratio-value').textContent = gameConfig.ratio.toFixed(2);
@@ -685,6 +1002,40 @@ function updateTargetWords(event) {
 
 function updateFriendlyWords(event) {
     gameConfig.friendlyWords = event.target.value;
+}
+
+function updateFriendlyMode(event) {
+    gameConfig.friendlyMode = event.target.value;
+    console.log('Friendly mode updated to:', gameConfig.friendlyMode);
+}
+
+function updateMissPenaltyEnabled(event) {
+    gameConfig.missPenaltyEnabled = event.target.checked;
+    console.log('Miss penalty enabled:', gameConfig.missPenaltyEnabled);
+}
+
+function updateTimeLimitEnabled(event) {
+    gameConfig.timeLimitEnabled = event.target.checked;
+    console.log('Time limit enabled:', gameConfig.timeLimitEnabled);
+}
+
+function updateTimeLimit(event) {
+    gameConfig.timeLimit = parseInt(event.target.value);
+    const minutes = Math.floor(gameConfig.timeLimit / 60);
+    const seconds = gameConfig.timeLimit % 60;
+    document.getElementById('time-limit-value').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    console.log('Time limit updated:', gameConfig.timeLimit);
+}
+
+function updateScoreLimitEnabled(event) {
+    gameConfig.scoreLimitEnabled = event.target.checked;
+    console.log('Score limit enabled:', gameConfig.scoreLimitEnabled);
+}
+
+function updateScoreLimit(event) {
+    gameConfig.scoreLimit = parseInt(event.target.value);
+    document.getElementById('score-limit-value').textContent = gameConfig.scoreLimit;
+    console.log('Score limit updated:', gameConfig.scoreLimit);
 }
 
 // Color picker functions

@@ -10,11 +10,34 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         
-        <!-- Play Button Overlay -->
-        <div id="play-overlay">
-            <button id="play-button" class="big-button" tabindex="0">
-                <span class="play-icon">▶</span>
-            </button>
+        <!-- Left Control Panel -->
+        <div id="left-panel">
+            <!-- Score Display -->
+            <div id="score">
+                <div class="score-label">Score</div>
+                <div class="score-number">0</div>
+            </div>
+            
+            <!-- Timer Display -->
+            <div id="timer-container">
+                <span>Time: </span><span id="timer">00:00</span>
+            </div>
+            
+            <!-- Player Name Display -->
+            <div id="player-name-display"></div>
+            
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <!-- Game Control Row -->
+                <div class="game-controls-row">
+                    <button id="play-button" class="icon-btn play-icon" title="Play"></button>
+                    <button id="pause-button" class="icon-btn pause-icon" title="Pause"></button>
+                    <button id="stop-button" class="icon-btn stop-icon" title="Stop"></button>
+                </div>
+                
+                <!-- Settings Button -->
+                <button id="settings-button" class="settings-btn" title="Settings">Settings</button>
+            </div>
         </div>
         
         <!-- Game Over Overlay -->
@@ -23,94 +46,157 @@
                 <h2>Game Over!</h2>
                 <div id="final-player-name">Player: Anonymous</div>
                 <div id="final-score">Score: 0</div>
-                <div class="game-over-message">Click Play to start again</div>
+                <div class="game-over-message"></div>
+                <button id="game-over-ok-button" class="game-over-ok-btn">OK</button>
             </div>
         </div>
         
-        <!-- Scoreboard / Dashboard -->
-        <div id="scoreboard">
-            <div id="score">Score: 0</div>
-            <div id="timer-container"><span>Time: </span><span id="timer">00:00</span></div>
-            <div id="player-name-display"></div>
-            <div class="dashboard-buttons">
-                <button id="pause-button" title="Pause/Resume">⏸️</button>
-                <button id="stop-button" title="Stop">⏹️</button>
-            </div>
-        </div>
-        
-        <!-- Settings Panel -->
-        <div id="settings-panel">
-            <details>
-                <summary>Settings</summary>
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="hidden">
+            <div class="settings-modal-content">
+                <div class="settings-header">
+                    <h2>Game Settings</h2>
+                </div>
                 <div class="settings-content">
-                    <div class="setting-group">
-                        <label for="player-name">Player Name:</label>
-                        <input type="text" id="player-name" maxlength="20" placeholder="Enter your name">
-                    </div>
-                    <div class="setting-group">
-                        <label for="speed">Speed:</label>
-                        <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
-                        <span id="speed-value">1.0x</span>
-                    </div>
-                    <div class="setting-group">
-                        <label for="randomness">Path Randomness:</label>
-                        <input type="range" id="randomness" min="0" max="1" step="0.1" value="0.5">
-                        <span id="randomness-value">0.5</span>
-                    </div>
-                    <div class="setting-group">
-                        <label for="spawnRate">Objects / min:</label>
-                        <input type="range" id="spawnRate" min="10" max="120" step="5" value="60">
-                        <span id="spawnRate-value">60</span>
-                    </div>
-                    <div class="setting-group">
-                        <label for="object-size">Object Size:</label>
-                        <input type="range" id="object-size" min="10" max="80" step="1" value="20">
-                        <span id="object-size-value">20</span>
-                    </div>
-                    <div class="setting-group">
-                        <label for="ratio">Target/Friendly Ratio:</label>
-                        <input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5">
-                        <span id="ratio-value">0.50</span>
-                        <div style="font-size: 0.9em; color: #888;">0 = all friendlies, 1 = all targets</div>
-                    </div>
-                    <div class="setting-group">
-                        <label for="target-words">Target Words:</label>
-                        <textarea id="target-words" placeholder="Enter words separated by spaces (e.g. apple banana cherry)" rows="2"></textarea>
-                        <div style="font-size: 0.9em; color: #888;">These words will appear inside red targets</div>
-                    </div>
-                    <div class="setting-group">
-                        <label for="friendly-words">Friendly Words:</label>
-                        <textarea id="friendly-words" placeholder="Enter words separated by spaces (e.g. friend buddy ally)" rows="2"></textarea>
-                        <div style="font-size: 0.9em; color: #888;">These words will appear inside blue friendlies</div>
-                    </div>
-                    <div class="setting-group">
-                        <label for="background-image">Background Image:</label>
-                        <input type="file" id="background-image" accept="image/*">
-                    </div>
-                    <!-- Color Selection Settings -->
-                    <div class="setting-group">
-                        <label>Circle Colors:</label>
-                        <div class="color-pickers">
-                            <!-- Target Color -->
-                            <div class="color-picker-container">
-                                <label for="target-color">Target:</label>
-                                <div class="color-options">
-                                    <input type="color" id="target-color" value="#ff4444">
-                                    <div class="color-presets" id="target-color-presets"></div>
+                    <div class="settings-grid">
+                        <!-- Player & Game Settings Column -->
+                        <div class="settings-column">
+                            <h3 class="category-title">Player & Game</h3>
+                            <div class="setting-group">
+                                <label for="player-name">Player Name:</label>
+                                <input type="text" id="player-name" maxlength="20" placeholder="Enter your name">
+                            </div>
+                            <div class="setting-group">
+                                <label for="speed">Speed:</label>
+                                <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
+                                <span id="speed-value">1.0x</span>
+                            </div>
+                            <div class="setting-group">
+                                <label for="randomness">Path Randomness:</label>
+                                <input type="range" id="randomness" min="0" max="1" step="0.1" value="0.5">
+                                <span id="randomness-value">0.5</span>
+                            </div>
+                            <div class="setting-group">
+                                <label for="spawnRate">Objects / min:</label>
+                                <input type="range" id="spawnRate" min="10" max="120" step="5" value="60">
+                                <span id="spawnRate-value">60</span>
+                            </div>
+                            <div class="setting-group">
+                                <label for="ratio">Target/Friendly Ratio:</label>
+                                <input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5">
+                                <span id="ratio-value">0.50</span>
+                                <div style="font-size: 0.9em; color: #888;">0 = all friendlies, 1 = all targets</div>
+                            </div>
+                            <div class="setting-group">
+                                <div class="checkbox-group">
+                                    <label for="miss-penalty-enabled">
+                                        <input type="checkbox" id="miss-penalty-enabled">
+                                        Miss Penalty
+                                    </label>
+                                </div>
+                                <div style="font-size: 0.9em; color: #888;">Lose 1 point when targets escape off-screen</div>
+                            </div>
+                        </div>
+
+                        <!-- Visual & Display Settings Column -->
+                        <div class="settings-column">
+                            <h3 class="category-title">Visual & Display</h3>
+                            <div class="setting-group">
+                                <label for="object-size">Object Size:</label>
+                                <input type="range" id="object-size" min="10" max="80" step="1" value="20">
+                                <span id="object-size-value">20</span>
+                            </div>
+                            <div class="setting-group">
+                                <label for="size-variation">Size Variation:</label>
+                                <input type="range" id="size-variation" min="0" max="0.8" step="0.1" value="0.3">
+                                <span id="size-variation-value">0.3</span>
+                                <div style="font-size: 0.9em; color: #888;">Objects will vary ±30% from base size</div>
+                            </div>
+                            <div class="setting-group">
+                                <label for="background-image">Background Image:</label>
+                                <input type="file" id="background-image" accept="image/*">
+                            </div>
+                            <div class="setting-group">
+                                <label>Circle Colors:</label>
+                                <div class="color-pickers">
+                                    <!-- Target Color -->
+                                    <div class="color-picker-container">
+                                        <label for="target-color">Target:</label>
+                                        <div class="color-options">
+                                            <input type="color" id="target-color" value="#ff4444">
+                                            <div class="color-presets" id="target-color-presets"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Friendly Color -->
+                                    <div class="color-picker-container">
+                                        <label for="friendly-color">Friendly:</label>
+                                        <div class="color-options">
+                                            <input type="color" id="friendly-color" value="#4444ff">
+                                            <div class="color-presets" id="friendly-color-presets"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Friendly Color -->
-                            <div class="color-picker-container">
-                                <label for="friendly-color">Friendly:</label>
-                                <div class="color-options">
-                                    <input type="color" id="friendly-color" value="#4444ff">
-                                    <div class="color-presets" id="friendly-color-presets"></div>
+                        </div>
+
+                        <!-- Content & Text Settings Column -->
+                        <div class="settings-column">
+                            <h3 class="category-title">Content & Text</h3>
+                            <div class="setting-group">
+                                <label for="target-words">Target Words:</label>
+                                <textarea id="target-words" placeholder="Enter words separated by spaces (e.g. apple banana cherry)" rows="3"></textarea>
+                                <div style="font-size: 0.9em; color: #888;">These words will appear inside red targets</div>
+                            </div>
+                            <div class="setting-group">
+                                <label for="friendly-words">Friendly Words:</label>
+                                <textarea id="friendly-words" placeholder="Enter words separated by spaces (e.g. friend buddy ally)" rows="3"></textarea>
+                                <div style="font-size: 0.9em; color: #888;">These words will appear inside blue friendlies</div>
+                            </div>
+                            <div class="setting-group">
+                                <label for="friendly-mode">Friendly Display Mode:</label>
+                                <select id="friendly-mode">
+                                    <option value="images">Images Only</option>
+                                    <option value="words">Words Only</option>
+                                    <option value="both">Images & Words</option>
+                                </select>
+                                <div style="font-size: 0.9em; color: #888;">Choose how friendly objects are displayed</div>
+                            </div>
+                        </div>
+
+                        <!-- Game End Conditions Column -->
+                        <div class="settings-column">
+                            <h3 class="category-title">Game End Conditions</h3>
+                            <div class="setting-group">
+                                <div class="checkbox-group">
+                                    <label for="time-limit-enabled">
+                                        <input type="checkbox" id="time-limit-enabled">
+                                        Time Limit
+                                    </label>
                                 </div>
+                                <label for="time-limit">Duration (seconds):</label>
+                                <input type="range" id="time-limit" min="30" max="600" step="30" value="120">
+                                <span id="time-limit-value">2:00</span>
+                                <div style="font-size: 0.9em; color: #888;">Game ends when time limit is reached</div>
+                            </div>
+                            <div class="setting-group">
+                                <div class="checkbox-group">
+                                    <label for="score-limit-enabled">
+                                        <input type="checkbox" id="score-limit-enabled">
+                                        Score Limit
+                                    </label>
+                                </div>
+                                <label for="score-limit">Target Score:</label>
+                                <input type="range" id="score-limit" min="10" max="200" step="5" value="50">
+                                <span id="score-limit-value">50</span>
+                                <div style="font-size: 0.9em; color: #888;">Game ends when target score is reached</div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </details>
+                <div class="settings-footer">
+                    <button id="settings-ok-button" class="settings-ok-btn">OK</button>
+                </div>
+            </div>
         </div>
     </div>
     

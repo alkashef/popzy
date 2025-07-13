@@ -1,32 +1,308 @@
-/* Dashboard Buttons Styling */
-.dashboard-buttons {
+/* Left Control Panel */
+#left-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+    color: #e0e0e0;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
     display: flex;
-    gap: 16px;
-    margin-top: 10px;
+    flex-direction: column;
+    gap: 15px;
+    font-family: 'Arial', sans-serif;
+    border-right: 2px solid #666;
 }
 
-/* Make pause and stop buttons half their size */
-#pause-button, #stop-button {
-    font-size: 0.75rem;
-    padding: 5px 8px;
-    border-radius: 4px;
-    background: linear-gradient(135deg, #00ff88, #00cc66);
-    color: #222;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0,255,136,0.4);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 25px;
+/* Score, Timer, and Player Name - Unified styling */
+#score {
+    color: #e0e0e0;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+    text-align: left;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 5px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.score-label {
+    font-size: 14px;
+    color: #e0e0e0;
+    margin-bottom: 8px;
     text-align: center;
 }
 
-#pause-button:hover, #stop-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 40px rgba(0,255,136,0.6);
+.score-number {
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    line-height: 1;
 }
 
-#pause-button:active, #stop-button:active {
-    transform: scale(0.95);
+#timer-container, #player-name-display {
+    color: #e0e0e0;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+    text-align: left;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 5px;
+}
+
+#timer {
+    color: #e0e0e0;
+    font-weight: normal;
+}
+
+/* Control Buttons Container */
+.control-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Game Controls Row - Play, Pause, Stop buttons in one row */
+.game-controls-row {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+/* Icon buttons for game controls */
+.icon-btn {
+    flex: 1;
+    background: #666;
+    color: white;
+    border: 2px solid #888;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 16px;
+    padding: 10px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: #777;
+    border-color: #aaa;
+    transform: translateY(-1px);
+}
+
+.icon-btn:active {
+    background: #555;
+    transform: translateY(0);
+}
+
+/* CSS-based geometric icons for consistent appearance */
+.play-icon::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 12px solid white;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    margin-left: 2px;
+}
+
+.pause-icon::before {
+    content: '';
+    width: 12px;
+    height: 16px;
+    background: linear-gradient(to right, white 0%, white 35%, transparent 35%, transparent 65%, white 65%, white 100%);
+}
+
+.stop-icon::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* Settings Button */
+.settings-btn {
+    background: #666;
+    color: #e0e0e0;
+    border: 2px solid #888;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 12px 16px;
+    width: 100%;
+    text-align: center;
+}
+
+.settings-btn:hover {
+    background: #777;
+    border-color: #aaa;
+    transform: translateY(-1px);
+}
+
+.settings-btn:active {
+    background: #555;
+    transform: translateY(0);
+}
+
+/* Game canvas adjustment for left panel */
+#gameCanvas {
+    margin-left: 200px;
+    width: calc(100vw - 200px);
+    height: 100vh;
+}
+
+/* Settings Modal */
+#settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    transition: opacity 0.3s ease;
+}
+
+#settings-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.settings-modal-content {
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #00ff88;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 1100px;
+    max-height: 80vh;
+    overflow-y: auto;
+    color: white;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+    position: relative;
+    width: 90%;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.settings-header h2 {
+    color: #00ff88;
+    margin: 0;
+    font-size: 24px;
+}
+
+.close-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #ff6666;
+    transform: scale(1.1);
+}
+
+/* Settings Grid Layout */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.settings-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.category-title {
+    color: #00ff88;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+    text-align: center;
+}
+
+/* Settings Footer */
+.settings-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 255, 136, 0.3);
+    margin-top: 20px;
+}
+
+/* Settings OK Button */
+.settings-ok-btn {
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #222;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.4);
+    min-width: 120px;
+}
+
+.settings-ok-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(135deg, #00ff99, #00dd77);
+}
+
+.settings-ok-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 255, 136, 0.4);
+}
+
+/* Adjust game container for left panel */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
 }
 * {
     margin: 0;
@@ -49,46 +325,12 @@ body {
 
 #gameCanvas {
     display: block;
-    width: 100%;
-    height: 100%;
     cursor: crosshair;
-    z-index: 1; /* Ensure canvas has a lower z-index than overlays */
+    z-index: 1;
     position: relative;
-}
-
-/* Play Button Overlay */
-#play-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    transition: opacity 0.3s ease;
-}
-
-#play-overlay.hidden, #game-over-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-    display: none; /* Add this to completely hide the element */
-}
-
-#play-button {
-    background: linear-gradient(135deg, #00ff88, #00cc66);
-    border: 2px solid #ffffff;
-    border-radius: 10px;
-    padding: 20px 30px;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 0 4px 16px rgba(0, 255, 136, 0.4);
-    transition: all 0.3s ease;
-    min-width: 100px;
-    position: relative;
-    z-index: 2100; /* Ensure play button is above overlays */
+    margin-left: 200px;
+    width: calc(100vw - 200px);
+    height: 100vh;
 }
 
 /* Game Over Overlay */
@@ -102,8 +344,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1900;
+    z-index: 2500;
     transition: opacity 0.3s ease;
+}
+
+#game-over-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
 }
 
 .game-over-content {
@@ -143,104 +391,34 @@ body {
     font-style: italic;
 }
 
-#play-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 40px rgba(0, 255, 136, 0.6);
-}
-
-#play-button:active {
-    transform: scale(0.95);
-}
-
-.play-icon {
-    font-size: 40px;
-    color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Scoreboard */
-#scoreboard {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 15px 20px;
+/* OK Button for Game Over Overlay */
+.game-over-ok-btn {
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #222;
+    border: none;
     border-radius: 8px;
+    padding: 12px 30px;
     font-size: 18px;
     font-weight: bold;
-    z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    min-width: 120px;
-}
-
-#score {
-    color: #00ff88;
-    margin-bottom: 5px;
-    font-size: 18px;
-}
-
-#timer-container {
-    color: #ffffff;
-    font-size: 16px;
-    font-family: 'Courier New', monospace;
-    margin-bottom: 5px;
-}
-
-#timer {
-    color: #ffffff;
-}
-
-#game-over {
-    margin-top: 10px;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-    color: #ff4444;
-    font-weight: bold;
-}
-
-#game-over.hidden {
-    display: none;
-}
-
-#game-over-score {
-    font-size: 18px;
-    color: #00ff88;
-}
-
-/* Settings Panel */
-#settings-panel {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    max-width: 300px;
-}
-
-#settings-panel details {
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-}
-
-#settings-panel summary {
-    padding: 15px 20px;
     cursor: pointer;
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px 8px 0 0;
-    transition: background 0.2s;
+    margin-top: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.4);
+    min-width: 100px;
 }
 
-#settings-panel summary:hover {
-    background: rgba(255, 255, 255, 0.2);
+.game-over-ok-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(135deg, #00ff99, #00dd77);
 }
 
-#settings-panel summary::marker {
-    color: #00ff88;
+.game-over-ok-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 255, 136, 0.4);
 }
+
+/* Remove old scoreboard and settings panel styles - replaced by left panel */
 
 .settings-content {
     padding: 20px;
@@ -286,6 +464,22 @@ body {
     border-radius: 50%;
     cursor: pointer;
     border: none;
+}
+
+.setting-group select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: white;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.setting-group select option {
+    background: #222;
+    color: white;
 }
 
 .setting-group textarea {
@@ -388,22 +582,77 @@ input[type="color"] {
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments for left panel */
 @media (max-width: 768px) {
-    #scoreboard {
-        top: 10px;
-        left: 10px;
-        padding: 8px 16px;
-        font-size: 16px;
-    }
-    
-    #settings-panel {
-        top: 10px;
-        right: 10px;
-        max-width: 250px;
-    }
-    
-    .settings-content {
+    #left-panel {
+        width: 150px;
         padding: 15px;
+        gap: 10px;
+    }
+    
+    #gameCanvas {
+        margin-left: 150px;
+        width: calc(100vw - 150px);
+    }
+    
+    .icon-btn {
+        padding: 8px;
+        font-size: 14px;
+        min-height: 35px;
+    }
+    
+    .settings-btn {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    #score, #timer-container, #player-name-display {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+    
+    .settings-modal-content {
+        max-width: 90%;
+        margin: 10px;
+        padding: 15px;
+    }
+}
+
+/* Responsive grid layout */
+@media (max-width: 1200px) {
+    .settings-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .settings-modal-content {
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .settings-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .settings-modal-content {
+        max-width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .settings-modal-content {
+        max-width: 95%;
+        padding: 15px;
+    }
+    
+    .category-title {
+        font-size: 16px;
     }
 }

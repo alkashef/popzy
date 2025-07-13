@@ -12,6 +12,7 @@ A simple HTML5 canvas-based shooter game where you click to shoot targets and av
   - Path randomness (0-1)
   - Spawn rate (10-120 objects/minute)
   - Object type toggles
+  - Miss penalty (optional -1 point for targets that escape)
 - **Live scoreboard** display
 - **Image-based objects** using assets from target/ and friendly/ folders
 - **Responsive design** that works on different screen sizes
