@@ -463,7 +463,7 @@ function setupEventListeners() {
     // Stop button
     const stopButton = document.getElementById('stop-button');
     if (stopButton) {
-        stopButton.addEventListener('click', stopGame);
+        stopButton.addEventListener('click', () => stopGame('stop_button'));
     }
 
     // Settings button - opens modal and pauses game
@@ -904,6 +904,8 @@ function getEndReasonText(reason) {
             return 'Time limit reached';
         case 'score_limit':
             return 'Score limit reached';
+        case 'stop_button':
+            return 'Stop button pressed';
         case 'manual':
             return 'Game stopped manually';
         default:

@@ -104,6 +104,9 @@
 .settings-container {
     margin-top: auto;
     padding-top: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
 }
 
 /* Game Controls Row - Play, Pause, Stop buttons in one row */
