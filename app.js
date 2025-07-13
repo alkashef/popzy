@@ -217,6 +217,7 @@ let lastTimestamp;
 let currentGameHits = 0;
 let currentGameMisses = 0;
 let currentGameTargetsPenalized = 0;
+let currentGameEndReason = '';
 
 // Update UI to match current settings
 function updateSettingsUI() {
@@ -560,6 +561,28 @@ function setupEventListeners() {
         resetSettingsButton.addEventListener('click', resetConfigToDefaults);
     }
 
+    // Scores button - opens modal and pauses game
+    const scoresButton = document.getElementById('scores-button');
+    if (scoresButton) {
+        scoresButton.addEventListener('click', openScoresModal);
+    }
+
+    // Scores OK button
+    const scoresOkButton = document.getElementById('scores-ok-button');
+    if (scoresOkButton) {
+        scoresOkButton.addEventListener('click', closeScoresModal);
+    }
+
+    // Close scores modal when clicking outside
+    const scoresModal = document.getElementById('scores-modal');
+    if (scoresModal) {
+        scoresModal.addEventListener('click', function(event) {
+            if (event.target === scoresModal) {
+                closeScoresModal();
+            }
+        });
+    }
+
     console.log('All event listeners set up');
 }
 // Background image logic
@@ -586,6 +609,7 @@ function updateBackgroundImage(event) {
 
 // Settings modal functionality
 let wasGameRunningBeforeSettings = false;
+let wasGameRunningBeforeScores = false;
 
 function openSettingsModal() {
     console.log('Opening settings modal');
@@ -620,6 +644,45 @@ function closeSettingsModal() {
     }
     
     wasGameRunningBeforeSettings = false;
+}
+
+// Scores modal functionality
+function openScoresModal() {
+    console.log('Opening scores modal');
+    
+    // Remember if game was running before opening scores
+    wasGameRunningBeforeScores = gameStarted && !gamePaused;
+    
+    // Pause the game if it's running
+    if (gameStarted && !gamePaused) {
+        pauseGame();
+    }
+    
+    // Populate scores dashboard
+    populateScoresDashboard();
+    
+    // Show scores modal
+    const scoresModal = document.getElementById('scores-modal');
+    if (scoresModal) {
+        scoresModal.classList.remove('hidden');
+    }
+}
+
+function closeScoresModal() {
+    console.log('Closing scores modal');
+    
+    // Hide scores modal
+    const scoresModal = document.getElementById('scores-modal');
+    if (scoresModal) {
+        scoresModal.classList.add('hidden');
+    }
+    
+    // Resume game if it was running before scores were opened
+    if (wasGameRunningBeforeScores && gameStarted && gamePaused) {
+        resumeGame();
+    }
+    
+    wasGameRunningBeforeScores = false;
 }
 
 // Dismiss game over overlay and return to main game view
@@ -690,6 +753,7 @@ function startGame() {
     currentGameHits = 0;
     currentGameMisses = 0;
     currentGameTargetsPenalized = 0;
+    currentGameEndReason = '';
     
     updateScoreDisplay();
     updateTimer();
@@ -741,8 +805,11 @@ function resumeGame() {
 }
 
 // Game loop function is defined further down
-function stopGame() {
+function stopGame(endReason = 'manual') {
     if (!gameStarted) return;
+    
+    // Store the end reason
+    currentGameEndReason = endReason;
     
     // Play game over sound
     playSound('gameOver');
@@ -768,7 +835,8 @@ function stopGame() {
         averageHitRate: Math.round(averageHitRate * 100) / 100, // Round to 2 decimal places
         hits: currentGameHits,
         misses: currentGameMisses,
-        targetsPenalized: currentGameTargetsPenalized
+        targetsPenalized: currentGameTargetsPenalized,
+        gameEndReason: endReason
     };
     
     // Add to game statistics
@@ -799,6 +867,17 @@ function stopGame() {
         gameOverOverlay.classList.remove('hidden');
         if (finalPlayerName) finalPlayerName.textContent = gameConfig.playerName || 'player 1';
         if (finalScore) finalScore.textContent = `Score: ${score}`;
+        
+        // Update game statistics in game over display
+        const gameStatsElement = document.getElementById('game-statistics');
+        if (gameStatsElement) {
+            gameStatsElement.innerHTML = `
+                <div><strong>Total Hits:</strong> ${currentGameHits}</div>
+                <div><strong>Total Targets Missed:</strong> ${currentGameTargetsPenalized}</div>
+                <div><strong>Total Hits Missed:</strong> ${currentGameMisses}</div>
+                <div><strong>Game End Reason:</strong> ${getEndReasonText(endReason)}</div>
+            `;
+        }
     }
 
     gameStarted = false;
@@ -812,6 +891,23 @@ function stopGame() {
     const pauseButton = document.getElementById('pause-button');
     if (pauseButton) {
         pauseButton.title = 'Pause';
+    }
+}
+
+function getEndReasonText(reason) {
+    switch (reason) {
+        case 'friendly_shot':
+            return 'Friendly picture shot';
+        case 'score_negative':
+            return 'Score dropped below 0';
+        case 'time_limit':
+            return 'Time limit reached';
+        case 'score_limit':
+            return 'Score limit reached';
+        case 'manual':
+            return 'Game stopped manually';
+        default:
+            return 'Unknown reason';
     }
 }
 
@@ -975,7 +1071,7 @@ function handleClick(event) {
                 playSound('oww');
                 
                 // Show game over message with "Don't shoot the unicorn!" message
-                stopGame();
+                stopGame('friendly_shot');
                 const gameOverMsg = document.querySelector('.game-over-message');
                 if (gameOverMsg) {
                     gameOverMsg.textContent = "Don't shoot the friendly images!";
@@ -996,7 +1092,7 @@ function handleClick(event) {
                 
                 // End game if score < 0
                 if (score < 0) {
-                    stopGame();
+                    stopGame('score_negative');
                 }
             }
             break;
@@ -1020,7 +1116,7 @@ function updateScoreDisplay() {
     
     // Check score limit
     if (gameConfig.scoreLimitEnabled && gameStarted && score >= gameConfig.scoreLimit) {
-        stopGame();
+        stopGame('score_limit');
         const gameOverMsg = document.querySelector('.game-over-message');
         if (gameOverMsg) {
             gameOverMsg.textContent = `Congratulations! You reached the target score of ${gameConfig.scoreLimit}!`;
@@ -1054,7 +1150,7 @@ function updateTimer() {
     if (gameConfig.timeLimitEnabled && !gamePaused) {
         const elapsedSeconds = Math.floor(elapsed / 1000);
         if (elapsedSeconds >= gameConfig.timeLimit) {
-            stopGame();
+            stopGame('time_limit');
             const gameOverMsg = document.querySelector('.game-over-message');
             if (gameOverMsg) {
                 gameOverMsg.textContent = `Time's up! You played for ${Math.floor(gameConfig.timeLimit / 60)} minutes.`;
@@ -1093,7 +1189,7 @@ function updateObjects(deltaTime) {
                 
                 // End game if score goes negative
                 if (score < 0) {
-                    stopGame();
+                    stopGame('score_negative');
                     const gameOverMsg = document.querySelector('.game-over-message');
                     if (gameOverMsg) {
                         gameOverMsg.textContent = "Score went negative! Try to hit more targets.";
@@ -1384,3 +1480,108 @@ document.addEventListener('DOMContentLoaded', function() {
         init();
     }, 100);
 });
+
+function populateScoresDashboard() {
+    // Get the latest game (last in array)
+    const latestGame = gameStats.gameSessionStats[gameStats.gameSessionStats.length - 1];
+    
+    // Latest Game Rankings
+    const latestRankingsElement = document.getElementById('latest-game-rankings');
+    if (latestRankingsElement && latestGame) {
+        const rateRank = calculateRateRank(latestGame.averageHitRate);
+        const scoreRank = calculateScoreRank(latestGame.score);
+        
+        latestRankingsElement.innerHTML = `
+            <div class="rank-item">
+                <strong>Rate Rank:</strong> #${rateRank} of ${gameStats.gameSessionStats.length} games<br>
+                <span style="color: #00ff88;">Rate: ${latestGame.averageHitRate} hits/min</span>
+            </div>
+            <div class="rank-item">
+                <strong>Score Rank:</strong> #${scoreRank} of ${gameStats.gameSessionStats.length} games<br>
+                <span style="color: #00ff88;">Score: ${latestGame.score}</span>
+            </div>
+        `;
+    } else {
+        latestRankingsElement.innerHTML = '<div class="rank-item">No games played yet</div>';
+    }
+    
+    // Overall Statistics
+    const overallStatsElement = document.getElementById('overall-statistics');
+    if (overallStatsElement) {
+        const uniquePlayers = new Set(gameStats.gameSessionStats.map(game => game.playerName)).size;
+        
+        overallStatsElement.innerHTML = `
+            <div class="stat-item">
+                <span class="stat-label">Total Games:</span>
+                <span class="stat-value">${gameStats.gameSessionStats.length}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Unique Players:</span>
+                <span class="stat-value">${uniquePlayers}</span>
+            </div>
+        `;
+    }
+    
+    // Top Performers
+    const topPerformersElement = document.getElementById('top-performers');
+    if (topPerformersElement) {
+        const highestScore = gameStats.gameSessionStats.length > 0 ? Math.max(...gameStats.gameSessionStats.map(game => game.score)) : 0;
+        const highestScoreGame = gameStats.gameSessionStats.find(game => game.score === highestScore);
+        
+        const highestRate = gameStats.gameSessionStats.length > 0 ? Math.max(...gameStats.gameSessionStats.map(game => game.averageHitRate)) : 0;
+        const highestRateGame = gameStats.gameSessionStats.find(game => game.averageHitRate === highestRate);
+        
+        topPerformersElement.innerHTML = `
+            <div class="stat-item">
+                <span class="stat-label">Highest Score:</span>
+                <span class="stat-value">${highestScoreGame ? `${highestScore} (${highestScoreGame.playerName})` : 'N/A'}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Highest Rate:</span>
+                <span class="stat-value">${highestRateGame ? `${highestRate} hits/min (${highestRateGame.playerName})` : 'N/A'}</span>
+            </div>
+        `;
+    }
+    
+    // Game End Reasons Histogram
+    const histogramElement = document.getElementById('game-end-histogram');
+    if (histogramElement) {
+        const endReasons = {};
+        gameStats.gameSessionStats.forEach(game => {
+            const reason = game.gameEndReason || 'unknown';
+            endReasons[reason] = (endReasons[reason] || 0) + 1;
+        });
+        
+        const maxCount = Math.max(...Object.values(endReasons));
+        let histogramHTML = '';
+        
+        Object.entries(endReasons).forEach(([reason, count]) => {
+            const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+            histogramHTML += `
+                <div class="histogram-bar">
+                    <div class="histogram-label">${getEndReasonText(reason)}</div>
+                    <div class="histogram-visual">
+                        <div class="histogram-fill" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="histogram-count">${count}</div>
+                </div>
+            `;
+        });
+        
+        histogramElement.innerHTML = histogramHTML || '<div class="stat-item">No games completed yet</div>';
+    }
+}
+
+function calculateRateRank(rate) {
+    const sortedRates = gameStats.gameSessionStats
+        .map(game => game.averageHitRate)
+        .sort((a, b) => b - a);
+    return sortedRates.indexOf(rate) + 1;
+}
+
+function calculateScoreRank(score) {
+    const sortedScores = gameStats.gameSessionStats
+        .map(game => game.score)
+        .sort((a, b) => b - a);
+    return sortedScores.indexOf(score) + 1;
+}

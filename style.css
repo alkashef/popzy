@@ -57,7 +57,7 @@
 }
 
 .score-number {
-    font-size: 120px;
+    font-size: 144px;
     font-weight: bold;
     color: white;
     text-align: center;
@@ -449,6 +449,24 @@ body {
     font-style: italic;
 }
 
+#game-statistics {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+}
+
+#game-statistics div {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+#game-statistics strong {
+    color: #00ff88;
+}
+
 /* OK Button for Game Over Overlay */
 .game-over-ok-btn {
     background: #666;
@@ -713,3 +731,119 @@ input[type="color"] {
         font-size: 16px;
     }
 }
+
+/* Scores Dashboard Modal */
+#scores-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    transition: opacity 0.3s ease;
+}
+
+#scores-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.scores-content {
+    padding: 20px;
+}
+
+.scores-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.scores-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+}
+
+.scores-section-title {
+    color: #e0e0e0;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.stat-label {
+    color: #e0e0e0;
+}
+
+.stat-value {
+    color: #00ff88;
+    font-weight: bold;
+}
+
+.rank-item {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.histogram-bar {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.histogram-label {
+    min-width: 120px;
+    color: #e0e0e0;
+}
+
+.histogram-visual {
+    flex: 1;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 0 10px;
+    position: relative;
+}
+
+.histogram-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #00cc66);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.histogram-count {
+    color: #00ff88;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .scores-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+/* Settings Modal */

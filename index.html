@@ -39,6 +39,7 @@
             
             <!-- Settings Button at bottom -->
             <div class="settings-container">
+                <button id="scores-button" class="settings-btn" title="Statistics Dashboard">Stats</button>
                 <button id="settings-button" class="settings-btn" title="Settings">Settings</button>
             </div>
         </div>
@@ -49,6 +50,9 @@
                 <h2>Game Over!</h2>
                 <div id="final-player-name">player 1</div>
                 <div id="final-score">Score: 0</div>
+                <div id="game-statistics">
+                    <!-- Game statistics will be populated by JavaScript -->
+                </div>
                 <div class="game-over-message"></div>
                 <button id="game-over-ok-button" class="game-over-ok-btn">OK</button>
             </div>
@@ -191,6 +195,53 @@
                 <div class="settings-footer">
                     <button id="reset-settings-button" class="reset-settings-btn">Reset to Defaults</button>
                     <button id="settings-ok-button" class="settings-ok-btn">OK</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scores Dashboard Modal -->
+        <div id="scores-modal" class="hidden">
+            <div class="settings-modal-content">
+                <div class="settings-header">
+                    <h2>Scores Dashboard</h2>
+                </div>
+                <div class="scores-content">
+                    <div class="scores-grid">
+                        <!-- Latest Game Rankings -->
+                        <div class="scores-section">
+                            <h3 class="scores-section-title">Latest Game Rankings</h3>
+                            <div id="latest-game-rankings">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Overall Statistics -->
+                        <div class="scores-section">
+                            <h3 class="scores-section-title">Overall Statistics</h3>
+                            <div id="overall-statistics">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Top Performers -->
+                        <div class="scores-section">
+                            <h3 class="scores-section-title">Top Performers</h3>
+                            <div id="top-performers">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Game End Reasons Histogram -->
+                        <div class="scores-section">
+                            <h3 class="scores-section-title">Game End Reasons</h3>
+                            <div id="game-end-histogram">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-footer">
+                    <button id="scores-ok-button" class="settings-ok-btn">OK</button>
                 </div>
             </div>
         </div>
