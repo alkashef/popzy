@@ -30,7 +30,7 @@ const GAME_CONFIG = {
     DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY: 1.0, // Friendly images transparency level (0.0 - 1.0)
     DEFAULT_SHOW_OBJECT_PATHS: false, // Show object movement paths
     DEFAULT_OBJECT_SHADOWS: false, // Show shadows for objects
-    DEFAULT_BACKGROUND_COLOR: '#1e3c72', // Default background color
+    DEFAULT_BACKGROUND_COLOR: '#4444ff', // Default background color (matches friendly color)
     // Object properties
     BASE_SPEED: 100, // pixels per second
     SPAWN_MARGIN: 50, // pixels from edge
@@ -248,6 +248,7 @@ let lastTimestamp;
 // Current game session tracking
 let currentGameHits = 0;
 let currentGameMisses = 0;
+let currentGameClicks = 0;
 let currentGameTargetsPenalized = 0;
 let currentGameEndReason = '';
 
@@ -428,9 +429,7 @@ function setupCanvas() {
     
     // Set canvas size to viewport minus right panel
     function resizeCanvas() {
-        const rightPanel = document.getElementById('right-panel');
-        const isCollapsed = rightPanel && rightPanel.classList.contains('collapsed');
-        const rightPanelWidth = isCollapsed ? 20 : 200; // 20px for toggle button when collapsed
+        const rightPanelWidth = 200; // Fixed width since no collapse
         
         canvas.width = window.innerWidth - rightPanelWidth;
         canvas.height = window.innerHeight;
@@ -808,9 +807,6 @@ function setupEventListeners() {
     
     // Setup tab functionality
     setupTabSwitching();
-    
-    // Setup panel toggle
-    setupPanelToggle();
 
     // Reset settings button
     const resetSettingsButton = document.getElementById('reset-settings-button');
@@ -1016,6 +1012,7 @@ function startGame() {
     // Reset current game session tracking
     currentGameHits = 0;
     currentGameMisses = 0;
+    currentGameClicks = 0;
     currentGameTargetsPenalized = 0;
     currentGameEndReason = '';
     
@@ -1093,6 +1090,9 @@ function stopGame(endReason = 'manual') {
     const effectiveHits = currentGameHits - currentGameTargetsPenalized;
     const averageHitRate = durationMinutes > 0 ? effectiveHits / durationMinutes : 0;
     
+    // Calculate accuracy percentage
+    const accuracy = currentGameClicks > 0 ? ((currentGameHits / currentGameClicks) * 100) : 0;
+    
     // Create game session record
     const gameSession = {
         gameEndTime: new Date().toISOString(),
@@ -1102,6 +1102,8 @@ function stopGame(endReason = 'manual') {
         averageHitRate: Math.round(averageHitRate * 100) / 100, // Round to 2 decimal places
         hits: currentGameHits,
         misses: currentGameMisses,
+        clicks: currentGameClicks,
+        accuracy: Math.round(accuracy * 100) / 100, // Round to 2 decimal places
         targetsPenalized: currentGameTargetsPenalized,
         gameEndReason: endReason
     };
@@ -1140,6 +1142,8 @@ function stopGame(endReason = 'manual') {
         if (gameStatsElement) {
             gameStatsElement.innerHTML = `
                 <div><strong>Total Hits:</strong> ${currentGameHits}</div>
+                <div><strong>Total Clicks:</strong> ${currentGameClicks}</div>
+                <div><strong>Accuracy:</strong> ${accuracy.toFixed(1)}%</div>
                 <div><strong>Total Targets Missed:</strong> ${currentGameTargetsPenalized}</div>
                 <div><strong>Total Hits Missed:</strong> ${currentGameMisses}</div>
                 <div><strong>Game End Reason:</strong> ${getEndReasonText(endReason)}</div>
@@ -1318,6 +1322,9 @@ function spawnObject() {
 // Handle mouse click (shooting)
 function handleClick(event) {
     if (!gameStarted) return; // Don't handle clicks until game is started
+
+    // Track total clicks for accuracy calculation
+    currentGameClicks++;
 
     const rect = canvas.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
@@ -1897,34 +1904,6 @@ function setupTabSwitching() {
     });
 }
 
-// Setup panel toggle functionality
-function setupPanelToggle() {
-    const panelToggle = document.getElementById('panel-toggle');
-    const lowerPanel = document.getElementById('right-panel-lower');
-    const gameCanvas = document.getElementById('gameCanvas');
-    const captionElement = document.querySelector('.game-caption');
-    
-    if (panelToggle && lowerPanel) {
-        panelToggle.addEventListener('click', () => {
-            lowerPanel.classList.toggle('collapsed');
-            
-            // Adjust canvas and caption width when panel is collapsed
-            const isCollapsed = lowerPanel.classList.contains('collapsed');
-            const rightPanelWidth = isCollapsed ? 20 : 200; // 20px for the toggle button
-            
-            if (gameCanvas) {
-                gameCanvas.style.marginRight = `${rightPanelWidth}px`;
-                gameCanvas.style.width = `calc(100vw - ${rightPanelWidth}px)`;
-                gameCanvas.width = window.innerWidth - rightPanelWidth;
-            }
-            
-            if (captionElement) {
-                captionElement.style.width = `calc(100vw - ${rightPanelWidth}px)`;
-            }
-        });
-    }
-}
-
 // Main game loop
 function gameLoop(timestamp) {
     // If game is paused, don't proceed with the game loop
@@ -2009,6 +1988,7 @@ function populateScoresDashboard() {
     if (latestRankingsElement && latestGame) {
         const rateRank = calculateRateRank(latestGame.averageHitRate);
         const scoreRank = calculateScoreRank(latestGame.score);
+        const accuracyRank = calculateAccuracyRank(latestGame.accuracy || 0);
         
         latestRankingsElement.innerHTML = `
             <div class="rank-item">
@@ -2018,6 +1998,10 @@ function populateScoresDashboard() {
             <div class="rank-item">
                 <strong>Score Rank:</strong> #${scoreRank} of ${gameStats.gameSessionStats.length} games<br>
                 <span style="color: #00ff88;">Score: ${latestGame.score}</span>
+            </div>
+            <div class="rank-item">
+                <strong>Accuracy Rank:</strong> #${accuracyRank} of ${gameStats.gameSessionStats.length} games<br>
+                <span style="color: #00ff88;">Accuracy: ${(latestGame.accuracy || 0).toFixed(1)}%</span>
             </div>
         `;
     } else {
@@ -2029,6 +2013,11 @@ function populateScoresDashboard() {
     if (overallStatsElement) {
         const uniquePlayers = new Set(gameStats.gameSessionStats.map(game => game.playerName)).size;
         
+        // Calculate overall accuracy from all games
+        const totalClicks = gameStats.gameSessionStats.reduce((sum, game) => sum + (game.clicks || 0), 0);
+        const totalHits = gameStats.gameSessionStats.reduce((sum, game) => sum + (game.hits || 0), 0);
+        const overallAccuracy = totalClicks > 0 ? ((totalHits / totalClicks) * 100) : 0;
+        
         overallStatsElement.innerHTML = `
             <div class="stat-item">
                 <span class="stat-label">Total Games:</span>
@@ -2037,6 +2026,14 @@ function populateScoresDashboard() {
             <div class="stat-item">
                 <span class="stat-label">Unique Players:</span>
                 <span class="stat-value">${uniquePlayers}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Overall Accuracy:</span>
+                <span class="stat-value">${overallAccuracy.toFixed(1)}%</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Clicks:</span>
+                <span class="stat-value">${totalClicks}</span>
             </div>
         `;
     }
@@ -2050,6 +2047,9 @@ function populateScoresDashboard() {
         const highestRate = gameStats.gameSessionStats.length > 0 ? Math.max(...gameStats.gameSessionStats.map(game => game.averageHitRate)) : 0;
         const highestRateGame = gameStats.gameSessionStats.find(game => game.averageHitRate === highestRate);
         
+        const highestAccuracy = gameStats.gameSessionStats.length > 0 ? Math.max(...gameStats.gameSessionStats.map(game => game.accuracy || 0)) : 0;
+        const highestAccuracyGame = gameStats.gameSessionStats.find(game => (game.accuracy || 0) === highestAccuracy);
+        
         topPerformersElement.innerHTML = `
             <div class="stat-item">
                 <span class="stat-label">Highest Score:</span>
@@ -2058,6 +2058,10 @@ function populateScoresDashboard() {
             <div class="stat-item">
                 <span class="stat-label">Highest Rate:</span>
                 <span class="stat-value">${highestRateGame ? `${highestRate} hits/min (${highestRateGame.playerName})` : 'N/A'}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Highest Accuracy:</span>
+                <span class="stat-value">${highestAccuracyGame ? `${highestAccuracy.toFixed(1)}% (${highestAccuracyGame.playerName})` : 'N/A'}</span>
             </div>
         `;
     }
@@ -2103,4 +2107,11 @@ function calculateScoreRank(score) {
         .map(game => game.score)
         .sort((a, b) => b - a);
     return sortedScores.indexOf(score) + 1;
+}
+
+function calculateAccuracyRank(accuracy) {
+    const sortedAccuracies = gameStats.gameSessionStats
+        .map(game => game.accuracy || 0)
+        .sort((a, b) => b - a);
+    return sortedAccuracies.indexOf(accuracy) + 1;
 }
