@@ -1,10 +1,30 @@
-/* Right Control Panel */
-#right-panel {
+/* Right Control Panel - Upper Panel (Fixed) */
+#right-panel-upper {
     position: fixed;
     top: 0;
     right: 0;
     width: 200px;
-    height: 100vh;
+    height: 240px;
+    background: linear-gradient(135deg, rgba(74, 74, 74, 0.3), rgba(42, 42, 42, 0.3));
+    color: #e0e0e0;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-family: 'Arial', sans-serif;
+    border-left: 2px solid rgba(102, 102, 102, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+/* Right Control Panel - Lower Panel (Collapsible) */
+#right-panel-lower {
+    position: fixed;
+    top: 240px;
+    right: 0;
+    width: 200px;
+    height: calc(100vh - 240px);
     background: linear-gradient(135deg, rgba(74, 74, 74, 0.3), rgba(42, 42, 42, 0.3));
     color: #e0e0e0;
     padding: 20px;
@@ -19,11 +39,11 @@
     backdrop-filter: blur(5px);
 }
 
-#right-panel.collapsed {
+#right-panel-lower.collapsed {
     transform: translateX(180px);
 }
 
-/* Panel toggle button */
+/* Panel toggle button - attached to lower panel */
 .panel-toggle-btn {
     position: absolute;
     left: -30px;
@@ -57,52 +77,8 @@
     transition: transform 0.3s ease;
 }
 
-#right-panel.collapsed .panel-toggle-btn::before {
+#right-panel-lower.collapsed .panel-toggle-btn::before {
     content: '◀';
-}
-
-/* When panel is collapsed, keep score and name visible */
-#right-panel.collapsed #player-name-display,
-#right-panel.collapsed #score {
-    position: fixed !important;
-    top: 20px;
-    right: 20px;
-    z-index: 1001;
-    background: rgba(74, 74, 74, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    padding: 10px 15px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    display: flex !important;
-    visibility: visible !important;
-}
-
-#right-panel.collapsed #player-name-display {
-    top: 20px;
-    font-size: 14px;
-    min-height: auto;
-    width: auto;
-    max-width: 150px;
-}
-
-#right-panel.collapsed #score {
-    top: 70px;
-    min-height: 80px;
-    width: 120px;
-}
-
-#right-panel.collapsed #score .score-number {
-    font-size: 36px;
-}
-
-/* Hide other elements when collapsed except score and name */
-#right-panel.collapsed > *:not(#player-name-display):not(#score):not(.panel-toggle-btn) {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
 }
 
 /* Score, Timer, and Player Name - Unified styling */
@@ -524,8 +500,10 @@ body {
 .game-caption {
     position: fixed;
     bottom: 20px;
-    left: 0;
-    width: calc(100vw - 200px); /* Account for right panel */
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: calc(100vw - 240px); /* Account for right panel */
     height: 40px;
     background: transparent;
     color: #ffffff;
@@ -534,17 +512,17 @@ body {
     font-weight: bold;
     line-height: 40px;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     z-index: 2;
     display: none;
     pointer-events: none;
+    text-align: center;
 }
 
 .caption-word {
-    position: absolute;
-    display: inline-block;
+    display: inline;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    opacity: 0;
+    opacity: 1;
 }
 
 .caption-word.instant-show {

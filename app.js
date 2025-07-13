@@ -29,6 +29,8 @@ const GAME_CONFIG = {
     DEFAULT_FRIENDLY_TRANSPARENCY: 1.0, // Friendly transparency level (0.0 - 1.0)
     DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY: 1.0, // Friendly images transparency level (0.0 - 1.0)
     DEFAULT_SHOW_OBJECT_PATHS: false, // Show object movement paths
+    DEFAULT_OBJECT_SHADOWS: false, // Show shadows for objects
+    DEFAULT_BACKGROUND_COLOR: '#1e3c72', // Default background color
     // Object properties
     BASE_SPEED: 100, // pixels per second
     SPAWN_MARGIN: 50, // pixels from edge
@@ -184,7 +186,9 @@ function resetConfigToDefaults() {
         targetTransparency: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENCY,
         friendlyTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENCY,
         friendlyImagesTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
-        showObjectPaths: GAME_CONFIG.DEFAULT_SHOW_OBJECT_PATHS
+        showObjectPaths: GAME_CONFIG.DEFAULT_SHOW_OBJECT_PATHS,
+        objectShadows: GAME_CONFIG.DEFAULT_OBJECT_SHADOWS,
+        backgroundColor: GAME_CONFIG.DEFAULT_BACKGROUND_COLOR
     };
     
     // Delete the cookie and update UI
@@ -227,7 +231,9 @@ let gameConfig = {
     targetTransparency: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENCY,
     friendlyTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENCY,
     friendlyImagesTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
-    showObjectPaths: GAME_CONFIG.DEFAULT_SHOW_OBJECT_PATHS
+    showObjectPaths: GAME_CONFIG.DEFAULT_SHOW_OBJECT_PATHS,
+    objectShadows: GAME_CONFIG.DEFAULT_OBJECT_SHADOWS,
+    backgroundColor: GAME_CONFIG.DEFAULT_BACKGROUND_COLOR
 };
 let targetImages = [];
 let friendlyImages = [];
@@ -374,6 +380,20 @@ function updateSettingsUI() {
         showObjectPathsCheckbox.checked = gameConfig.showObjectPaths;
     }
     
+    // Set object shadows
+    const objectShadowsCheckbox = document.getElementById('object-shadows');
+    if (objectShadowsCheckbox) {
+        objectShadowsCheckbox.checked = gameConfig.objectShadows;
+    }
+    
+    // Set background color
+    const backgroundColorInput = document.getElementById('background-color');
+    if (backgroundColorInput) {
+        backgroundColorInput.value = gameConfig.backgroundColor;
+        // Also update the body background
+        document.body.style.background = gameConfig.backgroundColor;
+    }
+    
     updatePlayerNameDisplay();
 }
 
@@ -487,7 +507,7 @@ function updateCaptionDisplay() {
     const textSpan = document.createElement('span');
     textSpan.className = 'caption-word instant-show';
     textSpan.textContent = captionText;
-    textSpan.style.left = '20px'; // Start position from left edge
+    textSpan.style.position = 'relative'; // Remove absolute positioning
     textSpan.style.opacity = '1';
     textSpan.style.color = gameConfig.captionColor;
     textSpan.style.fontSize = `${gameConfig.captionSize}px`;
@@ -748,6 +768,9 @@ function setupEventListeners() {
     // Background image selector
     document.getElementById('background-image').addEventListener('change', updateBackgroundImage);
 
+    // Background color picker
+    document.getElementById('background-color').addEventListener('input', updateBackgroundColor);
+
     // Color pickers
     document.getElementById('target-color').addEventListener('input', updateTargetColor);
     document.getElementById('friendly-color').addEventListener('input', updateFriendlyColor);
@@ -772,6 +795,12 @@ function setupEventListeners() {
     const showObjectPathsCheckbox = document.getElementById('show-object-paths');
     if (showObjectPathsCheckbox) {
         showObjectPathsCheckbox.addEventListener('change', updateShowObjectPaths);
+    }
+
+    // Object shadows
+    const objectShadowsCheckbox = document.getElementById('object-shadows');
+    if (objectShadowsCheckbox) {
+        objectShadowsCheckbox.addEventListener('change', updateObjectShadows);
     }
 
     // Initialize color presets
@@ -813,6 +842,13 @@ function setupEventListeners() {
 
     console.log('All event listeners set up');
 }
+function updateBackgroundColor(event) {
+    gameConfig.backgroundColor = event.target.value;
+    // Update body background to show the color immediately
+    document.body.style.background = gameConfig.backgroundColor;
+    saveConfigToCookie();
+}
+
 // Background image logic
 let backgroundImage = null;
 function updateBackgroundImage(event) {
@@ -1501,6 +1537,39 @@ function drawObjects() {
             }
         }
 
+        // Draw shadow if enabled
+        if (gameConfig.objectShadows) {
+            ctx.save();
+            ctx.globalAlpha = 0.6; // Shadow opacity - more pronounced
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetX = 5;
+            ctx.shadowOffsetY = 5;
+            
+            // Draw shadow shape
+            if (object.image) {
+                const size = object.radius * 2;
+                ctx.drawImage(object.image, object.x - object.radius, object.y - object.radius, size, size);
+            } else {
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(object.x, object.y, object.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+            
+            // Restore alpha for main object
+            if (object.type === 'target') {
+                ctx.globalAlpha = gameConfig.targetTransparency;
+            } else if (object.type === 'friendly') {
+                if (object.image) {
+                    ctx.globalAlpha = gameConfig.friendlyImagesTransparency;
+                } else {
+                    ctx.globalAlpha = gameConfig.friendlyTransparency;
+                }
+            }
+        }
+
         // Use the image stored in the object if available
         if (object.image) {
             const size = object.radius * 2;
@@ -1688,6 +1757,12 @@ function updateShowObjectPaths(event) {
     saveConfigToCookie();
 }
 
+function updateObjectShadows(event) {
+    gameConfig.objectShadows = event.target.checked;
+    console.log('Object shadows updated:', gameConfig.objectShadows);
+    saveConfigToCookie();
+}
+
 // Color picker functions
 function updateTargetColor(event) {
     gameConfig.targetColor = event.target.value;
@@ -1717,10 +1792,27 @@ function setupColorPresets() {
         '#888888'  // Gray
     ];
     
+    const backgroundColors = [
+        '#1e3c72', // Default blue
+        '#2a5298', // Light blue
+        '#000000', // Black
+        '#333333', // Dark gray
+        '#006400', // Dark green
+        '#800080', // Purple
+        '#8B0000', // Dark red
+        '#2F4F4F', // Dark slate gray
+        '#191970', // Midnight blue
+        '#556B2F', // Dark olive green
+        '#800000', // Maroon
+        '#483D8B', // Dark slate blue
+        '#2E2E2E'  // Very dark gray
+    ];
+    
     // Setup target color presets
     const targetPresets = document.getElementById('target-color-presets');
     const friendlyPresets = document.getElementById('friendly-color-presets');
     const captionPresets = document.getElementById('caption-color-presets');
+    const backgroundPresets = document.getElementById('background-color-presets');
     
     if (targetPresets && friendlyPresets) {
         colors.forEach(color => {
@@ -1763,6 +1855,22 @@ function setupColorPresets() {
             captionPresets.appendChild(captionPreset);
         });
     }
+    
+    // Setup background color presets
+    if (backgroundPresets) {
+        backgroundColors.forEach(color => {
+            const backgroundPreset = document.createElement('div');
+            backgroundPreset.className = 'color-preset';
+            backgroundPreset.style.backgroundColor = color;
+            backgroundPreset.addEventListener('click', () => {
+                gameConfig.backgroundColor = color;
+                document.getElementById('background-color').value = color;
+                document.body.style.background = color;
+                saveConfigToCookie();
+            });
+            backgroundPresets.appendChild(backgroundPreset);
+        });
+    }
 }
 
 // Setup tab switching functionality
@@ -1792,16 +1900,16 @@ function setupTabSwitching() {
 // Setup panel toggle functionality
 function setupPanelToggle() {
     const panelToggle = document.getElementById('panel-toggle');
-    const rightPanel = document.getElementById('right-panel');
+    const lowerPanel = document.getElementById('right-panel-lower');
     const gameCanvas = document.getElementById('gameCanvas');
     const captionElement = document.querySelector('.game-caption');
     
-    if (panelToggle && rightPanel) {
+    if (panelToggle && lowerPanel) {
         panelToggle.addEventListener('click', () => {
-            rightPanel.classList.toggle('collapsed');
+            lowerPanel.classList.toggle('collapsed');
             
             // Adjust canvas and caption width when panel is collapsed
-            const isCollapsed = rightPanel.classList.contains('collapsed');
+            const isCollapsed = lowerPanel.classList.contains('collapsed');
             const rightPanelWidth = isCollapsed ? 20 : 200; // 20px for the toggle button
             
             if (gameCanvas) {
