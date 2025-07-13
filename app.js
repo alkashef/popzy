@@ -20,6 +20,18 @@ const GAME_CONFIG = {
     DEFAULT_TIME_LIMIT: 120, // Time limit in seconds (2 minutes)
     DEFAULT_SCORE_LIMIT_ENABLED: false, // Enable score limit for game end
     DEFAULT_SCORE_LIMIT: 50, // Score limit for game end
+    DEFAULT_CAPTION_ENABLED: true, // Enable scrolling caption
+    DEFAULT_CAPTION_DIRECTION: 'left', // 'left' or 'right'
+    DEFAULT_CAPTION_SPEED: 50, // pixels per second
+    DEFAULT_CAPTION_COLOR: '#ffffff', // Caption text color
+    DEFAULT_CAPTION_SIZE: 18, // Caption text size in pixels
+    DEFAULT_TARGET_TRANSPARENT: false, // Target circles transparent
+    DEFAULT_FRIENDLY_TRANSPARENT: false, // Friendly circles transparent
+    DEFAULT_FRIENDLY_IMAGES_TRANSPARENT: false, // Friendly images transparent
+    DEFAULT_TARGET_TRANSPARENCY: 1.0, // Target transparency level (0.0 - 1.0)
+    DEFAULT_FRIENDLY_TRANSPARENCY: 1.0, // Friendly transparency level (0.0 - 1.0)
+    DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY: 1.0, // Friendly images transparency level (0.0 - 1.0)
+    DEFAULT_SHOW_OBJECT_PATHS: false, // Show object movement paths
     // Object properties
     BASE_SPEED: 100, // pixels per second
     SPAWN_MARGIN: 50, // pixels from edge
@@ -166,7 +178,19 @@ function resetConfigToDefaults() {
         timeLimitEnabled: GAME_CONFIG.DEFAULT_TIME_LIMIT_ENABLED,
         timeLimit: GAME_CONFIG.DEFAULT_TIME_LIMIT,
         scoreLimitEnabled: GAME_CONFIG.DEFAULT_SCORE_LIMIT_ENABLED,
-        scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT
+        scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT,
+        captionEnabled: GAME_CONFIG.DEFAULT_CAPTION_ENABLED,
+        captionDirection: GAME_CONFIG.DEFAULT_CAPTION_DIRECTION,
+        captionSpeed: GAME_CONFIG.DEFAULT_CAPTION_SPEED,
+        captionColor: GAME_CONFIG.DEFAULT_CAPTION_COLOR,
+        captionSize: GAME_CONFIG.DEFAULT_CAPTION_SIZE,
+        targetTransparent: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENT,
+        friendlyTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENT,
+        friendlyImagesTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENT,
+        targetTransparency: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENCY,
+        friendlyTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENCY,
+        friendlyImagesTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
+        showObjectPaths: GAME_CONFIG.DEFAULT_SHOW_OBJECT_PATHS
     };
     
     // Delete the cookie and update UI
@@ -201,7 +225,19 @@ let gameConfig = {
     timeLimitEnabled: GAME_CONFIG.DEFAULT_TIME_LIMIT_ENABLED,
     timeLimit: GAME_CONFIG.DEFAULT_TIME_LIMIT,
     scoreLimitEnabled: GAME_CONFIG.DEFAULT_SCORE_LIMIT_ENABLED,
-    scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT
+    scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT,
+    captionEnabled: GAME_CONFIG.DEFAULT_CAPTION_ENABLED,
+    captionDirection: GAME_CONFIG.DEFAULT_CAPTION_DIRECTION,
+    captionSpeed: GAME_CONFIG.DEFAULT_CAPTION_SPEED,
+    captionColor: GAME_CONFIG.DEFAULT_CAPTION_COLOR,
+    captionSize: GAME_CONFIG.DEFAULT_CAPTION_SIZE,
+    targetTransparent: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENT,
+    friendlyTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENT,
+    friendlyImagesTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENT,
+    targetTransparency: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENCY,
+    friendlyTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENCY,
+    friendlyImagesTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
+    showObjectPaths: GAME_CONFIG.DEFAULT_SHOW_OBJECT_PATHS
 };
 let targetImages = [];
 let friendlyImages = [];
@@ -218,6 +254,10 @@ let currentGameHits = 0;
 let currentGameMisses = 0;
 let currentGameTargetsPenalized = 0;
 let currentGameEndReason = '';
+
+// Caption system
+let captionWords = [];
+let captionElement = null;
 
 // Update UI to match current settings
 function updateSettingsUI() {
@@ -283,6 +323,82 @@ function updateSettingsUI() {
         scoreLimitValue.textContent = gameConfig.scoreLimit;
     }
     
+    // Set caption settings
+    const captionEnabledCheckbox = document.getElementById('caption-enabled');
+    if (captionEnabledCheckbox) {
+        captionEnabledCheckbox.checked = gameConfig.captionEnabled;
+    }
+    
+    const captionDirectionSelect = document.getElementById('caption-direction');
+    if (captionDirectionSelect) {
+        captionDirectionSelect.value = gameConfig.captionDirection;
+    }
+    
+    const captionSpeedInput = document.getElementById('caption-speed');
+    const captionSpeedValue = document.getElementById('caption-speed-value');
+    if (captionSpeedInput && captionSpeedValue) {
+        captionSpeedInput.value = gameConfig.captionSpeed;
+        captionSpeedValue.textContent = gameConfig.captionSpeed;
+    }
+    
+    // Set caption color
+    const captionColorInput = document.getElementById('caption-color');
+    if (captionColorInput) {
+        captionColorInput.value = gameConfig.captionColor;
+    }
+    
+    // Set caption size
+    const captionSizeInput = document.getElementById('caption-size');
+    const captionSizeValue = document.getElementById('caption-size-value');
+    if (captionSizeInput && captionSizeValue) {
+        captionSizeInput.value = gameConfig.captionSize;
+        captionSizeValue.textContent = `${gameConfig.captionSize}px`;
+    }
+    
+    // Set transparency settings
+    const targetTransparentCheckbox = document.getElementById('target-transparent');
+    if (targetTransparentCheckbox) {
+        targetTransparentCheckbox.checked = gameConfig.targetTransparent;
+    }
+    
+    const friendlyTransparentCheckbox = document.getElementById('friendly-transparent');
+    if (friendlyTransparentCheckbox) {
+        friendlyTransparentCheckbox.checked = gameConfig.friendlyTransparent;
+    }
+    
+    const friendlyImagesTransparentCheckbox = document.getElementById('friendly-images-transparent');
+    if (friendlyImagesTransparentCheckbox) {
+        friendlyImagesTransparentCheckbox.checked = gameConfig.friendlyImagesTransparent;
+    }
+    
+    // Set transparency sliders
+    const targetTransparencyInput = document.getElementById('target-transparency');
+    const targetTransparencyValue = document.getElementById('target-transparency-value');
+    if (targetTransparencyInput && targetTransparencyValue) {
+        targetTransparencyInput.value = gameConfig.targetTransparency;
+        targetTransparencyValue.textContent = `${Math.round(gameConfig.targetTransparency * 100)}%`;
+    }
+    
+    const friendlyTransparencyInput = document.getElementById('friendly-transparency');
+    const friendlyTransparencyValue = document.getElementById('friendly-transparency-value');
+    if (friendlyTransparencyInput && friendlyTransparencyValue) {
+        friendlyTransparencyInput.value = gameConfig.friendlyTransparency;
+        friendlyTransparencyValue.textContent = `${Math.round(gameConfig.friendlyTransparency * 100)}%`;
+    }
+    
+    const friendlyImagesTransparencyInput = document.getElementById('friendly-images-transparency');
+    const friendlyImagesTransparencyValue = document.getElementById('friendly-images-transparency-value');
+    if (friendlyImagesTransparencyInput && friendlyImagesTransparencyValue) {
+        friendlyImagesTransparencyInput.value = gameConfig.friendlyImagesTransparency;
+        friendlyImagesTransparencyValue.textContent = `${Math.round(gameConfig.friendlyImagesTransparency * 100)}%`;
+    }
+    
+    // Set show object paths
+    const showObjectPathsCheckbox = document.getElementById('show-object-paths');
+    if (showObjectPathsCheckbox) {
+        showObjectPathsCheckbox.checked = gameConfig.showObjectPaths;
+    }
+    
     updatePlayerNameDisplay();
 }
 
@@ -298,6 +414,8 @@ async function init() {
     
     setupCanvas();
     await loadAssets();
+    
+    initCaptionSystem();
     
     updateSettingsUI();
     setupEventListeners();
@@ -315,9 +433,18 @@ function setupCanvas() {
     
     // Set canvas size to viewport minus right panel
     function resizeCanvas() {
-        const rightPanelWidth = 200; // Match CSS right panel width
+        const rightPanel = document.getElementById('right-panel');
+        const isCollapsed = rightPanel && rightPanel.classList.contains('collapsed');
+        const rightPanelWidth = isCollapsed ? 20 : 200; // 20px for toggle button when collapsed
+        
         canvas.width = window.innerWidth - rightPanelWidth;
         canvas.height = window.innerHeight;
+        
+        // Update caption width too
+        const captionElement = document.querySelector('.game-caption');
+        if (captionElement) {
+            captionElement.style.width = `calc(100vw - ${rightPanelWidth}px)`;
+        }
     }
     
     resizeCanvas();
@@ -325,6 +452,160 @@ function setupCanvas() {
     
     // Canvas should always allow pointer events since game controls are in right panel
     canvas.style.pointerEvents = 'auto';
+}
+
+// Caption system functions
+function initCaptionSystem() {
+    // Create caption element if it doesn't exist
+    captionElement = document.getElementById('game-caption');
+    if (!captionElement) {
+        captionElement = document.createElement('div');
+        captionElement.id = 'game-caption';
+        captionElement.className = 'game-caption';
+        document.getElementById('game-container').appendChild(captionElement);
+    }
+    
+    // Initialize caption words array
+    captionWords = [];
+    updateCaptionDisplay();
+}
+
+function addWordToCaption(word) {
+    if (!gameConfig.captionEnabled || !word) return;
+    
+    const rightPanel = document.getElementById('right-panel');
+    const isCollapsed = rightPanel && rightPanel.classList.contains('collapsed');
+    const rightPanelWidth = isCollapsed ? 20 : 200;
+    const containerWidth = window.innerWidth - rightPanelWidth;
+    const fadeInPosition = containerWidth * 0.33; // One third of screen width
+    const fadeOutPosition = containerWidth * 0.67; // Two thirds of screen width
+    
+    // Start words in the middle of the visible zone for immediate visibility
+    const centerPosition = (fadeInPosition + fadeOutPosition) / 2;
+    
+    const wordElement = {
+        text: word,
+        x: centerPosition, // Start in center of visible zone for immediate visibility
+        opacity: 1, // Fully visible immediately
+        fadeInPosition: fadeInPosition,
+        fadeOutPosition: fadeOutPosition,
+        hasBeenShown: false, // Track if word has been displayed yet
+        id: Date.now() + Math.random() // Unique ID for each word
+    };
+    
+    captionWords.push(wordElement);
+    
+    // Immediately update display to show the new word without waiting for next frame
+    updateCaptionDisplay();
+}
+
+function updateCaptionDisplay() {
+    if (!captionElement) return;
+    
+    if (!gameConfig.captionEnabled || captionWords.length === 0) {
+        captionElement.style.display = 'none';
+        return;
+    }
+    
+    captionElement.style.display = 'block';
+    captionElement.style.fontSize = `${gameConfig.captionSize}px`;
+    captionElement.style.lineHeight = '40px';
+    
+    // Clear existing content
+    captionElement.innerHTML = '';
+    
+    // Add each word as a separate element
+    captionWords.forEach(wordData => {
+        const wordSpan = document.createElement('span');
+        
+        // Apply appropriate CSS classes based on word state
+        if (wordData.opacity === 1 && !wordData.hasBeenShown) {
+            // New word appearing immediately
+            wordSpan.className = 'caption-word instant-show';
+            wordData.hasBeenShown = true; // Mark as shown
+        } else if (wordData.opacity < 1 && wordData.hasBeenShown) {
+            // Word fading out
+            wordSpan.className = 'caption-word fade-out';
+        } else {
+            // Default state
+            wordSpan.className = 'caption-word';
+        }
+        
+        wordSpan.textContent = wordData.text;
+        wordSpan.style.left = `${wordData.x}px`;
+        wordSpan.style.opacity = wordData.opacity;
+        wordSpan.style.color = gameConfig.captionColor;
+        wordSpan.style.fontSize = `${gameConfig.captionSize}px`;
+        captionElement.appendChild(wordSpan);
+    });
+}
+
+function updateCaptionPosition(deltaTime) {
+    if (!captionElement || !gameConfig.captionEnabled || captionWords.length === 0) return;
+    
+    const speed = gameConfig.captionSpeed;
+    const distance = speed * (deltaTime / 1000);
+    const rightPanel = document.getElementById('right-panel');
+    const isCollapsed = rightPanel && rightPanel.classList.contains('collapsed');
+    const rightPanelWidth = isCollapsed ? 20 : 200;
+    const containerWidth = window.innerWidth - rightPanelWidth;
+    
+    // Update positions and opacities for each word
+    for (let i = captionWords.length - 1; i >= 0; i--) {
+        const wordData = captionWords[i];
+        
+        // Update position
+        if (gameConfig.captionDirection === 'left') {
+            wordData.x -= distance;
+        } else {
+            wordData.x += distance;
+        }
+        
+        // Calculate opacity based on position
+        if (gameConfig.captionDirection === 'left') {
+            // Moving right to left
+            if (wordData.x > wordData.fadeOutPosition) {
+                // Before fade-out zone
+                wordData.opacity = 1;
+            } else if (wordData.x > wordData.fadeInPosition) {
+                // In fade-out zone
+                const fadeRange = wordData.fadeOutPosition - wordData.fadeInPosition;
+                const fadeProgress = (wordData.x - wordData.fadeInPosition) / fadeRange;
+                wordData.opacity = Math.max(0, Math.min(1, fadeProgress));
+            } else {
+                // Past fade-in position - remove word
+                captionWords.splice(i, 1);
+                continue;
+            }
+        } else {
+            // Moving left to right
+            if (wordData.x < wordData.fadeInPosition) {
+                // Before fade-in zone
+                wordData.opacity = 0;
+            } else if (wordData.x < wordData.fadeOutPosition) {
+                // In fade-in zone
+                const fadeRange = wordData.fadeOutPosition - wordData.fadeInPosition;
+                const fadeProgress = (wordData.x - wordData.fadeInPosition) / fadeRange;
+                wordData.opacity = Math.max(0, Math.min(1, fadeProgress));
+            } else {
+                // Past fade-out position - remove word
+                captionWords.splice(i, 1);
+                continue;
+            }
+        }
+        
+        // Remove words that are completely off screen
+        if (wordData.x < -200 || wordData.x > containerWidth + 200) {
+            captionWords.splice(i, 1);
+        }
+    }
+    
+    updateCaptionDisplay();
+}
+
+function clearCaption() {
+    captionWords = [];
+    updateCaptionDisplay();
 }
 
 // Load game assets
@@ -545,6 +826,34 @@ function setupEventListeners() {
         scoreLimitInput.addEventListener('input', updateScoreLimit);
     }
 
+    // Caption settings
+    const captionEnabledCheckbox = document.getElementById('caption-enabled');
+    if (captionEnabledCheckbox) {
+        captionEnabledCheckbox.addEventListener('change', updateCaptionEnabled);
+    }
+    
+    const captionDirectionSelect = document.getElementById('caption-direction');
+    if (captionDirectionSelect) {
+        captionDirectionSelect.addEventListener('change', updateCaptionDirection);
+    }
+    
+    const captionSpeedInput = document.getElementById('caption-speed');
+    if (captionSpeedInput) {
+        captionSpeedInput.addEventListener('input', updateCaptionSpeed);
+    }
+    
+    // Caption color picker
+    const captionColorInput = document.getElementById('caption-color');
+    if (captionColorInput) {
+        captionColorInput.addEventListener('input', updateCaptionColor);
+    }
+    
+    // Caption size slider
+    const captionSizeInput = document.getElementById('caption-size');
+    if (captionSizeInput) {
+        captionSizeInput.addEventListener('input', updateCaptionSize);
+    }
+
     // Background image selector
     document.getElementById('background-image').addEventListener('change', updateBackgroundImage);
 
@@ -552,8 +861,52 @@ function setupEventListeners() {
     document.getElementById('target-color').addEventListener('input', updateTargetColor);
     document.getElementById('friendly-color').addEventListener('input', updateFriendlyColor);
     
+    // Transparency checkboxes
+    const targetTransparentCheckbox = document.getElementById('target-transparent');
+    if (targetTransparentCheckbox) {
+        targetTransparentCheckbox.addEventListener('change', updateTargetTransparent);
+    }
+    
+    const friendlyTransparentCheckbox = document.getElementById('friendly-transparent');
+    if (friendlyTransparentCheckbox) {
+        friendlyTransparentCheckbox.addEventListener('change', updateFriendlyTransparent);
+    }
+    
+    const friendlyImagesTransparentCheckbox = document.getElementById('friendly-images-transparent');
+    if (friendlyImagesTransparentCheckbox) {
+        friendlyImagesTransparentCheckbox.addEventListener('change', updateFriendlyImagesTransparent);
+    }
+
+    // Transparency sliders
+    const targetTransparencyInput = document.getElementById('target-transparency');
+    if (targetTransparencyInput) {
+        targetTransparencyInput.addEventListener('input', updateTargetTransparency);
+    }
+
+    const friendlyTransparencyInput = document.getElementById('friendly-transparency');
+    if (friendlyTransparencyInput) {
+        friendlyTransparencyInput.addEventListener('input', updateFriendlyTransparency);
+    }
+
+    const friendlyImagesTransparencyInput = document.getElementById('friendly-images-transparency');
+    if (friendlyImagesTransparencyInput) {
+        friendlyImagesTransparencyInput.addEventListener('input', updateFriendlyImagesTransparency);
+    }
+
+    // Show object paths
+    const showObjectPathsCheckbox = document.getElementById('show-object-paths');
+    if (showObjectPathsCheckbox) {
+        showObjectPathsCheckbox.addEventListener('change', updateShowObjectPaths);
+    }
+
     // Initialize color presets
     setupColorPresets();
+    
+    // Setup tab functionality
+    setupTabSwitching();
+    
+    // Setup panel toggle
+    setupPanelToggle();
 
     // Reset settings button
     const resetSettingsButton = document.getElementById('reset-settings-button');
@@ -754,6 +1107,9 @@ function startGame() {
     currentGameMisses = 0;
     currentGameTargetsPenalized = 0;
     currentGameEndReason = '';
+    
+    // Clear caption when starting new game
+    clearCaption();
     
     updateScoreDisplay();
     updateTimer();
@@ -994,7 +1350,13 @@ function spawnObject() {
         vy, 
         type, 
         radius: objectRadius,
-        points: type === 'target' ? 1 : -1
+        points: type === 'target' ? 1 : -1,
+        path: {
+            startX: startX,
+            startY: startY,
+            endX: targetX,
+            endY: targetY
+        }
     };
 
     // For targets, add a random word from the target words list
@@ -1080,6 +1442,11 @@ function handleClick(event) {
                 }
                 return;
             } else {
+                // Add word to caption if object has one
+                if (object.word) {
+                    addWordToCaption(object.word);
+                }
+                
                 // Play appropriate sound based on object type
                 if (object.type === 'target') {
                     playSound('snare');
@@ -1235,6 +1602,30 @@ function drawObjects() {
     gameObjects.forEach(object => {
         ctx.save();
 
+        // Draw object path if enabled
+        if (gameConfig.showObjectPaths && object.path) {
+            ctx.strokeStyle = object.type === 'target' ? 
+                `${gameConfig.targetColor}33` : `${gameConfig.friendlyColor}33`; // Add transparency to color
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(object.path.startX, object.path.startY);
+            ctx.lineTo(object.path.endX, object.path.endY);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset dash
+        }
+
+        // Apply transparency based on object type and settings
+        if (object.type === 'target') {
+            ctx.globalAlpha = gameConfig.targetTransparency;
+        } else if (object.type === 'friendly') {
+            if (object.image) {
+                ctx.globalAlpha = gameConfig.friendlyImagesTransparency;
+            } else {
+                ctx.globalAlpha = gameConfig.friendlyTransparency;
+            }
+        }
+
         // Use the image stored in the object if available
         if (object.image) {
             const size = object.radius * 2;
@@ -1351,6 +1742,87 @@ function updateScoreLimit(event) {
     saveConfigToCookie();
 }
 
+// Caption functions
+function updateCaptionEnabled(event) {
+    gameConfig.captionEnabled = event.target.checked;
+    console.log('Caption enabled:', gameConfig.captionEnabled);
+    updateCaptionDisplay();
+    saveConfigToCookie();
+}
+
+function updateCaptionDirection(event) {
+    gameConfig.captionDirection = event.target.value;
+    console.log('Caption direction updated:', gameConfig.captionDirection);
+    // Clear existing words since direction changed
+    clearCaption();
+    saveConfigToCookie();
+}
+
+function updateCaptionSpeed(event) {
+    gameConfig.captionSpeed = parseInt(event.target.value);
+    document.getElementById('caption-speed-value').textContent = gameConfig.captionSpeed;
+    console.log('Caption speed updated:', gameConfig.captionSpeed);
+    saveConfigToCookie();
+}
+
+function updateCaptionColor(event) {
+    gameConfig.captionColor = event.target.value;
+    console.log('Caption color updated:', gameConfig.captionColor);
+    updateCaptionDisplay(); // Refresh display with new color
+    saveConfigToCookie();
+}
+
+function updateCaptionSize(event) {
+    gameConfig.captionSize = parseInt(event.target.value);
+    document.getElementById('caption-size-value').textContent = `${gameConfig.captionSize}px`;
+    updateCaptionDisplay(); // Refresh display with new size
+    saveConfigToCookie();
+}
+
+// Transparency functions
+function updateTargetTransparent(event) {
+    gameConfig.targetTransparent = event.target.checked;
+    saveConfigToCookie();
+}
+
+function updateFriendlyTransparent(event) {
+    gameConfig.friendlyTransparent = event.target.checked;
+    saveConfigToCookie();
+}
+
+function updateFriendlyImagesTransparent(event) {
+    gameConfig.friendlyImagesTransparent = event.target.checked;
+    saveConfigToCookie();
+}
+
+// Transparency slider functions
+function updateTargetTransparency(event) {
+    gameConfig.targetTransparency = parseFloat(event.target.value);
+    document.getElementById('target-transparency-value').textContent = `${Math.round(gameConfig.targetTransparency * 100)}%`;
+    console.log('Target transparency updated:', gameConfig.targetTransparency);
+    saveConfigToCookie();
+}
+
+function updateFriendlyTransparency(event) {
+    gameConfig.friendlyTransparency = parseFloat(event.target.value);
+    document.getElementById('friendly-transparency-value').textContent = `${Math.round(gameConfig.friendlyTransparency * 100)}%`;
+    console.log('Friendly transparency updated:', gameConfig.friendlyTransparency);
+    saveConfigToCookie();
+}
+
+function updateFriendlyImagesTransparency(event) {
+    gameConfig.friendlyImagesTransparency = parseFloat(event.target.value);
+    document.getElementById('friendly-images-transparency-value').textContent = `${Math.round(gameConfig.friendlyImagesTransparency * 100)}%`;
+    console.log('Friendly images transparency updated:', gameConfig.friendlyImagesTransparency);
+    saveConfigToCookie();
+}
+
+function updateShowObjectPaths(event) {
+    gameConfig.showObjectPaths = event.target.checked;
+    console.log('Show object paths updated:', gameConfig.showObjectPaths);
+    saveConfigToCookie();
+}
+
 // Color picker functions
 function updateTargetColor(event) {
     gameConfig.targetColor = event.target.value;
@@ -1365,6 +1837,7 @@ function updateFriendlyColor(event) {
 // Setup color presets
 function setupColorPresets() {
     const colors = [
+        '#ffffff', // White
         '#ff0000', // Red
         '#ff8800', // Orange
         '#ffff00', // Yellow
@@ -1382,6 +1855,7 @@ function setupColorPresets() {
     // Setup target color presets
     const targetPresets = document.getElementById('target-color-presets');
     const friendlyPresets = document.getElementById('friendly-color-presets');
+    const captionPresets = document.getElementById('caption-color-presets');
     
     if (targetPresets && friendlyPresets) {
         colors.forEach(color => {
@@ -1392,6 +1866,7 @@ function setupColorPresets() {
             targetPreset.addEventListener('click', () => {
                 gameConfig.targetColor = color;
                 document.getElementById('target-color').value = color;
+                saveConfigToCookie();
             });
             targetPresets.appendChild(targetPreset);
             
@@ -1402,8 +1877,77 @@ function setupColorPresets() {
             friendlyPreset.addEventListener('click', () => {
                 gameConfig.friendlyColor = color;
                 document.getElementById('friendly-color').value = color;
+                saveConfigToCookie();
             });
             friendlyPresets.appendChild(friendlyPreset);
+        });
+    }
+    
+    // Setup caption color presets
+    if (captionPresets) {
+        colors.forEach(color => {
+            const captionPreset = document.createElement('div');
+            captionPreset.className = 'color-preset';
+            captionPreset.style.backgroundColor = color;
+            captionPreset.addEventListener('click', () => {
+                gameConfig.captionColor = color;
+                document.getElementById('caption-color').value = color;
+                updateCaptionDisplay(); // Refresh display with new color
+                saveConfigToCookie();
+            });
+            captionPresets.appendChild(captionPreset);
+        });
+    }
+}
+
+// Setup tab switching functionality
+function setupTabSwitching() {
+    const tabs = document.querySelectorAll('.settings-tab');
+    const tabContents = document.querySelectorAll('.settings-tab-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and contents
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Show corresponding content
+            const targetTab = tab.getAttribute('data-tab');
+            const targetContent = document.getElementById(`tab-${targetTab}`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+}
+
+// Setup panel toggle functionality
+function setupPanelToggle() {
+    const panelToggle = document.getElementById('panel-toggle');
+    const rightPanel = document.getElementById('right-panel');
+    const gameCanvas = document.getElementById('gameCanvas');
+    const captionElement = document.querySelector('.game-caption');
+    
+    if (panelToggle && rightPanel) {
+        panelToggle.addEventListener('click', () => {
+            rightPanel.classList.toggle('collapsed');
+            
+            // Adjust canvas and caption width when panel is collapsed
+            const isCollapsed = rightPanel.classList.contains('collapsed');
+            const rightPanelWidth = isCollapsed ? 20 : 200; // 20px for the toggle button
+            
+            if (gameCanvas) {
+                gameCanvas.style.marginRight = `${rightPanelWidth}px`;
+                gameCanvas.style.width = `calc(100vw - ${rightPanelWidth}px)`;
+                gameCanvas.width = window.innerWidth - rightPanelWidth;
+            }
+            
+            if (captionElement) {
+                captionElement.style.width = `calc(100vw - ${rightPanelWidth}px)`;
+            }
         });
     }
 }
@@ -1439,6 +1983,9 @@ function gameLoop(timestamp) {
     
     // Update timer
     updateTimer();
+    
+    // Update caption position
+    updateCaptionPosition(deltaTime);
     
     // Debug: Log game state but much less frequently
     if (Math.floor(timestamp / 1000) % 5 === 0 && Math.floor((timestamp - 50) / 1000) % 5 !== 0) {
