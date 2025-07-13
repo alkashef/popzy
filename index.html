@@ -10,8 +10,11 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         
-        <!-- Left Control Panel -->
-        <div id="left-panel">
+        <!-- Right Control Panel -->
+        <div id="right-panel">
+            <!-- Player Name Display -->
+            <div id="player-name-display">player 1</div>
+            
             <!-- Score Display -->
             <div id="score">
                 <div class="score-label">Score</div>
@@ -20,11 +23,9 @@
             
             <!-- Timer Display -->
             <div id="timer-container">
-                <span>Time: </span><span id="timer">00:00</span>
+                <div class="timer-label">Time</div>
+                <div id="timer">00:00</div>
             </div>
-            
-            <!-- Player Name Display -->
-            <div id="player-name-display"></div>
             
             <!-- Control Buttons -->
             <div class="control-buttons">
@@ -34,8 +35,10 @@
                     <button id="pause-button" class="icon-btn pause-icon" title="Pause"></button>
                     <button id="stop-button" class="icon-btn stop-icon" title="Stop"></button>
                 </div>
-                
-                <!-- Settings Button -->
+            </div>
+            
+            <!-- Settings Button at bottom -->
+            <div class="settings-container">
                 <button id="settings-button" class="settings-btn" title="Settings">Settings</button>
             </div>
         </div>
@@ -44,7 +47,7 @@
         <div id="game-over-overlay" class="hidden">
             <div class="game-over-content">
                 <h2>Game Over!</h2>
-                <div id="final-player-name">Player: Anonymous</div>
+                <div id="final-player-name">player 1</div>
                 <div id="final-score">Score: 0</div>
                 <div class="game-over-message"></div>
                 <button id="game-over-ok-button" class="game-over-ok-btn">OK</button>
@@ -85,7 +88,6 @@
                                 <label for="ratio">Target/Friendly Ratio:</label>
                                 <input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5">
                                 <span id="ratio-value">0.50</span>
-                                <div style="font-size: 0.9em; color: #888;">0 = all friendlies, 1 = all targets</div>
                             </div>
                             <div class="setting-group">
                                 <div class="checkbox-group">
@@ -94,7 +96,6 @@
                                         Miss Penalty
                                     </label>
                                 </div>
-                                <div style="font-size: 0.9em; color: #888;">Lose 1 point when targets escape off-screen</div>
                             </div>
                         </div>
 
@@ -110,7 +111,6 @@
                                 <label for="size-variation">Size Variation:</label>
                                 <input type="range" id="size-variation" min="0" max="0.8" step="0.1" value="0.3">
                                 <span id="size-variation-value">0.3</span>
-                                <div style="font-size: 0.9em; color: #888;">Objects will vary ±30% from base size</div>
                             </div>
                             <div class="setting-group">
                                 <label for="background-image">Background Image:</label>
@@ -145,12 +145,10 @@
                             <div class="setting-group">
                                 <label for="target-words">Target Words:</label>
                                 <textarea id="target-words" placeholder="Enter words separated by spaces (e.g. apple banana cherry)" rows="3"></textarea>
-                                <div style="font-size: 0.9em; color: #888;">These words will appear inside red targets</div>
                             </div>
                             <div class="setting-group">
                                 <label for="friendly-words">Friendly Words:</label>
                                 <textarea id="friendly-words" placeholder="Enter words separated by spaces (e.g. friend buddy ally)" rows="3"></textarea>
-                                <div style="font-size: 0.9em; color: #888;">These words will appear inside blue friendlies</div>
                             </div>
                             <div class="setting-group">
                                 <label for="friendly-mode">Friendly Display Mode:</label>
@@ -159,7 +157,6 @@
                                     <option value="words">Words Only</option>
                                     <option value="both">Images & Words</option>
                                 </select>
-                                <div style="font-size: 0.9em; color: #888;">Choose how friendly objects are displayed</div>
                             </div>
                         </div>
 
@@ -176,7 +173,6 @@
                                 <label for="time-limit">Duration (seconds):</label>
                                 <input type="range" id="time-limit" min="30" max="600" step="30" value="120">
                                 <span id="time-limit-value">2:00</span>
-                                <div style="font-size: 0.9em; color: #888;">Game ends when time limit is reached</div>
                             </div>
                             <div class="setting-group">
                                 <div class="checkbox-group">
@@ -188,7 +184,6 @@
                                 <label for="score-limit">Target Score:</label>
                                 <input type="range" id="score-limit" min="10" max="200" step="5" value="50">
                                 <span id="score-limit-value">50</span>
-                                <div style="font-size: 0.9em; color: #888;">Game ends when target score is reached</div>
                             </div>
                         </div>
                     </div>

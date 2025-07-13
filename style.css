@@ -1,23 +1,36 @@
-/* Left Control Panel */
-#left-panel {
+/* Right Control Panel */
+#right-panel {
     position: fixed;
     top: 0;
-    left: 0;
+    right: 0;
     width: 200px;
     height: 100vh;
     background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
     color: #e0e0e0;
     padding: 20px;
     z-index: 1000;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     gap: 15px;
     font-family: 'Arial', sans-serif;
-    border-right: 2px solid #666;
+    border-left: 2px solid #666;
 }
 
 /* Score, Timer, and Player Name - Unified styling */
+#player-name-display {
+    color: #e0e0e0;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+    text-align: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 5px;
+}
+
 #score {
     color: #e0e0e0;
     font-size: 16px;
@@ -29,7 +42,7 @@
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: 5px;
-    min-height: 80px;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -38,35 +51,44 @@
 
 .score-label {
     font-size: 14px;
-    color: #e0e0e0;
+    color: #666;
     margin-bottom: 8px;
     text-align: center;
 }
 
 .score-number {
-    font-size: 48px;
+    font-size: 120px;
     font-weight: bold;
     color: white;
     text-align: center;
     line-height: 1;
 }
 
-#timer-container, #player-name-display {
+#timer-container {
     color: #e0e0e0;
     font-size: 16px;
     font-family: 'Arial', sans-serif;
     font-weight: normal;
-    text-align: left;
-    padding: 8px 12px;
+    text-align: center;
+    padding: 12px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.timer-label {
+    font-size: 14px;
+    color: #666;
 }
 
 #timer {
     color: #e0e0e0;
     font-weight: normal;
+    font-size: 16px;
 }
 
 /* Control Buttons Container */
@@ -75,6 +97,13 @@
     flex-direction: column;
     gap: 15px;
     margin-top: 20px;
+    flex: 1;
+}
+
+/* Settings container at bottom */
+.settings-container {
+    margin-top: auto;
+    padding-top: 20px;
 }
 
 /* Game Controls Row - Play, Pause, Stop buttons in one row */
@@ -164,9 +193,9 @@
     transform: translateY(0);
 }
 
-/* Game canvas adjustment for left panel */
+/* Game canvas adjustment for right panel */
 #gameCanvas {
-    margin-left: 200px;
+    margin-right: 200px;
     width: calc(100vw - 200px);
     height: 100vh;
 }
@@ -193,15 +222,15 @@
 }
 
 .settings-modal-content {
-    background: rgba(0, 0, 0, 0.95);
-    border: 2px solid #00ff88;
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+    border: 2px solid #666;
     border-radius: 15px;
     padding: 20px;
     max-width: 1100px;
     max-height: 80vh;
     overflow-y: auto;
-    color: white;
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+    color: #e0e0e0;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     position: relative;
     width: 90%;
 }
@@ -212,11 +241,11 @@
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .settings-header h2 {
-    color: #00ff88;
+    color: #e0e0e0;
     margin: 0;
     font-size: 24px;
 }
@@ -254,48 +283,73 @@
 }
 
 .category-title {
-    color: #00ff88;
+    color: #e0e0e0;
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
     padding-bottom: 8px;
-    border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     text-align: center;
 }
 
 /* Settings Footer */
 .settings-footer {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     padding-top: 20px;
-    border-top: 1px solid rgba(0, 255, 136, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
     margin-top: 20px;
 }
 
-/* Settings OK Button */
-.settings-ok-btn {
-    background: linear-gradient(135deg, #00ff88, #00cc66);
-    color: #222;
-    border: none;
+/* Reset to Defaults Button */
+.reset-settings-btn {
+    background: #666;
+    color: #e0e0e0;
+    border: 2px solid #888;
     border-radius: 8px;
     padding: 12px 30px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.4);
+    min-width: 120px;
+}
+
+.reset-settings-btn:hover {
+    background: #777;
+    border-color: #aaa;
+    transform: translateY(-2px);
+}
+
+.reset-settings-btn:active {
+    background: #555;
+    transform: translateY(0);
+}
+
+/* Settings OK Button */
+.settings-ok-btn {
+    background: #666;
+    color: #e0e0e0;
+    border: 2px solid #888;
+    border-radius: 8px;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
     min-width: 120px;
 }
 
 .settings-ok-btn:hover {
+    background: #777;
+    border-color: #aaa;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.6);
-    background: linear-gradient(135deg, #00ff99, #00dd77);
 }
 
 .settings-ok-btn:active {
+    background: #555;
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 255, 136, 0.4);
 }
 
 /* Adjust game container for left panel */
@@ -328,7 +382,7 @@ body {
     cursor: crosshair;
     z-index: 1;
     position: relative;
-    margin-left: 200px;
+    margin-right: 200px;
     width: calc(100vw - 200px);
     height: 100vh;
 }
@@ -355,30 +409,34 @@ body {
 }
 
 .game-over-content {
-    background: rgba(0, 0, 0, 0.8);
-    border: 3px solid #ff4444;
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+    border: 2px solid #666;
     border-radius: 15px;
     padding: 30px 50px;
     text-align: center;
-    color: white;
-    box-shadow: 0 0 40px rgba(255, 68, 68, 0.6);
+    color: #e0e0e0;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     max-width: 80%;
+    min-width: 400px;
 }
 
 .game-over-content h2 {
-    color: #ff4444;
-    font-size: 36px;
+    color: #e0e0e0;
+    font-size: 28px;
     margin-bottom: 20px;
     text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 15px;
 }
 
 #final-player-name {
-    font-size: 24px;
-    margin-bottom: 10px;
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #e0e0e0;
 }
 
 #final-score {
-    font-size: 32px;
+    font-size: 24px;
     color: #00ff88;
     margin-bottom: 20px;
     font-weight: bold;
@@ -393,29 +451,28 @@ body {
 
 /* OK Button for Game Over Overlay */
 .game-over-ok-btn {
-    background: linear-gradient(135deg, #00ff88, #00cc66);
-    color: #222;
-    border: none;
+    background: #666;
+    color: #e0e0e0;
+    border: 2px solid #888;
     border-radius: 8px;
     padding: 12px 30px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     margin-top: 25px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.4);
-    min-width: 100px;
+    min-width: 120px;
 }
 
 .game-over-ok-btn:hover {
+    background: #777;
+    border-color: #aaa;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.6);
-    background: linear-gradient(135deg, #00ff99, #00dd77);
 }
 
 .game-over-ok-btn:active {
+    background: #555;
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 255, 136, 0.4);
 }
 
 /* Remove old scoreboard and settings panel styles - replaced by left panel */
@@ -436,7 +493,7 @@ body {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: #00ff88;
+    color: #e0e0e0;
 }
 
 .setting-group input[type="range"] {

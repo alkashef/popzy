@@ -8,7 +8,7 @@ const GAME_CONFIG = {
     DEFAULT_FRIENDLIES_ENABLED: true,
     DEFAULT_OBJECT_SIZE: 20,
     DEFAULT_RATIO: 0.5, // 0 = all friendlies, 1 = all targets
-    DEFAULT_PLAYER_NAME: '',
+    DEFAULT_PLAYER_NAME: 'player 1',
     DEFAULT_TARGET_WORDS: '2 4 6 8 10',
     DEFAULT_FRIENDLY_WORDS: '1 3 5 7 9',
     DEFAULT_TARGET_COLOR: '#ff4444',
@@ -34,6 +34,18 @@ const GAME_CONFIG = {
 // Cookie utility functions for saving/loading game configuration
 const CONFIG_COOKIE_NAME = 'shootTheUnicornConfig';
 const CONFIG_COOKIE_EXPIRY_DAYS = 365; // Cookie expires in 1 year
+
+// Game statistics tracking
+const STATS_COOKIE_NAME = 'shootTheUnicornGameStats';
+const STATS_COOKIE_EXPIRY_DAYS = 365; // Cookie expires in 1 year
+
+// Game statistics variables
+let gameStats = {
+    totalHits: 0,
+    totalMisses: 0,
+    totalTargetsPenalized: 0, // For miss penalty tracking
+    gameSessionStats: [] // Array to store individual game sessions
+};
 
 function saveConfigToCookie() {
     try {
@@ -80,6 +92,56 @@ function deleteConfigCookie() {
         console.log('Game configuration cookie deleted');
     } catch (error) {
         console.warn('Failed to delete configuration cookie:', error);
+    }
+}
+
+// Game statistics cookie functions
+function saveStatsToCookie() {
+    try {
+        const statsToSave = JSON.stringify(gameStats);
+        const expiryDate = new Date();
+        expiryDate.setTime(expiryDate.getTime() + (STATS_COOKIE_EXPIRY_DAYS * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + expiryDate.toUTCString();
+        document.cookie = `${STATS_COOKIE_NAME}=${statsToSave};${expires};path=/`;
+        console.log('Game statistics saved to cookie');
+    } catch (error) {
+        console.warn('Failed to save statistics to cookie:', error);
+    }
+}
+
+function loadStatsFromCookie() {
+    try {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            let c = cookie.trim();
+            if (c.indexOf(STATS_COOKIE_NAME + '=') === 0) {
+                const statsJson = c.substring(STATS_COOKIE_NAME.length + 1);
+                const savedStats = JSON.parse(statsJson);
+                
+                // Merge saved stats with current gameStats, preserving structure
+                gameStats = {
+                    totalHits: savedStats.totalHits || 0,
+                    totalMisses: savedStats.totalMisses || 0,
+                    totalTargetsPenalized: savedStats.totalTargetsPenalized || 0,
+                    gameSessionStats: savedStats.gameSessionStats || []
+                };
+                
+                console.log('Game statistics loaded from cookie');
+                return true;
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to load statistics from cookie:', error);
+    }
+    return false;
+}
+
+function deleteStatsCookie() {
+    try {
+        document.cookie = `${STATS_COOKIE_NAME}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+        console.log('Game statistics cookie deleted');
+    } catch (error) {
+        console.warn('Failed to delete statistics cookie:', error);
     }
 }
 
@@ -151,6 +213,11 @@ let totalPausedTime = 0;
 let pauseStartTime = 0;
 let lastTimestamp;
 
+// Current game session tracking
+let currentGameHits = 0;
+let currentGameMisses = 0;
+let currentGameTargetsPenalized = 0;
+
 // Update UI to match current settings
 function updateSettingsUI() {
     // Update all UI elements to match current gameConfig values
@@ -168,13 +235,6 @@ function updateSettingsUI() {
     
     document.getElementById('size-variation').value = gameConfig.sizeVariation;
     document.getElementById('size-variation-value').textContent = gameConfig.sizeVariation.toFixed(1);
-    
-    // Update size variation description
-    const percentage = Math.round(gameConfig.sizeVariation * 100);
-    const descElement = document.querySelector('#size-variation').parentNode.querySelector('div');
-    if (descElement) {
-        descElement.textContent = `Objects will vary ±${percentage}% from base size`;
-    }
     
     document.getElementById('ratio').value = gameConfig.ratio;
     document.getElementById('ratio-value').textContent = gameConfig.ratio.toFixed(2);
@@ -232,6 +292,9 @@ async function init() {
     // Load saved configuration from cookie before setting up UI
     loadConfigFromCookie();
     
+    // Load saved statistics from cookie
+    loadStatsFromCookie();
+    
     setupCanvas();
     await loadAssets();
     
@@ -249,17 +312,17 @@ function setupCanvas() {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
     
-    // Set canvas size to viewport minus left panel
+    // Set canvas size to viewport minus right panel
     function resizeCanvas() {
-        const leftPanelWidth = 200; // Match CSS left panel width
-        canvas.width = window.innerWidth - leftPanelWidth;
+        const rightPanelWidth = 200; // Match CSS right panel width
+        canvas.width = window.innerWidth - rightPanelWidth;
         canvas.height = window.innerHeight;
     }
     
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    // Canvas should always allow pointer events since game controls are in left panel
+    // Canvas should always allow pointer events since game controls are in right panel
     canvas.style.pointerEvents = 'auto';
 }
 
@@ -622,6 +685,12 @@ function startGame() {
     gameObjects = [];
     score = 0;
     lastSpawnTime = 0; // Reset to 0 to force immediate spawn
+    
+    // Reset current game session tracking
+    currentGameHits = 0;
+    currentGameMisses = 0;
+    currentGameTargetsPenalized = 0;
+    
     updateScoreDisplay();
     updateTimer();
     updatePlayerNameDisplay();
@@ -682,6 +751,42 @@ function stopGame() {
     const endTime = Date.now();
     const pauseTimeToAdd = gamePaused ? (endTime - pauseStartTime) : 0;
     const durationMs = endTime - gameStartTime - totalPausedTime - pauseTimeToAdd;
+    const durationSeconds = Math.floor(durationMs / 1000);
+    const durationMinutes = durationSeconds / 60;
+    
+    // Calculate average hit rate per minute
+    // Formula: (hits - penalties/misses) per minute
+    const effectiveHits = currentGameHits - currentGameTargetsPenalized;
+    const averageHitRate = durationMinutes > 0 ? effectiveHits / durationMinutes : 0;
+    
+    // Create game session record
+    const gameSession = {
+        gameEndTime: new Date().toISOString(),
+        playerName: gameConfig.playerName || 'player 1',
+        score: score,
+        gameDurationSeconds: durationSeconds,
+        averageHitRate: Math.round(averageHitRate * 100) / 100, // Round to 2 decimal places
+        hits: currentGameHits,
+        misses: currentGameMisses,
+        targetsPenalized: currentGameTargetsPenalized
+    };
+    
+    // Add to game statistics
+    gameStats.totalHits += currentGameHits;
+    gameStats.totalMisses += currentGameMisses;
+    gameStats.totalTargetsPenalized += currentGameTargetsPenalized;
+    gameStats.gameSessionStats.push(gameSession);
+    
+    // Keep only the last 50 game sessions to prevent cookie from getting too large
+    if (gameStats.gameSessionStats.length > 50) {
+        gameStats.gameSessionStats = gameStats.gameSessionStats.slice(-50);
+    }
+    
+    // Save statistics to cookie
+    saveStatsToCookie();
+    
+    console.log('Game session statistics:', gameSession);
+    
     const duration = formatDuration(durationMs);
     const player = gameConfig.playerName || 'Anonymous';
 
@@ -692,7 +797,7 @@ function stopGame() {
     
     if (gameOverOverlay) {
         gameOverOverlay.classList.remove('hidden');
-        if (finalPlayerName) finalPlayerName.textContent = `Player: ${player}`;
+        if (finalPlayerName) finalPlayerName.textContent = gameConfig.playerName || 'player 1';
         if (finalScore) finalScore.textContent = `Score: ${score}`;
     }
 
@@ -847,6 +952,8 @@ function handleClick(event) {
     const clickX = event.clientX - rect.left;
     const clickY = event.clientY - rect.top;
 
+    let hitSomething = false;
+    
     // Check collision with objects (back to front for proper hit detection)
     for (let i = gameObjects.length - 1; i >= 0; i--) {
         const object = gameObjects[i];
@@ -857,6 +964,10 @@ function handleClick(event) {
         if (distance <= object.radius) {
             // Hit! Handle based on object type
             gameObjects.splice(i, 1);
+            hitSomething = true;
+            
+            // Track hit for statistics
+            currentGameHits++;
             
             // Game over if a friendly image is hit
             if (object.isFriendlyImage) {
@@ -890,6 +1001,11 @@ function handleClick(event) {
             }
             break;
         }
+    }
+    
+    // Track miss if no object was hit
+    if (!hitSomething) {
+        currentGameMisses++;
     }
 }
 
@@ -971,6 +1087,7 @@ function updateObjects(deltaTime) {
             // Apply miss penalty if enabled and it's a target
             if (gameConfig.missPenaltyEnabled && object.type === 'target') {
                 score -= 1; // Subtract 1 point for missed target
+                currentGameTargetsPenalized++; // Track penalized targets
                 updateScoreDisplay();
                 console.log('Target missed! Score reduced by 1');
                 
@@ -1058,7 +1175,7 @@ function drawObjects() {
 function updatePlayerNameDisplay() {
     const el = document.getElementById('player-name-display');
     if (el) {
-        el.textContent = gameConfig.playerName ? `Player: ${gameConfig.playerName}` : '';
+        el.textContent = gameConfig.playerName || 'player 1';
     }
 }
 
@@ -1071,13 +1188,6 @@ function updateObjectSize(event) {
 function updateSizeVariation(event) {
     gameConfig.sizeVariation = parseFloat(event.target.value);
     document.getElementById('size-variation-value').textContent = gameConfig.sizeVariation.toFixed(1);
-    
-    // Update the description text to show the percentage
-    const percentage = Math.round(gameConfig.sizeVariation * 100);
-    const descElement = document.querySelector('#size-variation').parentNode.querySelector('div');
-    if (descElement) {
-        descElement.textContent = `Objects will vary ±${percentage}% from base size`;
-    }
     saveConfigToCookie();
 }
 
