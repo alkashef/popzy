@@ -22,12 +22,9 @@ const GAME_CONFIG = {
     DEFAULT_SCORE_LIMIT: 50, // Score limit for game end
     DEFAULT_CAPTION_ENABLED: true, // Enable scrolling caption
     DEFAULT_CAPTION_DIRECTION: 'left', // 'left' or 'right'
-    DEFAULT_CAPTION_SPEED: 50, // pixels per second
     DEFAULT_CAPTION_COLOR: '#ffffff', // Caption text color
     DEFAULT_CAPTION_SIZE: 18, // Caption text size in pixels
-    DEFAULT_TARGET_TRANSPARENT: false, // Target circles transparent
-    DEFAULT_FRIENDLY_TRANSPARENT: false, // Friendly circles transparent
-    DEFAULT_FRIENDLY_IMAGES_TRANSPARENT: false, // Friendly images transparent
+    DEFAULT_CAPTION_MAX_TOKENS: 5, // Maximum number of tokens visible on screen
     DEFAULT_TARGET_TRANSPARENCY: 1.0, // Target transparency level (0.0 - 1.0)
     DEFAULT_FRIENDLY_TRANSPARENCY: 1.0, // Friendly transparency level (0.0 - 1.0)
     DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY: 1.0, // Friendly images transparency level (0.0 - 1.0)
@@ -181,12 +178,9 @@ function resetConfigToDefaults() {
         scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT,
         captionEnabled: GAME_CONFIG.DEFAULT_CAPTION_ENABLED,
         captionDirection: GAME_CONFIG.DEFAULT_CAPTION_DIRECTION,
-        captionSpeed: GAME_CONFIG.DEFAULT_CAPTION_SPEED,
         captionColor: GAME_CONFIG.DEFAULT_CAPTION_COLOR,
         captionSize: GAME_CONFIG.DEFAULT_CAPTION_SIZE,
-        targetTransparent: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENT,
-        friendlyTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENT,
-        friendlyImagesTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENT,
+        captionMaxTokens: GAME_CONFIG.DEFAULT_CAPTION_MAX_TOKENS,
         targetTransparency: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENCY,
         friendlyTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENCY,
         friendlyImagesTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
@@ -225,15 +219,11 @@ let gameConfig = {
     timeLimitEnabled: GAME_CONFIG.DEFAULT_TIME_LIMIT_ENABLED,
     timeLimit: GAME_CONFIG.DEFAULT_TIME_LIMIT,
     scoreLimitEnabled: GAME_CONFIG.DEFAULT_SCORE_LIMIT_ENABLED,
-    scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT,
-    captionEnabled: GAME_CONFIG.DEFAULT_CAPTION_ENABLED,
-    captionDirection: GAME_CONFIG.DEFAULT_CAPTION_DIRECTION,
-    captionSpeed: GAME_CONFIG.DEFAULT_CAPTION_SPEED,
-    captionColor: GAME_CONFIG.DEFAULT_CAPTION_COLOR,
-    captionSize: GAME_CONFIG.DEFAULT_CAPTION_SIZE,
-    targetTransparent: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENT,
-    friendlyTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENT,
-    friendlyImagesTransparent: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENT,
+    scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT,        captionEnabled: GAME_CONFIG.DEFAULT_CAPTION_ENABLED,
+        captionDirection: GAME_CONFIG.DEFAULT_CAPTION_DIRECTION,
+        captionColor: GAME_CONFIG.DEFAULT_CAPTION_COLOR,
+        captionSize: GAME_CONFIG.DEFAULT_CAPTION_SIZE,
+        captionMaxTokens: GAME_CONFIG.DEFAULT_CAPTION_MAX_TOKENS,
     targetTransparency: GAME_CONFIG.DEFAULT_TARGET_TRANSPARENCY,
     friendlyTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_TRANSPARENCY,
     friendlyImagesTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
@@ -334,11 +324,12 @@ function updateSettingsUI() {
         captionDirectionSelect.value = gameConfig.captionDirection;
     }
     
-    const captionSpeedInput = document.getElementById('caption-speed');
-    const captionSpeedValue = document.getElementById('caption-speed-value');
-    if (captionSpeedInput && captionSpeedValue) {
-        captionSpeedInput.value = gameConfig.captionSpeed;
-        captionSpeedValue.textContent = gameConfig.captionSpeed;
+    // Set caption max tokens
+    const captionMaxTokensInput = document.getElementById('caption-max-tokens');
+    const captionMaxTokensValue = document.getElementById('caption-max-tokens-value');
+    if (captionMaxTokensInput && captionMaxTokensValue) {
+        captionMaxTokensInput.value = gameConfig.captionMaxTokens;
+        captionMaxTokensValue.textContent = gameConfig.captionMaxTokens;
     }
     
     // Set caption color
@@ -353,22 +344,6 @@ function updateSettingsUI() {
     if (captionSizeInput && captionSizeValue) {
         captionSizeInput.value = gameConfig.captionSize;
         captionSizeValue.textContent = `${gameConfig.captionSize}px`;
-    }
-    
-    // Set transparency settings
-    const targetTransparentCheckbox = document.getElementById('target-transparent');
-    if (targetTransparentCheckbox) {
-        targetTransparentCheckbox.checked = gameConfig.targetTransparent;
-    }
-    
-    const friendlyTransparentCheckbox = document.getElementById('friendly-transparent');
-    if (friendlyTransparentCheckbox) {
-        friendlyTransparentCheckbox.checked = gameConfig.friendlyTransparent;
-    }
-    
-    const friendlyImagesTransparentCheckbox = document.getElementById('friendly-images-transparent');
-    if (friendlyImagesTransparentCheckbox) {
-        friendlyImagesTransparentCheckbox.checked = gameConfig.friendlyImagesTransparent;
     }
     
     // Set transparency sliders
@@ -473,29 +448,20 @@ function initCaptionSystem() {
 function addWordToCaption(word) {
     if (!gameConfig.captionEnabled || !word) return;
     
-    const rightPanel = document.getElementById('right-panel');
-    const isCollapsed = rightPanel && rightPanel.classList.contains('collapsed');
-    const rightPanelWidth = isCollapsed ? 20 : 200;
-    const containerWidth = window.innerWidth - rightPanelWidth;
-    const fadeInPosition = containerWidth * 0.33; // One third of screen width
-    const fadeOutPosition = containerWidth * 0.67; // Two thirds of screen width
-    
-    // Start words in the middle of the visible zone for immediate visibility
-    const centerPosition = (fadeInPosition + fadeOutPosition) / 2;
+    // Remove old tokens if we exceed the maximum
+    while (captionWords.length >= gameConfig.captionMaxTokens) {
+        captionWords.shift();
+    }
     
     const wordElement = {
         text: word,
-        x: centerPosition, // Start in center of visible zone for immediate visibility
-        opacity: 1, // Fully visible immediately
-        fadeInPosition: fadeInPosition,
-        fadeOutPosition: fadeOutPosition,
-        hasBeenShown: false, // Track if word has been displayed yet
-        id: Date.now() + Math.random() // Unique ID for each word
+        opacity: 1,
+        id: Date.now() + Math.random()
     };
     
     captionWords.push(wordElement);
     
-    // Immediately update display to show the new word without waiting for next frame
+    // Immediately update display to show the new word
     updateCaptionDisplay();
 }
 
@@ -514,93 +480,18 @@ function updateCaptionDisplay() {
     // Clear existing content
     captionElement.innerHTML = '';
     
-    // Add each word as a separate element
-    captionWords.forEach(wordData => {
-        const wordSpan = document.createElement('span');
-        
-        // Apply appropriate CSS classes based on word state
-        if (wordData.opacity === 1 && !wordData.hasBeenShown) {
-            // New word appearing immediately
-            wordSpan.className = 'caption-word instant-show';
-            wordData.hasBeenShown = true; // Mark as shown
-        } else if (wordData.opacity < 1 && wordData.hasBeenShown) {
-            // Word fading out
-            wordSpan.className = 'caption-word fade-out';
-        } else {
-            // Default state
-            wordSpan.className = 'caption-word';
-        }
-        
-        wordSpan.textContent = wordData.text;
-        wordSpan.style.left = `${wordData.x}px`;
-        wordSpan.style.opacity = wordData.opacity;
-        wordSpan.style.color = gameConfig.captionColor;
-        wordSpan.style.fontSize = `${gameConfig.captionSize}px`;
-        captionElement.appendChild(wordSpan);
-    });
-}
-
-function updateCaptionPosition(deltaTime) {
-    if (!captionElement || !gameConfig.captionEnabled || captionWords.length === 0) return;
+    // Create a single text string with words separated by single spaces
+    const captionText = captionWords.map(wordData => wordData.text).join(' ');
     
-    const speed = gameConfig.captionSpeed;
-    const distance = speed * (deltaTime / 1000);
-    const rightPanel = document.getElementById('right-panel');
-    const isCollapsed = rightPanel && rightPanel.classList.contains('collapsed');
-    const rightPanelWidth = isCollapsed ? 20 : 200;
-    const containerWidth = window.innerWidth - rightPanelWidth;
-    
-    // Update positions and opacities for each word
-    for (let i = captionWords.length - 1; i >= 0; i--) {
-        const wordData = captionWords[i];
-        
-        // Update position
-        if (gameConfig.captionDirection === 'left') {
-            wordData.x -= distance;
-        } else {
-            wordData.x += distance;
-        }
-        
-        // Calculate opacity based on position
-        if (gameConfig.captionDirection === 'left') {
-            // Moving right to left
-            if (wordData.x > wordData.fadeOutPosition) {
-                // Before fade-out zone
-                wordData.opacity = 1;
-            } else if (wordData.x > wordData.fadeInPosition) {
-                // In fade-out zone
-                const fadeRange = wordData.fadeOutPosition - wordData.fadeInPosition;
-                const fadeProgress = (wordData.x - wordData.fadeInPosition) / fadeRange;
-                wordData.opacity = Math.max(0, Math.min(1, fadeProgress));
-            } else {
-                // Past fade-in position - remove word
-                captionWords.splice(i, 1);
-                continue;
-            }
-        } else {
-            // Moving left to right
-            if (wordData.x < wordData.fadeInPosition) {
-                // Before fade-in zone
-                wordData.opacity = 0;
-            } else if (wordData.x < wordData.fadeOutPosition) {
-                // In fade-in zone
-                const fadeRange = wordData.fadeOutPosition - wordData.fadeInPosition;
-                const fadeProgress = (wordData.x - wordData.fadeInPosition) / fadeRange;
-                wordData.opacity = Math.max(0, Math.min(1, fadeProgress));
-            } else {
-                // Past fade-out position - remove word
-                captionWords.splice(i, 1);
-                continue;
-            }
-        }
-        
-        // Remove words that are completely off screen
-        if (wordData.x < -200 || wordData.x > containerWidth + 200) {
-            captionWords.splice(i, 1);
-        }
-    }
-    
-    updateCaptionDisplay();
+    // Create a single span element for all words
+    const textSpan = document.createElement('span');
+    textSpan.className = 'caption-word instant-show';
+    textSpan.textContent = captionText;
+    textSpan.style.left = '20px'; // Start position from left edge
+    textSpan.style.opacity = '1';
+    textSpan.style.color = gameConfig.captionColor;
+    textSpan.style.fontSize = `${gameConfig.captionSize}px`;
+    captionElement.appendChild(textSpan);
 }
 
 function clearCaption() {
@@ -837,9 +728,9 @@ function setupEventListeners() {
         captionDirectionSelect.addEventListener('change', updateCaptionDirection);
     }
     
-    const captionSpeedInput = document.getElementById('caption-speed');
-    if (captionSpeedInput) {
-        captionSpeedInput.addEventListener('input', updateCaptionSpeed);
+    const captionMaxTokensInput = document.getElementById('caption-max-tokens');
+    if (captionMaxTokensInput) {
+        captionMaxTokensInput.addEventListener('input', updateCaptionMaxTokens);
     }
     
     // Caption color picker
@@ -861,22 +752,6 @@ function setupEventListeners() {
     document.getElementById('target-color').addEventListener('input', updateTargetColor);
     document.getElementById('friendly-color').addEventListener('input', updateFriendlyColor);
     
-    // Transparency checkboxes
-    const targetTransparentCheckbox = document.getElementById('target-transparent');
-    if (targetTransparentCheckbox) {
-        targetTransparentCheckbox.addEventListener('change', updateTargetTransparent);
-    }
-    
-    const friendlyTransparentCheckbox = document.getElementById('friendly-transparent');
-    if (friendlyTransparentCheckbox) {
-        friendlyTransparentCheckbox.addEventListener('change', updateFriendlyTransparent);
-    }
-    
-    const friendlyImagesTransparentCheckbox = document.getElementById('friendly-images-transparent');
-    if (friendlyImagesTransparentCheckbox) {
-        friendlyImagesTransparentCheckbox.addEventListener('change', updateFriendlyImagesTransparent);
-    }
-
     // Transparency sliders
     const targetTransparencyInput = document.getElementById('target-transparency');
     if (targetTransparencyInput) {
@@ -1758,10 +1633,16 @@ function updateCaptionDirection(event) {
     saveConfigToCookie();
 }
 
-function updateCaptionSpeed(event) {
-    gameConfig.captionSpeed = parseInt(event.target.value);
-    document.getElementById('caption-speed-value').textContent = gameConfig.captionSpeed;
-    console.log('Caption speed updated:', gameConfig.captionSpeed);
+function updateCaptionMaxTokens(event) {
+    gameConfig.captionMaxTokens = parseInt(event.target.value);
+    document.getElementById('caption-max-tokens-value').textContent = gameConfig.captionMaxTokens;
+    console.log('Caption max tokens updated:', gameConfig.captionMaxTokens);
+    
+    // Remove excess tokens if current count exceeds new limit
+    while (captionWords.length > gameConfig.captionMaxTokens) {
+        captionWords.shift();
+    }
+    updateCaptionDisplay();
     saveConfigToCookie();
 }
 
@@ -1776,22 +1657,6 @@ function updateCaptionSize(event) {
     gameConfig.captionSize = parseInt(event.target.value);
     document.getElementById('caption-size-value').textContent = `${gameConfig.captionSize}px`;
     updateCaptionDisplay(); // Refresh display with new size
-    saveConfigToCookie();
-}
-
-// Transparency functions
-function updateTargetTransparent(event) {
-    gameConfig.targetTransparent = event.target.checked;
-    saveConfigToCookie();
-}
-
-function updateFriendlyTransparent(event) {
-    gameConfig.friendlyTransparent = event.target.checked;
-    saveConfigToCookie();
-}
-
-function updateFriendlyImagesTransparent(event) {
-    gameConfig.friendlyImagesTransparent = event.target.checked;
     saveConfigToCookie();
 }
 
@@ -1983,9 +1848,6 @@ function gameLoop(timestamp) {
     
     // Update timer
     updateTimer();
-    
-    // Update caption position
-    updateCaptionPosition(deltaTime);
     
     // Debug: Log game state but much less frequently
     if (Math.floor(timestamp / 1000) % 5 === 0 && Math.floor((timestamp - 50) / 1000) % 5 !== 0) {

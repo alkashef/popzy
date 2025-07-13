@@ -5,7 +5,7 @@
     right: 0;
     width: 200px;
     height: 100vh;
-    background: linear-gradient(135deg, rgba(74, 74, 74, 0.8), rgba(42, 42, 42, 0.8));
+    background: linear-gradient(135deg, rgba(74, 74, 74, 0.3), rgba(42, 42, 42, 0.3));
     color: #e0e0e0;
     padding: 20px;
     z-index: 1000;
@@ -64,7 +64,7 @@
 /* When panel is collapsed, keep score and name visible */
 #right-panel.collapsed #player-name-display,
 #right-panel.collapsed #score {
-    position: fixed;
+    position: fixed !important;
     top: 20px;
     right: 20px;
     z-index: 1001;
@@ -74,6 +74,10 @@
     padding: 10px 15px;
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    visibility: visible !important;
 }
 
 #right-panel.collapsed #player-name-display {

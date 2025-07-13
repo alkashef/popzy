@@ -145,22 +145,6 @@
                                     <input type="file" id="background-image" accept="image/*">
                                 </div>
                                 <div class="setting-group">
-                                    <div class="checkbox-group">
-                                        <label for="target-transparent">
-                                            <input type="checkbox" id="target-transparent">
-                                            Target Circles Transparent
-                                        </label>
-                                        <label for="friendly-transparent">
-                                            <input type="checkbox" id="friendly-transparent">
-                                            Friendly Circles Transparent
-                                        </label>
-                                        <label for="friendly-images-transparent">
-                                            <input type="checkbox" id="friendly-images-transparent">
-                                            Friendly Images Transparent
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="setting-group">
                                     <label for="target-transparency">Target Transparency:</label>
                                     <input type="range" id="target-transparency" min="0.1" max="1.0" step="0.1" value="1.0">
                                     <span id="target-transparency-value">100%</span>
@@ -241,9 +225,9 @@
                                     </select>
                                 </div>
                                 <div class="setting-group">
-                                    <label for="caption-speed">Caption Speed:</label>
-                                    <input type="range" id="caption-speed" min="20" max="100" step="10" value="50">
-                                    <span id="caption-speed-value">50</span>
+                                    <label for="caption-max-tokens">Max Tokens on Screen:</label>
+                                    <input type="range" id="caption-max-tokens" min="1" max="10" step="1" value="5">
+                                    <span id="caption-max-tokens-value">5</span>
                                 </div>
                             </div>
                             <div class="settings-column">
