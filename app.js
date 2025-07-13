@@ -31,6 +31,90 @@ const GAME_CONFIG = {
     }
 };
 
+// Cookie utility functions for saving/loading game configuration
+const CONFIG_COOKIE_NAME = 'shootTheUnicornConfig';
+const CONFIG_COOKIE_EXPIRY_DAYS = 365; // Cookie expires in 1 year
+
+function saveConfigToCookie() {
+    try {
+        const configToSave = JSON.stringify(gameConfig);
+        const expiryDate = new Date();
+        expiryDate.setTime(expiryDate.getTime() + (CONFIG_COOKIE_EXPIRY_DAYS * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + expiryDate.toUTCString();
+        document.cookie = `${CONFIG_COOKIE_NAME}=${configToSave};${expires};path=/`;
+        console.log('Game configuration saved to cookie');
+    } catch (error) {
+        console.warn('Failed to save configuration to cookie:', error);
+    }
+}
+
+function loadConfigFromCookie() {
+    try {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            let c = cookie.trim();
+            if (c.indexOf(CONFIG_COOKIE_NAME + '=') === 0) {
+                const configJson = c.substring(CONFIG_COOKIE_NAME.length + 1);
+                const savedConfig = JSON.parse(configJson);
+                
+                // Merge saved config with current gameConfig, preserving any new default values
+                for (const key in savedConfig) {
+                    if (gameConfig.hasOwnProperty(key)) {
+                        gameConfig[key] = savedConfig[key];
+                    }
+                }
+                
+                console.log('Game configuration loaded from cookie');
+                return true;
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to load configuration from cookie:', error);
+    }
+    return false;
+}
+
+function deleteConfigCookie() {
+    try {
+        document.cookie = `${CONFIG_COOKIE_NAME}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+        console.log('Game configuration cookie deleted');
+    } catch (error) {
+        console.warn('Failed to delete configuration cookie:', error);
+    }
+}
+
+// Reset configuration to defaults
+function resetConfigToDefaults() {
+    gameConfig = {
+        speed: GAME_CONFIG.DEFAULT_SPEED,
+        randomness: GAME_CONFIG.DEFAULT_RANDOMNESS,
+        spawnRate: GAME_CONFIG.DEFAULT_SPAWN_RATE,
+        targetsEnabled: GAME_CONFIG.DEFAULT_TARGETS_ENABLED,
+        friendliesEnabled: GAME_CONFIG.DEFAULT_FRIENDLIES_ENABLED,
+        objectSize: GAME_CONFIG.DEFAULT_OBJECT_SIZE,
+        ratio: GAME_CONFIG.DEFAULT_RATIO,
+        playerName: GAME_CONFIG.DEFAULT_PLAYER_NAME,
+        targetWords: GAME_CONFIG.DEFAULT_TARGET_WORDS,
+        friendlyWords: GAME_CONFIG.DEFAULT_FRIENDLY_WORDS,
+        targetColor: GAME_CONFIG.DEFAULT_TARGET_COLOR,
+        friendlyColor: GAME_CONFIG.DEFAULT_FRIENDLY_COLOR,
+        friendlyMode: GAME_CONFIG.DEFAULT_FRIENDLY_MODE,
+        sizeVariation: GAME_CONFIG.DEFAULT_SIZE_VARIATION,
+        missPenaltyEnabled: GAME_CONFIG.DEFAULT_MISS_PENALTY_ENABLED,
+        timeLimitEnabled: GAME_CONFIG.DEFAULT_TIME_LIMIT_ENABLED,
+        timeLimit: GAME_CONFIG.DEFAULT_TIME_LIMIT,
+        scoreLimitEnabled: GAME_CONFIG.DEFAULT_SCORE_LIMIT_ENABLED,
+        scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT
+    };
+    
+    // Delete the cookie and update UI
+    deleteConfigCookie();
+    updateSettingsUI();
+    updatePlayerNameDisplay();
+    
+    console.log('Configuration reset to defaults');
+}
+
 // Game state
 let canvas, ctx;
 let gameObjects = [];
@@ -144,6 +228,9 @@ function updateSettingsUI() {
 // Initialize the game
 async function init() {
     console.log('Initializing game...');
+    
+    // Load saved configuration from cookie before setting up UI
+    loadConfigFromCookie();
     
     setupCanvas();
     await loadAssets();
@@ -403,6 +490,12 @@ function setupEventListeners() {
     
     // Initialize color presets
     setupColorPresets();
+
+    // Reset settings button
+    const resetSettingsButton = document.getElementById('reset-settings-button');
+    if (resetSettingsButton) {
+        resetSettingsButton.addEventListener('click', resetConfigToDefaults);
+    }
 
     console.log('All event listeners set up');
 }
@@ -972,6 +1065,7 @@ function updatePlayerNameDisplay() {
 function updateObjectSize(event) {
     gameConfig.objectSize = parseInt(event.target.value);
     document.getElementById('object-size-value').textContent = gameConfig.objectSize;
+    saveConfigToCookie();
 }
 
 function updateSizeVariation(event) {
@@ -984,39 +1078,47 @@ function updateSizeVariation(event) {
     if (descElement) {
         descElement.textContent = `Objects will vary ±${percentage}% from base size`;
     }
+    saveConfigToCookie();
 }
 
 function updateRatio(event) {
     gameConfig.ratio = parseFloat(event.target.value);
     document.getElementById('ratio-value').textContent = gameConfig.ratio.toFixed(2);
+    saveConfigToCookie();
 }
 
 function updatePlayerName(event) {
     gameConfig.playerName = event.target.value;
     updatePlayerNameDisplay();
+    saveConfigToCookie();
 }
 
 function updateTargetWords(event) {
     gameConfig.targetWords = event.target.value;
+    saveConfigToCookie();
 }
 
 function updateFriendlyWords(event) {
     gameConfig.friendlyWords = event.target.value;
+    saveConfigToCookie();
 }
 
 function updateFriendlyMode(event) {
     gameConfig.friendlyMode = event.target.value;
     console.log('Friendly mode updated to:', gameConfig.friendlyMode);
+    saveConfigToCookie();
 }
 
 function updateMissPenaltyEnabled(event) {
     gameConfig.missPenaltyEnabled = event.target.checked;
     console.log('Miss penalty enabled:', gameConfig.missPenaltyEnabled);
+    saveConfigToCookie();
 }
 
 function updateTimeLimitEnabled(event) {
     gameConfig.timeLimitEnabled = event.target.checked;
     console.log('Time limit enabled:', gameConfig.timeLimitEnabled);
+    saveConfigToCookie();
 }
 
 function updateTimeLimit(event) {
@@ -1025,26 +1127,31 @@ function updateTimeLimit(event) {
     const seconds = gameConfig.timeLimit % 60;
     document.getElementById('time-limit-value').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     console.log('Time limit updated:', gameConfig.timeLimit);
+    saveConfigToCookie();
 }
 
 function updateScoreLimitEnabled(event) {
     gameConfig.scoreLimitEnabled = event.target.checked;
     console.log('Score limit enabled:', gameConfig.scoreLimitEnabled);
+    saveConfigToCookie();
 }
 
 function updateScoreLimit(event) {
     gameConfig.scoreLimit = parseInt(event.target.value);
     document.getElementById('score-limit-value').textContent = gameConfig.scoreLimit;
     console.log('Score limit updated:', gameConfig.scoreLimit);
+    saveConfigToCookie();
 }
 
 // Color picker functions
 function updateTargetColor(event) {
     gameConfig.targetColor = event.target.value;
+    saveConfigToCookie();
 }
 
 function updateFriendlyColor(event) {
     gameConfig.friendlyColor = event.target.value;
+    saveConfigToCookie();
 }
 
 // Setup color presets
@@ -1142,16 +1249,19 @@ function gameLoop(timestamp) {
 function updateSpeed(event) {
     gameConfig.speed = parseFloat(event.target.value);
     document.getElementById('speed-value').textContent = `${gameConfig.speed.toFixed(1)}x`;
+    saveConfigToCookie();
 }
 
 function updateRandomness(event) {
     gameConfig.randomness = parseFloat(event.target.value);
     document.getElementById('randomness-value').textContent = gameConfig.randomness.toFixed(1);
+    saveConfigToCookie();
 }
 
 function updateSpawnRate(event) {
     gameConfig.spawnRate = parseInt(event.target.value);
     document.getElementById('spawnRate-value').textContent = gameConfig.spawnRate;
+    saveConfigToCookie();
 }
 
 // We've removed the updateObjectTypes function since we no longer have object type checkboxes
