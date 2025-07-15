@@ -1,0 +1,20 @@
+<!-- filepath: c:\alkashef\GitHub\shoot-the-unicorn\LICENSE -->
+PROPRIETARY SOFTWARE LICENSE
+
+Copyright (c) 2025 Ahmad Alkashef. All Rights Reserved.
+
+Licensed exclusively to: Ahmad Alkashef (alkashef@gmail.com)
+
+NOTICE: This software and its source code are the exclusive property of Ahmad Alkashef. 
+This software is licensed for personal use only by Ahmad Alkashef.
+
+RESTRICTIONS:
+- No part of this software may be reproduced, distributed, or transmitted in any form or by any means
+- No reverse engineering, decompilation, or disassembly is permitted
+- No modification or derivative works are allowed without explicit written permission
+- Commercial use is strictly prohibited without written authorization
+- Public distribution or sharing is not permitted
+
+This software is provided "AS IS" without warranty of any kind. Ahmad Alkashef shall not be liable for any damages arising from the use of this software.
+
+For licensing inquiries, contact: alkashef@gmail.com

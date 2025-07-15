@@ -1,12 +1,15 @@
 {
-  "name": "browser-shooter",
+  "name": "shoot-the-unicorn-private",
   "version": "1.0.0",
-  "description": "Simple HTML5 canvas shooter",
+  "description": "A proprietary browser-based shooting game",
+  "author": "Ahmad Alkashef <alkashef@gmail.com>",
+  "license": "UNLICENSED",
   "private": true,
+  "copyright": "Copyright © 2025 Ahmad Alkashef. All rights reserved. Proprietary Software.",
   "scripts": {
     "start": "npx http-server -c-1 -p 8080"
   },
   "devDependencies": {
     "http-server": "^14.1.1"
   }
-} 
+}
