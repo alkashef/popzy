@@ -849,6 +849,28 @@ function setupEventListeners() {
         });
     }
 
+    // About button - opens modal
+    const aboutButton = document.getElementById('about-button');
+    if (aboutButton) {
+        aboutButton.addEventListener('click', openAboutModal);
+    }
+
+    // About OK button
+    const aboutOkButton = document.getElementById('about-ok-button');
+    if (aboutOkButton) {
+        aboutOkButton.addEventListener('click', closeAboutModal);
+    }
+
+    // Close about modal when clicking outside
+    const aboutModal = document.getElementById('about-modal');
+    if (aboutModal) {
+        aboutModal.addEventListener('click', function(event) {
+            if (event.target === aboutModal) {
+                closeAboutModal();
+            }
+        });
+    }
+
     console.log('All event listeners set up');
 }
 function updateBackgroundColor(event) {
@@ -956,6 +978,27 @@ function closeScoresModal() {
     }
     
     wasGameRunningBeforeScores = false;
+}
+
+// About modal functions
+function openAboutModal() {
+    console.log('Opening about modal');
+    
+    // Show about modal
+    const aboutModal = document.getElementById('about-modal');
+    if (aboutModal) {
+        aboutModal.classList.remove('hidden');
+    }
+}
+
+function closeAboutModal() {
+    console.log('Closing about modal');
+    
+    // Hide about modal
+    const aboutModal = document.getElementById('about-modal');
+    if (aboutModal) {
+        aboutModal.classList.add('hidden');
+    }
 }
 
 // Dismiss game over overlay and return to main game view
@@ -1267,9 +1310,10 @@ function spawnObject() {
     const dy = targetY - startY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Normalize and apply speed
-    const vx = (dx / distance) * baseSpeed;
-    const vy = (dy / distance) * baseSpeed;
+    // FIXED: Much slower, more reasonable speed calculation
+    const pixelsPerSecond = baseSpeed; // Remove the * 60 multiplier
+    const vx = (dx / distance) * pixelsPerSecond / 1000; // pixels per millisecond
+    const vy = (dy / distance) * pixelsPerSecond / 1000; // pixels per millisecond
 
     const object = {
         x: startX, 
@@ -1470,9 +1514,10 @@ function updateObjects(deltaTime) {
     for (let i = gameObjects.length - 1; i >= 0; i--) {
         const object = gameObjects[i];
         
-        // Update position - straight line movement only
-        object.x += object.vx * (deltaTime / 1000);
-        object.y += object.vy * (deltaTime / 1000);
+        // Smooth movement with capped delta time
+        const smoothDelta = Math.min(deltaTime, 16.67); // Cap at ~60fps equivalent
+        object.x += object.vx * smoothDelta;
+        object.y += object.vy * smoothDelta;
         
         // Remove if off screen
         const margin = gameConfig.objectSize * 2;
@@ -1482,12 +1527,11 @@ function updateObjects(deltaTime) {
         if (shouldRemove) {
             // Apply miss penalty if enabled and it's a target
             if (gameConfig.missPenaltyEnabled && object.type === 'target') {
-                score -= 1; // Subtract 1 point for missed target
-                currentGameTargetsPenalized++; // Track penalized targets
+                score -= 1;
+                currentGameTargetsPenalized++;
                 updateScoreDisplay();
                 console.log('Target missed! Score reduced by 1');
                 
-                // End game if score goes negative
                 if (score < 0) {
                     stopGame('score_negative');
                     const gameOverMsg = document.querySelector('.game-over-message');
@@ -1924,7 +1968,9 @@ function gameLoop(timestamp) {
         return requestAnimationFrame(gameLoop);
     }
     
-    const deltaTime = timestamp - (lastTimestamp || timestamp);
+    // Cap delta time to prevent large jumps (max 50ms = ~20 FPS minimum)
+    let deltaTime = timestamp - (lastTimestamp || timestamp);
+    deltaTime = Math.min(deltaTime, 50); // Cap at 50ms
     lastTimestamp = timestamp;
     
     // Clear canvas
@@ -1933,7 +1979,6 @@ function gameLoop(timestamp) {
     // Draw background pattern when game hasn't started
     if (!gameStarted) {
         drawBackground();
-        // We still want the animation frame to continue even if game isn't started
         return requestAnimationFrame(gameLoop);
     }
     
@@ -1948,15 +1993,6 @@ function gameLoop(timestamp) {
     
     // Update timer
     updateTimer();
-    
-    // Debug: Log game state but much less frequently
-    if (Math.floor(timestamp / 1000) % 5 === 0 && Math.floor((timestamp - 50) / 1000) % 5 !== 0) {
-        console.log('Game state:', { 
-            gameStarted, 
-            objectCount: gameObjects.length, 
-            score
-        });
-    }
     
     // Continue loop
     requestAnimationFrame(gameLoop);

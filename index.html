@@ -10,11 +10,21 @@
     <meta name="license" content="Proprietary - Personal Use Only">
 </head>
 <body>
+    <!-- Game Title Header -->
+    <div id="game-title-header">
+        <h1 class="game-title">
+            <span class="rainbow-text">Shoot the Unicorn</span>
+        </h1>
+    </div>
+    
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         
         <!-- Right Control Panel -->
         <div id="right-panel">
+            <!-- Unicorn Icon at top -->
+            <img src="assets/friendly/unicorn_256.png" alt="Unicorn" class="unicorn-icon">
+            
             <!-- Player Name Display -->
             <div id="player-name-display">player 1</div>
             
@@ -42,8 +52,14 @@
             
             <!-- Settings Button at bottom -->
             <div class="settings-container">
+                <button id="about-button" class="settings-btn" title="About this game">About</button>
                 <button id="scores-button" class="settings-btn" title="Statistics Dashboard">Stats</button>
                 <button id="settings-button" class="settings-btn" title="Settings">Settings</button>
+            </div>
+            
+            <!-- Copyright text at bottom of right panel -->
+            <div class="panel-copyright">
+                <p>&copy; 2025 Ahmad Alkashef (alkashef@gmail.com). All rights reserved. | Proprietary Software</p>
             </div>
         </div>
         
@@ -348,11 +364,46 @@
                 </div>
             </div>
         </div>
+        
+        <!-- About Modal -->
+        <div id="about-modal" class="hidden">
+            <div class="settings-modal-content">
+                <div class="settings-header">
+                    <h2>About Shoot the Unicorn</h2>
+                </div>
+                <div class="about-content">
+                    <div class="about-section">
+                        <h3>How to Play (Simple for Kids)</h3>
+                        <div class="how-to-play">
+                            <p>🎯 <strong>Shoot targets:</strong> Score +1 point</p>
+                            <p>❌ <strong>Shoot friendly objects:</strong> Score -1 point</p>
+                            <p>🏁 <strong>Game ends if:</strong></p>
+                            <ul>
+                                <li>You shoot the unicorn</li>
+                                <li>You press the stop button</li>
+                                <li>Your score goes below zero</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3>License</h3>
+                        <div class="license-info">
+                            <p><strong>Copyright © 2025 Ahmad Alkashef</strong></p>
+                            <p>Email: alkashef@gmail.com</p>
+                            <p><strong>PROPRIETARY SOFTWARE - PERSONAL USE ONLY</strong></p>
+                            <p>This software is the exclusive property of Ahmad Alkashef. Unauthorized reproduction, distribution, or use is strictly prohibited.</p>
+                            <p>Licensed exclusively to: Ahmad Alkashef</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-footer">
+                    <button id="about-ok-button" class="settings-ok-btn">OK</button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script src="app.js"></script>
-    <footer class="copyright-footer">
-        <p>&copy; 2025 Ahmad Alkashef (alkashef@gmail.com). All rights reserved. | Proprietary Software</p>
-    </footer>
 </body>
 </html>

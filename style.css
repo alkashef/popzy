@@ -11,6 +11,60 @@
  * Contact: alkashef@gmail.com
  */
 
+/* Game Title Header */
+#game-title-header {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    text-align: center;
+}
+
+.game-title {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    font-size: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0.9; /* 90% transparency - much less transparent */
+}
+
+.rainbow-text {
+    background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff, #ff00ff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow 3s ease-in-out infinite;
+}
+
+.strike-through {
+    text-decoration: line-through;
+    background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff, #ff00ff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow 3s ease-in-out infinite;
+}
+
+/* Rainbow animation for the text */
+@keyframes rainbow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 /* Right Control Panel */
 #right-panel {
     position: fixed;
@@ -29,6 +83,21 @@
     font-family: 'Arial', sans-serif;
     border-left: 2px solid rgba(102, 102, 102, 0.6);
     backdrop-filter: blur(5px);
+}
+
+/* Unicorn Icon at top of right panel */
+.unicorn-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    display: block;
+    margin: 0 auto 15px auto;
+}
+
+.unicorn-icon:hover {
+    transform: scale(1.1) rotate(5deg);
 }
 
 /* Score, Timer, and Player Name - Unified styling */
@@ -116,13 +185,14 @@
     flex: 1;
 }
 
-/* Settings container at bottom */
+/* Settings container - no longer at bottom since copyright is now there */
 .settings-container {
     margin-top: auto;
     padding-top: 20px;
     display: flex;
     flex-direction: column-reverse;
     gap: 10px;
+    padding-bottom: 10px; /* Add some space above copyright */
 }
 
 /* Game Controls Row - Play, Pause, Stop buttons in one row */
@@ -958,11 +1028,90 @@ input[type="color"] {
     text-align: right;
 }
 
-@media (max-width: 768px) {
-    .scores-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
+/* About Modal Styles */
+#about-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    transition: opacity 0.3s ease;
 }
 
-/* Settings Modal */
+#about-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.about-content {
+    padding: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.about-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.about-section h3 {
+    color: #00ff88;
+    font-size: 20px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 8px;
+}
+
+.how-to-play p {
+    font-size: 16px;
+    margin: 12px 0;
+    color: #e0e0e0;
+}
+
+.how-to-play ul {
+    margin-left: 20px;
+    margin-top: 8px;
+}
+
+.how-to-play li {
+    font-size: 16px;
+    margin: 8px 0;
+    color: #e0e0e0;
+    list-style-type: disc;
+}
+
+.license-info p {
+    font-size: 14px;
+    margin: 10px 0;
+    color: #e0e0e0;
+    line-height: 1.4;
+}
+
+.license-info p:first-child {
+    font-size: 16px;
+    color: #00ff88;
+}
+
+/* Panel Copyright at bottom of right panel */
+.panel-copyright {
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    line-height: 1.2;
+}
+
+.panel-copyright p {
+    margin: 0;
+    font-size: 10px;
+}
