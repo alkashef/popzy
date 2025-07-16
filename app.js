@@ -24,8 +24,8 @@ const GAME_CONFIG = {
     DEFAULT_PLAYER_NAME: 'player 1',
     DEFAULT_TARGET_WORDS: '2 4 6 8 10',
     DEFAULT_FRIENDLY_WORDS: '1 3 5 7 9',
-    DEFAULT_TARGET_COLOR: '#ff4444',
-    DEFAULT_FRIENDLY_COLOR: '#4444ff',
+    DEFAULT_TARGET_COLOR: '#ffff00', // Changed from '#ff4444' (red) to yellow
+    DEFAULT_FRIENDLY_COLOR: '#ffff00', // Changed from '#4444ff' (blue) to yellow
     DEFAULT_FRIENDLY_MODE: 'both', // 'images', 'words', 'both'
     DEFAULT_SIZE_VARIATION: 0.3, // 30% size variation around average
     DEFAULT_MISS_PENALTY_ENABLED: false, // Enable penalty for missed targets
@@ -45,7 +45,7 @@ const GAME_CONFIG = {
     DEFAULT_OBJECT_SHADOWS: false, // Show shadows for objects
     DEFAULT_BACKGROUND_COLOR: '#4444ff', // Default background color (matches friendly color)
     // Object properties
-    BASE_SPEED: 100, // pixels per second
+    BASE_SPEED: 140, // pixels per second (was 100, now 140 = 1.4x faster)
     SPAWN_MARGIN: 50, // pixels from edge
     // Asset paths
     ASSETS: {
@@ -191,7 +191,7 @@ function resetConfigToDefaults() {
         timeLimit: GAME_CONFIG.DEFAULT_TIME_LIMIT,
         scoreLimitEnabled: GAME_CONFIG.DEFAULT_SCORE_LIMIT_ENABLED,
         scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT,
-        captionEnabled: GAME_CONFIG.DEFAULT_CAPTION_ENABLED,
+        captionEnabled: false, // Changed from GAME_CONFIG.DEFAULT_CAPTION_ENABLED to false
         captionDirection: GAME_CONFIG.DEFAULT_CAPTION_DIRECTION,
         captionColor: GAME_CONFIG.DEFAULT_CAPTION_COLOR,
         captionSize: GAME_CONFIG.DEFAULT_CAPTION_SIZE,
@@ -246,7 +246,8 @@ let gameConfig = {
     friendlyImagesTransparency: GAME_CONFIG.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
     showObjectPaths: GAME_CONFIG.DEFAULT_SHOW_OBJECT_PATHS,
     objectShadows: GAME_CONFIG.DEFAULT_OBJECT_SHADOWS,
-    backgroundColor: GAME_CONFIG.DEFAULT_BACKGROUND_COLOR
+    backgroundColor: GAME_CONFIG.DEFAULT_BACKGROUND_COLOR,
+    useRandomColors: false // Add this new property
 };
 let targetImages = [];
 let friendlyImages = [];
@@ -515,11 +516,11 @@ function updateCaptionDisplay() {
     // Create a single text string with words separated by single spaces
     const captionText = captionWords.map(wordData => wordData.text).join(' ');
     
-    // Create a single span element for all words
+    // Create a single span element for all words - never scrolls
     const textSpan = document.createElement('span');
     textSpan.className = 'caption-word instant-show';
     textSpan.textContent = captionText;
-    textSpan.style.position = 'relative'; // Remove absolute positioning
+    textSpan.style.position = 'relative'; // Keep it in place
     textSpan.style.opacity = '1';
     textSpan.style.color = gameConfig.captionColor;
     textSpan.style.fontSize = `${gameConfig.captionSize}px`;
@@ -1330,7 +1331,25 @@ function spawnObject() {
             endY: targetY
         }
     };
-
+    
+    // Assign random color if random colors mode is enabled
+    if (gameConfig.useRandomColors) {
+        const colors = [
+            '#ff0000', // Red
+            '#ff8800', // Orange
+            '#ffff00', // Yellow
+            '#88ff00', // Lime
+            '#00ff00', // Green
+            '#00ffff', // Cyan
+            '#0088ff', // Light Blue
+            '#0000ff', // Blue
+            '#8800ff', // Purple
+            '#ff00ff', // Magenta
+            '#ff0088', // Pink
+        ];
+        object.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+    
     // For targets, add a random word from the target words list
     if (type === 'target' && gameConfig.targetWords) {
         const words = gameConfig.targetWords.trim().split(/\s+/);
@@ -1639,13 +1658,13 @@ function drawObjects() {
             const size = object.radius * 2;
             ctx.drawImage(object.image, object.x - object.radius, object.y - object.radius, size, size);
         } else {
-            // Fallback to colored circles
+            // Fallback to colored circles - use object.color if available (random color mode)
             if (object.type === 'target') {
-                ctx.fillStyle = gameConfig.targetColor;
+                ctx.fillStyle = object.color || gameConfig.targetColor;
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 2;
             } else {
-                ctx.fillStyle = gameConfig.friendlyColor;
+                ctx.fillStyle = object.color || gameConfig.friendlyColor;
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 2;
             }
@@ -1856,21 +1875,8 @@ function setupColorPresets() {
         '#888888'  // Gray
     ];
     
-    const backgroundColors = [
-        '#1e3c72', // Default blue
-        '#2a5298', // Light blue
-        '#000000', // Black
-        '#333333', // Dark gray
-        '#006400', // Dark green
-        '#800080', // Purple
-        '#8B0000', // Dark red
-        '#2F4F4F', // Dark slate gray
-        '#191970', // Midnight blue
-        '#556B2F', // Dark olive green
-        '#800000', // Maroon
-        '#483D8B', // Dark slate blue
-        '#2E2E2E'  // Very dark gray
-    ];
+    // CHANGE: Use the same color palette for backgrounds
+    const backgroundColors = colors;
     
     // Setup target color presets
     const targetPresets = document.getElementById('target-color-presets');
@@ -1879,6 +1885,29 @@ function setupColorPresets() {
     const backgroundPresets = document.getElementById('background-color-presets');
     
     if (targetPresets && friendlyPresets) {
+        // Add random color option for targets
+        const targetRandomPreset = document.createElement('div');
+        targetRandomPreset.className = 'color-preset random-color-preset';
+        targetRandomPreset.title = "Use random colors";
+        targetRandomPreset.addEventListener('click', () => {
+            gameConfig.useRandomColors = true;
+            console.log('Using random colors for targets');
+            saveConfigToCookie();
+        });
+        targetPresets.appendChild(targetRandomPreset);
+        
+        // Add random color option for friendlies
+        const friendlyRandomPreset = document.createElement('div');
+        friendlyRandomPreset.className = 'color-preset random-color-preset';
+        friendlyRandomPreset.title = "Use random colors";
+        friendlyRandomPreset.addEventListener('click', () => {
+            gameConfig.useRandomColors = true;
+            console.log('Using random colors for friendlies');
+            saveConfigToCookie();
+        });
+        friendlyPresets.appendChild(friendlyRandomPreset);
+        
+        // Regular colors
         colors.forEach(color => {
             // Create target preset
             const targetPreset = document.createElement('div');
@@ -1886,6 +1915,7 @@ function setupColorPresets() {
             targetPreset.style.backgroundColor = color;
             targetPreset.addEventListener('click', () => {
                 gameConfig.targetColor = color;
+                gameConfig.useRandomColors = false; // Disable random colors
                 document.getElementById('target-color').value = color;
                 saveConfigToCookie();
             });
@@ -1897,6 +1927,7 @@ function setupColorPresets() {
             friendlyPreset.style.backgroundColor = color;
             friendlyPreset.addEventListener('click', () => {
                 gameConfig.friendlyColor = color;
+                gameConfig.useRandomColors = false; // Disable random colors
                 document.getElementById('friendly-color').value = color;
                 saveConfigToCookie();
             });
@@ -2063,13 +2094,13 @@ function populateScoresDashboard() {
         const uniquePlayers = new Set(gameStats.gameSessionStats.map(game => game.playerName)).size;
         
         // Calculate overall accuracy from all games
-        const totalClicks = gameStats.gameSessionStats.reduce((sum, game) => sum + (game.clicks || 0), 0);
+        const totalClicks = gameStats.gameSessionStats.reduce((sum, game) => sum + (game.clicks || 0),  0);
         const totalHits = gameStats.gameSessionStats.reduce((sum, game) => sum + (game.hits || 0), 0);
         const overallAccuracy = totalClicks > 0 ? ((totalHits / totalClicks) * 100) : 0;
         
         overallStatsElement.innerHTML = `
             <div class="stat-item">
-                <span class="stat-label">Total Games:</span>
+                               <span class="stat-label">Total Games:</span>
                 <span class="stat-value">${gameStats.gameSessionStats.length}</span>
             </div>
             <div class="stat-item">

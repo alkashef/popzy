@@ -30,7 +30,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    opacity: 0.9; /* 90% transparency - much less transparent */
+    opacity: 1.0; /* 100% opacity - fully visible */
 }
 
 .rainbow-text {
@@ -1114,4 +1114,22 @@ input[type="color"] {
 .panel-copyright p {
     margin: 0;
     font-size: 10px;
+}
+
+/* Add this at the end of the style.css file */
+
+/* Random color preset */
+.random-color-preset {
+    background-image: linear-gradient(45deg, 
+        #ff0000 0%, #ff8800 14%, 
+        #ffff00 28%, #00ff00 42%, 
+        #00ffff 56%, #0000ff 70%, 
+        #ff00ff 84%, #ff0088 100%);
+    border: 2px solid white;
+    position: relative;
+}
+
+.random-color-preset:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
