@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browser Shooter</title>
+    <title>Shoot the Unicorn</title>
     <link rel="stylesheet" href="style.css">
     <meta name="author" content="Ahmad Alkashef">
     <meta name="copyright" content="Copyright © 2025 Ahmad Alkashef. All rights reserved. Proprietary Software.">
@@ -53,7 +53,7 @@
             <!-- Settings Button at bottom -->
             <div class="settings-container">
                 <button id="about-button" class="settings-btn" title="About this game">About</button>
-                <button id="scores-button" class="settings-btn" title="Statistics Dashboard">Stats</button>
+                <button id="scores-button" class="settings-btn" title="Statistics Dashboard">Scores</button>
                 <button id="settings-button" class="settings-btn" title="Settings">Settings</button>
             </div>
             
@@ -99,46 +99,55 @@
                             <div class="settings-column">
                                 <div class="setting-group">
                                     <label for="player-name">Player Name:</label>
-                                    <input type="text" id="player-name" maxlength="20" placeholder="Enter your name">
+                                    <div class="control-wrapper">
+                                        <input type="text" id="player-name" maxlength="20" placeholder="Enter your name">
+                                    </div>
                                 </div>
                                 <div class="setting-group">
                                     <label for="speed">Speed:</label>
-                                    <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
-                                    <span id="speed-value">1.0x</span>
+                                    <div class="control-wrapper">
+                                        <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
+                                        <span id="speed-value">1.0x</span>
+                                    </div>
                                 </div>
                                 <div class="setting-group">
                                     <label for="randomness">Path Randomness:</label>
-                                    <input type="range" id="randomness" min="0" max="1" step="0.1" value="0.5">
-                                    <span id="randomness-value">0.5</span>
+                                    <div class="control-wrapper">
+                                        <input type="range" id="randomness" min="0" max="1" step="0.1" value="0.5">
+                                        <span id="randomness-value">0.5</span>
+                                    </div>
                                 </div>
                                 <div class="setting-group">
                                     <label for="spawnRate">Objects / min:</label>
-                                    <input type="range" id="spawnRate" min="10" max="120" step="5" value="60">
-                                    <span id="spawnRate-value">60</span>
+                                    <div class="control-wrapper">
+                                        <input type="range" id="spawnRate" min="10" max="120" step="5" value="60">
+                                        <span id="spawnRate-value">60</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="settings-column">
                                 <div class="setting-group">
                                     <label for="ratio">Target/Friendly Ratio:</label>
-                                    <input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5">
-                                    <span id="ratio-value">0.50</span>
-                                </div>
-                                <div class="setting-group">
-                                    <div class="checkbox-group">
-                                        <label for="miss-penalty-enabled">
-                                            <input type="checkbox" id="miss-penalty-enabled">
-                                            Miss Penalty
-                                        </label>
+                                    <div class="control-wrapper">
+                                        <input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5">
+                                        <span id="ratio-value">0.50</span>
                                     </div>
                                 </div>
                                 <div class="setting-group">
+                                    <label>Miss Penalty:</label>
                                     <div class="checkbox-group">
-                                        <label for="show-object-paths">
-                                            <input type="checkbox" id="show-object-paths">
-                                            Show Object Paths
-                                        </label>
+                                        <input type="checkbox" id="miss-penalty-enabled">
+                                        <label for="miss-penalty-enabled">Enable</label>
                                     </div>
                                 </div>
+                                <div class="setting-group">
+                                    <label>Show Object Paths:</label>
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="show-object-paths">
+                                        <label for="show-object-paths">Enable</label>
+                                    </div>
+                                </div>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -243,9 +252,9 @@
                             <div class="settings-column">
                                 <div class="setting-group">
                                     <div class="checkbox-group">
-                                        <label for="caption-enabled" style="display: none;">
+                                        <label for="caption-enabled">
                                             <input type="checkbox" id="caption-enabled">
-                                            Scrolling Caption
+                                            Enable Captions
                                         </label>
                                     </div>
                                 </div>
@@ -322,7 +331,7 @@
         <div id="scores-modal" class="hidden">
             <div class="settings-modal-content">
                 <div class="settings-header">
-                    <h2>Scores Dashboard</h2>
+                    <h2>Scores</h2>
                 </div>
                 <div class="scores-content">
                     <div class="scores-grid">
@@ -359,7 +368,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="settings-footer">
+                <div class="settings-footer scores-footer">
                     <button id="scores-ok-button" class="settings-ok-btn">OK</button>
                 </div>
             </div>

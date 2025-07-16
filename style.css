@@ -15,7 +15,7 @@
 #game-title-header {
     position: fixed;
     top: 10px;
-    left: 50%;
+    left: calc(50vw - 100px); /* Center of canvas: half of (100vw - 200px panel) */
     transform: translateX(-50%);
     z-index: 1001;
     text-align: center;
@@ -670,6 +670,10 @@ body {
 
 .setting-group {
     margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
 }
 
 .setting-group:last-child {
@@ -677,10 +681,34 @@ body {
 }
 
 .setting-group label {
-    display: block;
-    margin-bottom: 8px;
+    flex: 0 0 auto;
+    min-width: 140px;
     font-weight: bold;
     color: #e0e0e0;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.setting-group .control-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.setting-group .checkbox-group {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.setting-group .checkbox-group label {
+    min-width: auto;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .setting-group input[type="range"] {
@@ -1021,11 +1049,9 @@ input[type="color"] {
     transition: width 0.3s ease;
 }
 
-.histogram-count {
-    color: #00ff88;
-    font-weight: bold;
-    min-width: 30px;
-    text-align: right;
+/* Scores Footer - Right-aligned OK button */
+.scores-footer {
+    justify-content: flex-end !important;
 }
 
 /* About Modal Styles */

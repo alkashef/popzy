@@ -191,7 +191,7 @@ function resetConfigToDefaults() {
         timeLimit: GAME_CONFIG.DEFAULT_TIME_LIMIT,
         scoreLimitEnabled: GAME_CONFIG.DEFAULT_SCORE_LIMIT_ENABLED,
         scoreLimit: GAME_CONFIG.DEFAULT_SCORE_LIMIT,
-        captionEnabled: false, // Changed from GAME_CONFIG.DEFAULT_CAPTION_ENABLED to false
+        captionEnabled: true, // Enable captions by default
         captionDirection: GAME_CONFIG.DEFAULT_CAPTION_DIRECTION,
         captionColor: GAME_CONFIG.DEFAULT_CAPTION_COLOR,
         captionSize: GAME_CONFIG.DEFAULT_CAPTION_SIZE,
@@ -2072,15 +2072,15 @@ function populateScoresDashboard() {
         
         latestRankingsElement.innerHTML = `
             <div class="rank-item">
-                <strong>Rate Rank:</strong> #${rateRank} of ${gameStats.gameSessionStats.length} games<br>
-                <span style="color: #00ff88;">Rate: ${latestGame.averageHitRate} hits/min</span>
-            </div>
-            <div class="rank-item">
-                <strong>Score Rank:</strong> #${scoreRank} of ${gameStats.gameSessionStats.length} games<br>
+                <strong>Score Rank:</strong> ${scoreRank} of ${gameStats.gameSessionStats.length} games<br>
                 <span style="color: #00ff88;">Score: ${latestGame.score}</span>
             </div>
             <div class="rank-item">
-                <strong>Accuracy Rank:</strong> #${accuracyRank} of ${gameStats.gameSessionStats.length} games<br>
+                <strong>Rate Rank:</strong> ${rateRank} of ${gameStats.gameSessionStats.length} games<br>
+                <span style="color: #00ff88;">Rate: ${latestGame.averageHitRate} hits/min</span>
+            </div>
+            <div class="rank-item">
+                <strong>Accuracy Rank:</strong> ${accuracyRank} of ${gameStats.gameSessionStats.length} games<br>
                 <span style="color: #00ff88;">Accuracy: ${(latestGame.accuracy || 0).toFixed(1)}%</span>
             </div>
         `;
