@@ -907,6 +907,57 @@ function updateBackgroundImage(event) {
 let wasGameRunningBeforeSettings = false;
 let wasGameRunningBeforeScores = false;
 
+// Calculate and set consistent height for modal tabs
+function setConsistentModalHeight(modalSelector, tabContentSelector) {
+    const modal = document.querySelector(modalSelector);
+    if (!modal) return;
+    
+    const tabContents = modal.querySelectorAll(tabContentSelector);
+    if (tabContents.length === 0) return;
+    
+    // Temporarily show all tab contents to measure their heights
+    let maxHeight = 0;
+    const originalDisplays = [];
+    
+    tabContents.forEach((tabContent, index) => {
+        // Store original display state
+        originalDisplays[index] = tabContent.style.display;
+        
+        // Temporarily show the tab content
+        tabContent.style.display = 'block';
+        tabContent.style.visibility = 'hidden'; // Hide visually but allow measurement
+        
+        // Measure the height
+        const height = tabContent.offsetHeight;
+        if (height > maxHeight) {
+            maxHeight = height;
+        }
+    });
+    
+    // Restore original display states
+    tabContents.forEach((tabContent, index) => {
+        tabContent.style.display = originalDisplays[index];
+        tabContent.style.visibility = 'visible';
+    });
+    
+    // Set the content area to the maximum height to prevent resize
+    let contentArea = modal.querySelector('.settings-content');
+    if (!contentArea) {
+        contentArea = modal.querySelector('.about-content');
+    }
+    if (!contentArea) {
+        contentArea = modal.querySelector('.scores-content');
+    }
+    
+    if (contentArea && maxHeight > 0) {
+        // Set consistent height
+        contentArea.style.height = maxHeight + 'px';
+        contentArea.style.overflowY = 'hidden'; // No scrollbars
+        
+        console.log(`Set ${modalSelector} content height to ${maxHeight}px`);
+    }
+}
+
 function openSettingsModal() {
     console.log('Opening settings modal');
     
@@ -922,6 +973,11 @@ function openSettingsModal() {
     const settingsModal = document.getElementById('settings-modal');
     if (settingsModal) {
         settingsModal.classList.remove('hidden');
+        
+        // Set consistent height after modal is visible
+        setTimeout(() => {
+            setConsistentModalHeight('#settings-modal', '.settings-tab-content');
+        }, 10);
     }
 }
 
@@ -932,6 +988,13 @@ function closeSettingsModal() {
     const settingsModal = document.getElementById('settings-modal');
     if (settingsModal) {
         settingsModal.classList.add('hidden');
+        
+        // Reset content height to auto for next opening
+        const settingsContent = settingsModal.querySelector('.settings-content');
+        if (settingsContent) {
+            settingsContent.style.height = 'auto';
+            settingsContent.style.overflowY = 'visible';
+        }
     }
     
     // Resume game if it was running before settings were opened
@@ -989,6 +1052,11 @@ function openAboutModal() {
     const aboutModal = document.getElementById('about-modal');
     if (aboutModal) {
         aboutModal.classList.remove('hidden');
+        
+        // Set consistent height after modal is visible
+        setTimeout(() => {
+            setConsistentModalHeight('#about-modal', '.tab-content');
+        }, 10);
     }
 }
 
@@ -999,6 +1067,13 @@ function closeAboutModal() {
     const aboutModal = document.getElementById('about-modal');
     if (aboutModal) {
         aboutModal.classList.add('hidden');
+        
+        // Reset content height to auto for next opening
+        const aboutContent = aboutModal.querySelector('.about-content');
+        if (aboutContent) {
+            aboutContent.style.height = 'auto';
+            aboutContent.style.overflowY = 'visible';
+        }
     }
 }
 

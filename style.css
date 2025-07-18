@@ -317,14 +317,15 @@
     padding: 20px;
     max-width: 1100px;
     width: 90%;
-    height: 75vh;
-    max-height: 75vh;
-    min-height: 500px;
+    height: auto;
+    max-height: 90vh;
+    min-height: auto;
     color: #e0e0e0;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     position: relative;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 /* Scores Modal - Auto height to fit content */
@@ -445,9 +446,9 @@
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-bottom: 15px;
-    height: 350px; /* Reduced height to fit without scrolling */
+    min-height: 350px; /* Minimum height to maintain reasonable size */
     padding: 15px;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .settings-column {
@@ -703,7 +704,7 @@ body {
 .settings-content {
     padding: 0;
     flex: 1;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .setting-group {
@@ -1198,7 +1199,7 @@ input[type="color"] {
 .about-content {
     padding: 20px;
     flex: 1;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 /* Panel Copyright at bottom of right panel */
