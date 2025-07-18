@@ -521,7 +521,7 @@ body {
 .game-caption {
     position: fixed;
     bottom: 20px;
-    left: 50%;
+    left: calc((100vw - 200px) / 2); /* Center between left edge and right panel */
     transform: translateX(-50%);
     width: auto;
     max-width: calc(100vw - 240px); /* Account for right panel */
@@ -868,7 +868,8 @@ input[type="color"] {
     }
     
     .game-caption {
-        width: calc(100vw - 150px);
+        left: calc((100vw - 150px) / 2); /* Center between left edge and right panel */
+        max-width: calc(100vw - 170px);
     }
     
     #score {
@@ -926,6 +927,7 @@ input[type="color"] {
     }
     
     .game-caption {
+        left: calc((100vw - 150px) / 2); /* Center between left edge and right panel */
         max-width: calc(100vw - 170px);
     }
     
