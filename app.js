@@ -857,7 +857,7 @@ function setupEventListeners() {
     }
 
     // About OK button
-    const aboutOkButton = document.getElementById('about-ok-button');
+    const aboutOkButton = document.getElementById('close-about');
     if (aboutOkButton) {
         aboutOkButton.addEventListener('click', closeAboutModal);
     }
@@ -2071,6 +2071,7 @@ function populateScoresDashboard() {
         const accuracyRank = calculateAccuracyRank(latestGame.accuracy || 0);
         
         latestRankingsElement.innerHTML = `
+           
             <div class="rank-item">
                 <strong>Score Rank:</strong> ${scoreRank} of ${gameStats.gameSessionStats.length} games<br>
                 <span style="color: #00ff88;">Score: ${latestGame.score}</span>
@@ -2194,4 +2195,25 @@ function calculateAccuracyRank(accuracy) {
         .map(game => game.accuracy || 0)
         .sort((a, b) => b - a);
     return sortedAccuracies.indexOf(accuracy) + 1;
+}
+
+// About page tab switching
+function showAboutTab(tabName) {
+    // Hide all tab contents
+    const allTabs = document.querySelectorAll('.tab-content');
+    allTabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Remove active class from all tab buttons
+    const allButtons = document.querySelectorAll('.tab-button');
+    allButtons.forEach(button => button.classList.remove('active'));
+    
+    // Show selected tab
+    const selectedTab = document.getElementById(tabName + '-tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Highlight selected button
+    const selectedButton = event.target;
+    selectedButton.classList.add('active');
 }

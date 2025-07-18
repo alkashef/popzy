@@ -361,7 +361,7 @@
                         
                         <!-- Game End Reasons Histogram -->
                         <div class="scores-section">
-                            <h3 class="scores-section-title">Game End Reasons</h3>
+                            <h3 class="scores-section-title">Game Ends</h3>
                             <div id="game-end-histogram">
                                 <!-- Will be populated by JavaScript -->
                             </div>
@@ -378,36 +378,41 @@
         <div id="about-modal" class="hidden">
             <div class="settings-modal-content">
                 <div class="settings-header">
-                    <h2>About Shoot the Unicorn</h2>
+                    <h2>About</h2>
                 </div>
                 <div class="about-content">
-                    <div class="about-section">
-                        <h3>How to Play (Simple for Kids)</h3>
-                        <div class="how-to-play">
-                            <p>🎯 <strong>Shoot targets:</strong> Score +1 point</p>
-                            <p>❌ <strong>Shoot friendly objects:</strong> Score -1 point</p>
-                            <p>🏁 <strong>Game ends if:</strong></p>
-                            <ul>
-                                <li>You shoot the unicorn</li>
-                                <li>You press the stop button</li>
-                                <li>Your score goes below zero</li>
-                            </ul>
-                        </div>
+                    <!-- Tab buttons -->
+                    <div class="about-tabs">
+                        <button class="tab-button active" onclick="showAboutTab('howtoplay')">How to Play</button>
+                        <button class="tab-button" onclick="showAboutTab('license')">License</button>
                     </div>
                     
-                    <div class="about-section">
+                    <!-- How to Play Tab -->
+                    <div id="howtoplay-tab" class="tab-content active">
+                        <h3>How to Play</h3>
+                        <ul>
+                            <li>🎯 Shoot targets: Score increases by 1</li>
+                            <li>❌ Shoot friendly objects: Score decreases by 1</li>
+                            <li>🏁 Game ends if: You shoot the unicorn, press stop, or score goes below zero</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- License Tab -->
+                    <div id="license-tab" class="tab-content">
                         <h3>License</h3>
-                        <div class="license-info">
-                            <p><strong>Copyright © 2025 Ahmad Alkashef</strong></p>
-                            <p>Email: alkashef@gmail.com</p>
-                            <p><strong>PROPRIETARY SOFTWARE - PERSONAL USE ONLY</strong></p>
-                            <p>This software is the exclusive property of Ahmad Alkashef. Unauthorized reproduction, distribution, or use is strictly prohibited.</p>
-                            <p>Licensed exclusively to: Ahmad Alkashef</p>
-                        </div>
+                        <p><strong>Copyright © 2025 Ahmad Alkashef (alkashef@gmail.com)</strong></p>
+                        <p><strong>All rights reserved.</strong></p>
+                        <br>
+                        <p><strong>PROPRIETARY SOFTWARE - PERSONAL USE ONLY</strong></p>
+                        <p>This software is the exclusive property of Ahmad Alkashef.</p>
+                        <p>Unauthorized reproduction, distribution, or use is strictly prohibited.</p>
+                        <br>
+                        <p><strong>Licensed exclusively to:</strong> Ahmad Alkashef</p>
+                        <p><strong>Contact:</strong> alkashef@gmail.com</p>
                     </div>
                 </div>
-                <div class="settings-footer">
-                    <button id="about-ok-button" class="settings-ok-btn">OK</button>
+                <div class="settings-footer about-footer">
+                    <button id="close-about" class="settings-ok-btn">OK</button>
                 </div>
             </div>
         </div>

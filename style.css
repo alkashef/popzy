@@ -1075,56 +1075,70 @@ input[type="color"] {
     display: none;
 }
 
+/* About page tabs */
+.about-tabs {
+    display: flex;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tab-button.active {
+    border-bottom-color: #ffffff;
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.tab-content ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.tab-content ul li {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #e0e0e0;
+}
+
+.tab-content p {
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #e0e0e0;
+}
+
 .about-content {
     padding: 20px;
-    max-height: 50vh;
+    max-height: 60vh;
     overflow-y: auto;
-}
-
-.about-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.about-section h3 {
-    color: #00ff88;
-    font-size: 20px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 8px;
-}
-
-.how-to-play p {
-    font-size: 16px;
-    margin: 12px 0;
-    color: #e0e0e0;
-}
-
-.how-to-play ul {
-    margin-left: 20px;
-    margin-top: 8px;
-}
-
-.how-to-play li {
-    font-size: 16px;
-    margin: 8px 0;
-    color: #e0e0e0;
-    list-style-type: disc;
-}
-
-.license-info p {
-    font-size: 14px;
-    margin: 10px 0;
-    color: #e0e0e0;
-    line-height: 1.4;
-}
-
-.license-info p:first-child {
-    font-size: 16px;
-    color: #00ff88;
 }
 
 /* Panel Copyright at bottom of right panel */
@@ -1158,4 +1172,67 @@ input[type="color"] {
 .random-color-preset:hover {
     transform: scale(1.1);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* About modal footer - right align OK button */
+.about-footer {
+    justify-content: flex-end !important;
+}
+
+/* About page tabs */
+.about-tabs {
+    display: flex;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tab-button.active {
+    border-bottom-color: #ffffff;
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.tab-content ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.tab-content ul li {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.tab-content p {
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.4;
 }
