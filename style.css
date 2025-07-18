@@ -327,6 +327,44 @@
     flex-direction: column;
 }
 
+/* Scores Modal - Auto height to fit content */
+.scores-modal-content {
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+    border: 2px solid #666;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 1100px;
+    width: 90%;
+    height: auto;
+    max-height: 90vh;
+    min-height: auto;
+    color: #e0e0e0;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* About Modal - Auto height to fit content */
+.about-modal-content {
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+    border: 2px solid #666;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 800px;
+    width: 90%;
+    height: auto;
+    max-height: 80vh;
+    min-height: auto;
+    color: #e0e0e0;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
 .settings-header {
     display: flex;
     justify-content: space-between;
@@ -899,7 +937,9 @@ input[type="color"] {
         gap: 20px;
     }
     
-    .settings-modal-content {
+    .settings-modal-content,
+    .scores-modal-content,
+    .about-modal-content {
         max-width: 800px;
     }
     
@@ -915,7 +955,9 @@ input[type="color"] {
 }
 
 @media (max-width: 1024px) {
-    .settings-modal-content {
+    .settings-modal-content,
+    .scores-modal-content,
+    .about-modal-content {
         max-width: 700px;
     }
 }
@@ -931,9 +973,25 @@ input[type="color"] {
         max-width: calc(100vw - 170px);
     }
     
-    .settings-modal-content {
+    .settings-modal-content,
+    .scores-modal-content,
+    .about-modal-content {
         max-width: 95%;
         padding: 15px;
+    }
+    
+    .scores-modal-content {
+        max-height: 95vh;
+    }
+    
+    .about-modal-content {
+        max-height: 90vh;
+        max-width: 95%;
+    }
+    
+    .scores-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
     
     .category-title {
@@ -1139,7 +1197,7 @@ input[type="color"] {
 
 .about-content {
     padding: 20px;
-    max-height: 60vh;
+    flex: 1;
     overflow-y: auto;
 }
 
