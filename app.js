@@ -1198,12 +1198,11 @@ function stopGame(endReason = 'manual') {
         const gameStatsElement = document.getElementById('game-statistics');
         if (gameStatsElement) {
             gameStatsElement.innerHTML = `
-                <div><strong>Total Hits:</strong> ${currentGameHits}</div>
                 <div><strong>Total Clicks:</strong> ${currentGameClicks}</div>
+                <div><strong>Total Target Hits:</strong> ${currentGameHits}</div>
+                <div><strong>Targets Missed:</strong> ${currentGameMisses}</div>
                 <div><strong>Accuracy:</strong> ${accuracy.toFixed(1)}%</div>
-                <div><strong>Total Targets Missed:</strong> ${currentGameTargetsPenalized}</div>
-                <div><strong>Total Hits Missed:</strong> ${currentGameMisses}</div>
-                <div><strong>Game End Reason:</strong> ${getEndReasonText(endReason)}</div>
+                <div><strong>Game End:</strong> ${getEndReasonText(endReason)}</div>
             `;
         }
     }

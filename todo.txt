@@ -1,0 +1,11 @@
+#codebase 
+about window:
+- make the window height fixed; dont changed it when tabs changes
+- nake the window height the max of the two tabs
+- dont use vertical scroll bars
+- new game description:
+     -- Click Play and colourful objects start drifting across the playfield. 
+     -- Some are “targets” you want to shoot; others are “friendlies” you should avoid.
+     -- Your mouse is the blaster. 
+     -- Hit a target for +1 point, hit a friendly for –1, and (optionally) miss for another –1.   
+     -- The session ends when you: reach a time limit, hit a score cap, let your score drop below zero, or press Stop.
