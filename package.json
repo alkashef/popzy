@@ -7,9 +7,14 @@
   "private": true,
   "copyright": "Copyright © 2025 Ahmad Alkashef. All rights reserved. Proprietary Software.",
   "scripts": {
-    "start": "npx http-server -c-1 -p 8080"
+  "start": "npx http-server -c-1 -p 8080",
+  "test:e2e": "playwright test",
+  "test": "playwright test",
+  "test:unit": "node tests/unit/runner.js",
+  "test:all": "npm run test:unit && npm test"
   },
   "devDependencies": {
-    "http-server": "^14.1.1"
+  "http-server": "^14.1.1",
+  "@playwright/test": "^1.46.0"
   }
 }

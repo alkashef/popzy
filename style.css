@@ -1,3 +1,6 @@
+:root {
+    --right-panel-width: 200px;
+}
 /*
  * Shoot the Unicorn Game
  * Copyright © 2025 Ahmad Alkashef (alkashef@gmail.com)
@@ -15,7 +18,7 @@
 #game-title-header {
     position: fixed;
     top: 10px;
-    left: calc(50vw - 100px); /* Center of canvas: half of (100vw - 200px panel) */
+    left: calc(50vw - (var(--right-panel-width) / 2)); /* Center of canvas based on panel width */
     transform: translateX(-50%);
     z-index: 1001;
     text-align: center;
@@ -70,7 +73,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 200px;
+    width: var(--right-panel-width);
     height: 100vh;
     background: linear-gradient(135deg, rgba(74, 74, 74, 0.3), rgba(42, 42, 42, 0.3));
     color: #e0e0e0;
@@ -284,8 +287,8 @@
 
 /* Game canvas adjustment for right panel */
 #gameCanvas {
-    margin-right: 200px;
-    width: calc(100vw - 200px);
+    margin-right: var(--right-panel-width);
+    width: calc(100vw - var(--right-panel-width));
     height: 100vh;
 }
 
@@ -512,8 +515,8 @@ body {
     cursor: crosshair;
     z-index: 1;
     position: relative;
-    margin-right: 200px;
-    width: calc(100vw - 200px);
+    margin-right: var(--right-panel-width);
+    width: calc(100vw - var(--right-panel-width));
     height: 100vh;
 }
 
@@ -837,7 +840,7 @@ input[type="color"] {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-    max-width: 200px;
+    max-width: var(--right-panel-width);
 }
 
 .color-preset {
