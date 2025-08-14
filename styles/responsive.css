@@ -21,6 +21,8 @@
   #gameCanvas { margin-right: 150px; width: calc(100vw - 150px); }
   .game-caption { left: calc((100vw - 150px) / 2); max-width: calc(100vw - 170px); }
   .settings-modal-content, .scores-modal-content, .about-modal-content { max-width: 95%; padding: 15px; }
+  .settings-footer { justify-content: center; gap: 8px; }
+  .reset-settings-btn, .settings-ok-btn { width: 100%; min-width: 0; }
   .scores-modal-content { max-height: 95vh; }
   .about-modal-content { max-height: 90vh; max-width: 95%; }
   .scores-grid { grid-template-columns: 1fr; gap: 15px; }
