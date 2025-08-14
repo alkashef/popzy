@@ -1,8 +1,51 @@
-// Game Engine: encapsulates loop, spawning, updating, timing, and click handling.
-// DOM/UI concerns are handled by the host via callbacks.
+/**
+ * Module: Systems/Game Engine
+ * Responsibility:
+ * - Encapsulate core gameplay loop: spawn, update, render, timing, and input hit-testing.
+ * - Remain UI-agnostic; communicate via host-provided hooks (callbacks) only.
+ * - Enforce end conditions: friendly hit, score < 0, time limit, score limit, manual stop.
+ * Notes:
+ * - Uses requestAnimationFrame; also installs a 250ms setInterval ticker to enforce
+ *   time limits robustly in headless browsers (where rAF may be throttled).
+ */
+
+/**
+ * @typedef {Object} EngineHooks
+ * @property {(newScore:number)=>void} [onScoreChange]
+ * @property {(text:string)=>void} [onTimerUpdate]
+ * @property {(word:string)=>void} [onAddCaptionWord]
+ * @property {(key:string)=>void} [onPlaySound]
+ * @property {(reason:string, session:object, meta:{durationMs:number})=>void} [onStop]
+ */
+
+/**
+ * @typedef {Object} EngineAPI
+ * @property {()=>void} start
+ * @property {()=>void} pause
+ * @property {()=>void} resume
+ * @property {(reason?:string)=>void} stop
+ * @property {(x:number, y:number)=>void} handlePointer
+ * @property {(nextConfig:Object)=>void} setConfig
+ * @property {(nextAssets:Object)=>void} setAssets
+ * @property {()=>Object} getState
+ */
 
 import { GAME_CONFIG_DEFAULTS } from '../core/config.js';
 
+/**
+ * Create a new game engine instance.
+ * Inputs are plain objects and functions so the engine stays framework-free.
+ *
+ * @param {{
+ *  canvas: HTMLCanvasElement,
+ *  ctx: CanvasRenderingContext2D,
+ *  gameConfig: any,
+ *  renderFrame: (ctx:CanvasRenderingContext2D, canvas:HTMLCanvasElement, cfg:any, objects:any[], started:boolean)=>void,
+ *  assets: { friendlyImages?: HTMLImageElement[] },
+ *  hooks?: EngineHooks,
+ * }} deps
+ * @returns {EngineAPI}
+ */
 export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets, hooks }) {
   const state = {
     gameObjects: [],
@@ -21,6 +64,8 @@ export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets,
     clicks: 0,
     targetsPenalized: 0,
     endReason: '',
+  // timers
+  limitTickerId: 0,
   };
 
   function setAssets(nextAssets) {
@@ -47,7 +92,19 @@ export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets,
     state.clicks = 0;
     state.targetsPenalized = 0;
     state.endReason = '';
-  requestAnimationFrame(raf);
+    // start raf loop
+    requestAnimationFrame(raf);
+    // start resilient time-limit ticker (in case rAF is throttled in headless)
+    if (gameConfig.timeLimitEnabled) {
+      if (state.limitTickerId) clearInterval(state.limitTickerId);
+      state.limitTickerId = setInterval(() => {
+        if (!state.started || state.paused) return;
+        const now = Date.now();
+        const elapsed = now - state.gameStartTime - state.totalPausedTime;
+        const elapsedSec = Math.floor(elapsed / 1000);
+        if (elapsedSec >= gameConfig.timeLimit) stop('time_limit');
+      }, 250);
+    }
   }
 
   function pause() {
@@ -67,6 +124,10 @@ export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets,
   function stop(reason = 'manual') {
     if (!state.started) return;
     state.endReason = reason;
+    if (state.limitTickerId) {
+      clearInterval(state.limitTickerId);
+      state.limitTickerId = 0;
+    }
 
     // duration (account for paused time)
     const endTime = Date.now();

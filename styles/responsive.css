@@ -1,0 +1,30 @@
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #right-panel { width: 150px; padding: 15px; gap: 10px; }
+  #gameCanvas { margin-right: 150px; width: calc(100vw - 150px); }
+  .game-caption { left: calc((100vw - 150px) / 2); max-width: calc(100vw - 170px); }
+  #score { min-height: 110px; padding: 10px; gap: 2px; }
+  .score-label { margin-bottom: 2px; }
+  .score-number { font-size: 42px; }
+  #player-name-display { font-size: 14px; padding: 8px 10px; }
+}
+@media (max-width: 1200px) {
+  .settings-grid { grid-template-columns: 1fr; gap: 20px; }
+  .settings-modal-content, .scores-modal-content, .about-modal-content { max-width: 800px; }
+  .settings-tabs { flex-wrap: wrap; }
+  .settings-tab { min-width: 100px; padding: 10px 15px; font-size: 14px; }
+}
+@media (max-width: 1024px) {
+  .settings-modal-content, .scores-modal-content, .about-modal-content { max-width: 700px; }
+}
+@media (max-width: 768px) {
+  #gameCanvas { margin-right: 150px; width: calc(100vw - 150px); }
+  .game-caption { left: calc((100vw - 150px) / 2); max-width: calc(100vw - 170px); }
+  .settings-modal-content, .scores-modal-content, .about-modal-content { max-width: 95%; padding: 15px; }
+  .scores-modal-content { max-height: 95vh; }
+  .about-modal-content { max-height: 90vh; max-width: 95%; }
+  .scores-grid { grid-template-columns: 1fr; gap: 15px; }
+  .category-title { font-size: 16px; }
+  .settings-tabs { gap: 2px; }
+  .settings-tab { min-width: 80px; padding: 8px 12px; font-size: 12px; }
+}

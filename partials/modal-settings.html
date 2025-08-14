@@ -1,0 +1,107 @@
+<div id="settings-modal" class="hidden">
+  <div class="settings-modal-content">
+    <div class="settings-header">
+      <h2>Game Settings</h2>
+    </div>
+    <div class="settings-content">
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="gameplay">Gameplay</button>
+        <button class="settings-tab" data-tab="visual">Visual</button>
+        <button class="settings-tab" data-tab="content">Content</button>
+        <button class="settings-tab" data-tab="caption">Caption</button>
+        <button class="settings-tab" data-tab="game-end">Game End</button>
+      </div>
+      <div class="settings-tab-content active" id="tab-gameplay">
+        <div class="settings-grid">
+          <div class="settings-column">
+            <div class="setting-group">
+              <label for="player-name">Player Name:</label>
+              <div class="control-wrapper"><input type="text" id="player-name" maxlength="20" placeholder="Enter your name"></div>
+            </div>
+            <div class="setting-group">
+              <label for="speed">Speed:</label>
+              <div class="control-wrapper"><input type="range" id="speed" min="0.5" max="3" step="0.1" value="1"><span id="speed-value">1.0x</span></div>
+            </div>
+            <div class="setting-group">
+              <label for="randomness">Path Randomness:</label>
+              <div class="control-wrapper"><input type="range" id="randomness" min="0" max="1" step="0.1" value="0.5"><span id="randomness-value">0.5</span></div>
+            </div>
+            <div class="setting-group">
+              <label for="spawnRate">Objects / min:</label>
+              <div class="control-wrapper"><input type="range" id="spawnRate" min="10" max="120" step="5" value="60"><span id="spawnRate-value">60</span></div>
+            </div>
+          </div>
+          <div class="settings-column">
+            <div class="setting-group">
+              <label for="ratio">Target/Friendly Ratio:</label>
+              <div class="control-wrapper"><input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5"><span id="ratio-value">0.50</span></div>
+            </div>
+            <div class="setting-group">
+              <label>Miss Penalty:</label>
+              <div class="checkbox-group"><input type="checkbox" id="miss-penalty-enabled"><label for="miss-penalty-enabled">Enable</label></div>
+            </div>
+            <div class="setting-group">
+              <label>Show Object Paths:</label>
+              <div class="checkbox-group"><input type="checkbox" id="show-object-paths"><label for="show-object-paths">Enable</label></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-visual">
+        <div class="settings-grid">
+          <div class="settings-column">
+            <div class="setting-group"><label for="object-size">Object Size:</label><input type="range" id="object-size" min="10" max="80" step="1" value="20"><span id="object-size-value">20</span></div>
+            <div class="setting-group"><label for="size-variation">Size Variation:</label><input type="range" id="size-variation" min="0" max="0.8" step="0.1" value="0.3"><span id="size-variation-value">0.3</span></div>
+            <div class="setting-group"><label for="background-image">Background Image:</label><input type="file" id="background-image" accept="image/*"></div>
+            <div class="setting-group"><label for="background-color">Background Color:</label><div class="color-options"><input type="color" id="background-color" value="#4444ff"><div class="color-presets" id="background-color-presets"></div></div></div>
+            <div class="setting-group"><label for="target-transparency">Target Transparency:</label><input type="range" id="target-transparency" min="0.1" max="1.0" step="0.1" value="1.0"><span id="target-transparency-value">100%</span></div>
+            <div class="setting-group"><label for="friendly-transparency">Friendly Transparency:</label><input type="range" id="friendly-transparency" min="0.1" max="1.0" step="0.1" value="1.0"><span id="friendly-transparency-value">100%</span></div>
+            <div class="setting-group"><label for="friendly-images-transparency">Friendly Images Transparency:</label><input type="range" id="friendly-images-transparency" min="0.1" max="1.0" step="0.1" value="1.0"><span id="friendly-images-transparency-value">100%</span></div>
+            <div class="setting-group"><div class="checkbox-group"><label for="object-shadows"><input type="checkbox" id="object-shadows">Object Shadows</label></div></div>
+          </div>
+          <div class="settings-column">
+            <div class="setting-group"><label>Target Color:</label><div class="color-options"><input type="color" id="target-color" value="#ff4444"><div class="color-presets" id="target-color-presets"></div></div></div>
+            <div class="setting-group"><label>Friendly Color:</label><div class="color-options"><input type="color" id="friendly-color" value="#4444ff"><div class="color-presets" id="friendly-color-presets"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-content">
+        <div class="settings-grid">
+          <div class="settings-column">
+            <div class="setting-group"><label for="target-words">Target Words:</label><textarea id="target-words" rows="3" placeholder="Enter words separated by spaces (e.g. apple banana cherry)"></textarea></div>
+          </div>
+          <div class="settings-column">
+            <div class="setting-group"><label for="friendly-words">Friendly Words:</label><textarea id="friendly-words" rows="3" placeholder="Enter words separated by spaces (e.g. friend buddy ally)"></textarea></div>
+            <div class="setting-group"><label for="friendly-mode">Friendly Display Mode:</label><select id="friendly-mode"><option value="images">Images Only</option><option value="words">Words Only</option><option value="both">Images & Words</option></select></div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-caption">
+        <div class="settings-grid">
+          <div class="settings-column">
+            <div class="setting-group"><div class="checkbox-group"><label for="caption-enabled"><input type="checkbox" id="caption-enabled">Enable Captions</label></div></div>
+            <div class="setting-group"><label for="caption-direction">Caption Direction:</label><select id="caption-direction"><option value="left">Right to Left</option><option value="right">Left to Right</option></select></div>
+            <div class="setting-group"><label for="caption-max-tokens">Max Tokens on Screen:</label><input type="range" id="caption-max-tokens" min="1" max="10" step="1" value="5"><span id="caption-max-tokens-value">5</span></div>
+          </div>
+          <div class="settings-column">
+            <div class="setting-group"><label for="caption-color">Caption Color:</label><div class="color-options"><input type="color" id="caption-color" value="#ffffff"><div class="color-presets" id="caption-color-presets"></div></div></div>
+            <div class="setting-group"><label for="caption-size">Caption Text Size:</label><input type="range" id="caption-size" min="12" max="36" step="2" value="18"><span id="caption-size-value">18px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-game-end">
+        <div class="settings-grid">
+          <div class="settings-column">
+            <div class="setting-group"><div class="checkbox-group"><label for="time-limit-enabled"><input type="checkbox" id="time-limit-enabled">Time Limit</label></div></div>
+            <label for="time-limit">Duration (seconds):</label><input type="range" id="time-limit" min="30" max="600" step="30" value="120"><span id="time-limit-value">2:00</span>
+          </div>
+          <div class="settings-column">
+            <div class="setting-group"><div class="checkbox-group"><label for="score-limit-enabled"><input type="checkbox" id="score-limit-enabled">Score Limit</label></div></div>
+            <label for="score-limit">Target Score:</label><input type="range" id="score-limit" min="10" max="200" step="5" value="50"><span id="score-limit-value">50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-footer"><button id="reset-settings-button" class="reset-settings-btn">Reset to Defaults</button><button id="settings-ok-button" class="settings-ok-btn">OK</button></div>
+  </div>
+</div>

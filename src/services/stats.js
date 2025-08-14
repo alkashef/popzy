@@ -50,5 +50,7 @@ export function calculateAccuracyRank(gameStats, accuracy) {
   const sorted = (gameStats?.gameSessionStats || [])
     .map(g => g.accuracy || 0)
     .sort((a, b) => b - a);
-  return sorted.indexOf(accuracy) + 1;
+  // Use lastIndexOf so ties push the queried value to the lower (worse) rank, matching UI/tests.
+  const idx = sorted.lastIndexOf(accuracy);
+  return (idx >= 0 ? idx : -1) + 1;
 }

@@ -1,0 +1,5 @@
+:root { --right-panel-width: 200px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Arial', sans-serif; background: #4444ff; overflow: hidden; height: 100vh; }
+#game-container { position: relative; width: 100vw; height: 100vh; }
+#gameCanvas { display: block; cursor: crosshair; z-index: 1; position: relative; margin-right: var(--right-panel-width); width: calc(100vw - var(--right-panel-width)); height: 100vh; }

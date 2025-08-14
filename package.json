@@ -11,10 +11,20 @@
   "test:e2e": "playwright test",
   "test": "playwright test",
   "test:unit": "node tests/unit/runner.js",
-  "test:all": "npm run test:unit && npm test"
+  "test:all": "npm run test:unit && npm test",
+  "coverage:unit": "c8 -r text -r html -r lcov -r json-summary node tests/unit/runner.js",
+  "coverage:check": "c8 check-coverage --lines=70 --functions=65 --branches=70",
+  "coverage:clean": "rimraf coverage",
+  "stats": "node scripts/gen-stats.js",
+  "lint": "eslint . --ext .js",
+  "format": "prettier --write ."
   },
   "devDependencies": {
   "http-server": "^14.1.1",
-  "@playwright/test": "^1.46.0"
+  "@playwright/test": "^1.46.0",
+  "c8": "^9.1.0",
+  "rimraf": "^5.0.5",
+  "eslint": "^8.57.0",
+  "prettier": "^3.3.2"
   }
 }

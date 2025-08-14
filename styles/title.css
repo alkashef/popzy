@@ -1,0 +1,6 @@
+/* Game Title Header */
+#game-title-header { position: fixed; top: 10px; left: calc(50vw - (var(--right-panel-width) / 2)); transform: translateX(-50%); z-index: 1001; text-align: center; }
+.game-title { margin: 0; font-family: 'Arial', sans-serif; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 1; }
+.rainbow-text, .strike-through { background: linear-gradient(45deg, #f00, #f80, #ff0, #0f0, #08f, #80f, #f0f); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 3s ease-in-out infinite; }
+.strike-through { text-decoration: line-through; }
+@keyframes rainbow { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }

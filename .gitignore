@@ -34,6 +34,8 @@ out/
 # Coverage / tests (if added later)
 coverage/
 .nyc_output/
+# Browser coverage cache
+.cache/
 
 # Playwright artifacts
 test-results/

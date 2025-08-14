@@ -1,0 +1,5 @@
+/* Caption Display */
+.game-caption { position: fixed; bottom: 20px; left: calc((100vw - 200px) / 2); transform: translateX(-50%); width: auto; max-width: calc(100vw - 240px); height: 40px; background: transparent; color: #fff; font-family: 'Arial', sans-serif; font-size: 18px; font-weight: bold; line-height: 40px; white-space: nowrap; overflow: visible; z-index: 2; display: none; pointer-events: none; text-align: center; }
+.caption-word { display: inline; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); opacity: 1; }
+.caption-word.instant-show { transition: none; }
+.caption-word.fade-out { transition: opacity 0.3s ease-out; }

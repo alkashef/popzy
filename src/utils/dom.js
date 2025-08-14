@@ -1,2 +1,3 @@
-// Shim: re-export dom cache under utils namespace
+// Shim: re-export DOM cache under utils namespace.
+// Prefer importing from 'src/ui/dom.js' directly in new code.
 export { UI, initUIRefs } from '../ui/dom.js';

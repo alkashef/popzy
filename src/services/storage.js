@@ -36,7 +36,16 @@ function getCookie(name) {
 
 function deleteCookie(name) {
   try {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+    // Best-effort delete for real browsers and test environments.
+    // In real browsers, setting an expired cookie removes it from document.cookie reads.
+    // In our tests, document.cookie is a plain string; handle that explicitly.
+    if (typeof document.cookie === 'string') {
+      const parts = document.cookie.split(';').filter((c) => !c.trim().startsWith(name + '='));
+      const next = parts.join(';').trim();
+      document.cookie = next;
+    } else {
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+    }
   } catch (e) {
     console.warn('deleteCookie failed', name, e);
   }
