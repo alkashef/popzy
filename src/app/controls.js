@@ -7,9 +7,18 @@ import { getRightPanelWidth } from '../ui/canvas.js';
 import { clearCaption } from '../ui/caption.js';
 import { setScoreDisplay, setTimerText, setPlayerNameDisplay } from '../ui/scoreboard.js';
 import { hideGameOver } from '../ui/overlay.js';
-import { playSound as playAudio } from '../services/audio.js';
+import { playSound as playAudio, playBackground, pauseBackground } from '../services/audio.js';
+import { getSoundPack } from '../services/themes.js';
 
 export function playSound(key) {
+  const themed = getSoundPack();
+  if (themed && themed[key]) {
+    // Create or reuse an Audio object for the themed sound lazily
+  const a = new Audio(themed[key]);
+  try { a.volume = Math.max(0, Math.min(1, state.gameConfig.volume ?? 0.5)); } catch {}
+    try { a.currentTime = 0; a.play().catch(() => {}); } catch {}
+    return;
+  }
   playAudio(state.sounds, key);
 }
 
@@ -73,6 +82,7 @@ export function startGame() {
   state.gameStarted = true;
   state.gamePaused = false;
   playSound('gameStart');
+  playBackground();
   resetScore();
   state.currentGameEndReason = '';
   clearCaption(state.gameConfig);
@@ -90,16 +100,19 @@ export function pauseGame() {
   if (!state.gameStarted || state.gamePaused) return;
   state.gamePaused = true;
   state.engine?.pause();
+  pauseBackground();
 }
 
 export function resumeGame() {
   if (!state.gameStarted || !state.gamePaused) return;
   state.gamePaused = false;
   state.engine?.resume();
+  playBackground();
 }
 
 export function stopGame(endReason = 'manual') {
   if (!state.gameStarted) return;
   playSound('gameOver');
   state.engine?.stop(endReason);
+  pauseBackground();
 }

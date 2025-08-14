@@ -1,14 +1,14 @@
 /* Right Control Panel and widgets */
-#right-panel { position: fixed; top: 0; right: 0; width: var(--right-panel-width); height: 100vh; background: linear-gradient(135deg, rgba(74,74,74,0.3), rgba(42,42,42,0.3)); color: #e0e0e0; padding: 20px; z-index: 1000; box-shadow: -2px 0 10px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 15px; font-family: 'Arial', sans-serif; border-left: 2px solid rgba(102,102,102,0.6); backdrop-filter: blur(5px); }
+#right-panel { position: fixed; top: 0; right: 0; width: var(--right-panel-width); height: 100vh; background: var(--panel-bg); color: var(--ui-text); padding: 20px; z-index: 1000; box-shadow: -2px 0 10px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 15px; font-family: 'Arial', sans-serif; border-left: 2px solid var(--ui-border); backdrop-filter: blur(5px); }
 .unicorn-icon { width: 100px; height: 100px; border-radius: 50%; transition: transform 0.3s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); display: block; margin: 0 auto 15px auto; }
 .unicorn-icon:hover { transform: scale(1.1) rotate(5deg); }
-#player-name-display { color: #e0e0e0; font-size: 16px; font-weight: normal; text-align: center; padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; }
-#score { color: #e0e0e0; font-size: 16px; text-align: left; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; min-height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; }
-.score-label { font-size: 14px; color: #666; margin-bottom: 4px; text-align: center; }
-.score-number { font-size: 54px; font-weight: bold; color: #fff; text-align: center; line-height: 1; margin-top: 0; }
-#timer-container { color: #e0e0e0; font-size: 16px; text-align: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; display: flex; flex-direction: column; gap: 4px; }
-.timer-label { font-size: 14px; color: #666; }
-#timer { color: #e0e0e0; font-weight: normal; font-size: 16px; }
+#player-name-display { color: var(--ui-text); font-size: 16px; font-weight: normal; text-align: center; padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; }
+#score { color: var(--ui-text); font-size: 16px; text-align: left; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; min-height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; }
+.score-label { font-size: 14px; color: var(--ui-muted); margin-bottom: 4px; text-align: center; }
+.score-number { font-size: 54px; font-weight: bold; color: var(--score-number, var(--btn-text)); text-align: center; line-height: 1; margin-top: 0; }
+#timer-container { color: var(--ui-text); font-size: 16px; text-align: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; display: flex; flex-direction: column; gap: 4px; }
+.timer-label { font-size: 14px; color: var(--ui-muted); }
+#timer { color: var(--ui-text); font-weight: normal; font-size: 16px; }
 .control-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; flex: 1; }
 .settings-container { margin-top: auto; padding-top: 20px; display: flex; flex-direction: column-reverse; gap: 10px; padding-bottom: 10px; }
 .game-controls-row { display: flex; gap: 8px; justify-content: space-between; }

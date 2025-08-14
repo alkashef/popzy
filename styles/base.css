@@ -1,5 +1,20 @@
-:root { --right-panel-width: 200px; }
+:root {
+	--right-panel-width: 200px;
+	/* Themeable UI variables (defaults approximate current styling) */
+	--ui-text: #e0e0e0;
+	--ui-muted: #999999;
+	--ui-border: #666666;
+	--panel-bg: linear-gradient(135deg, rgba(74,74,74,0.3), rgba(42,42,42,0.3));
+	--modal-bg: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+	--btn-bg: #666666;
+	--btn-bg-hover: #777777;
+	--btn-bg-active: #555555;
+	--btn-text: #ffffff;
+	--btn-border: #888888;
+	--accent: #00ff88;
+	--accent-contrast: #000000;
+}
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Arial', sans-serif; background: #4444ff; overflow: hidden; height: 100vh; }
+body { font-family: 'Arial', sans-serif; background: #4444ff; overflow: hidden; height: 100vh; color: var(--ui-text); }
 #game-container { position: relative; width: 100vw; height: 100vh; }
 #gameCanvas { display: block; cursor: crosshair; z-index: 1; position: relative; margin-right: var(--right-panel-width); width: calc(100vw - var(--right-panel-width)); height: 100vh; }

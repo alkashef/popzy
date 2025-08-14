@@ -38,7 +38,8 @@ export function updateSettingsUIVisuals(gameConfig) {
   const backgroundColor = get('backgroundColor');
   if (backgroundColor) {
     backgroundColor.value = gameConfig.backgroundColor;
-    document.body.style.background = gameConfig.backgroundColor;
+    // Only set backgroundColor to avoid clearing any theme backgroundImage
+    document.body.style.backgroundColor = gameConfig.backgroundColor;
   }
 }
 
@@ -72,7 +73,8 @@ export function bindVisualsControls(gameConfig) {
 
   function updateBackgroundColor(e) {
     gameConfig.backgroundColor = e.target.value;
-    document.body.style.background = gameConfig.backgroundColor;
+    // Only set backgroundColor to avoid clearing any theme backgroundImage
+    document.body.style.backgroundColor = gameConfig.backgroundColor;
     storageSaveConfig(gameConfig);
   }
 
@@ -172,7 +174,8 @@ export function bindVisualsControls(gameConfig) {
       b.addEventListener('click', () => {
         gameConfig.backgroundColor = color;
         (UI?.el?.backgroundColor || document.getElementById('background-color')).value = color;
-        document.body.style.background = color;
+  // Only set backgroundColor to avoid clearing any theme backgroundImage
+  document.body.style.backgroundColor = color;
         storageSaveConfig(gameConfig);
       });
       backgroundPresets.appendChild(b);

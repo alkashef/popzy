@@ -32,6 +32,10 @@ export function updateSettingsUIGameplay(gameConfig) {
   if (sizeVariation) sizeVariation.value = gameConfig.sizeVariation;
   setText('sizeVariationValue', gameConfig.sizeVariation.toFixed(1));
 
+  const volume = get('volume');
+  if (volume) volume.value = gameConfig.volume != null ? gameConfig.volume : 0.5;
+  setText('volumeValue', `${Math.round((gameConfig.volume != null ? gameConfig.volume : 0.5) * 100)}%`);
+
   const ratio = get('ratio');
   if (ratio) ratio.value = gameConfig.ratio;
   setText('ratioValue', gameConfig.ratio.toFixed(2));
@@ -76,6 +80,20 @@ export function bindGameplayControls(gameConfig) {
     setText('sizeVariationValue', gameConfig.sizeVariation.toFixed(1));
     storageSaveConfig(gameConfig);
   }
+  function updateVolume(e) {
+    const v = parseFloat(e.target.value);
+    gameConfig.volume = isNaN(v) ? 0.5 : v;
+    setText('volumeValue', `${Math.round(gameConfig.volume * 100)}%`);
+    storageSaveConfig(gameConfig);
+    try {
+      const { setGlobalVolume } = require('../services/audio.js');
+      // dynamic import not needed in browser; tests use Node require shim
+      if (typeof setGlobalVolume === 'function') {
+        // We can't access state.sounds here directly; dispatch an event that init/controls can handle.
+      }
+    } catch {}
+    try { document.dispatchEvent(new CustomEvent('audio:volume', { detail: { volume: gameConfig.volume } })); } catch {}
+  }
   function updateRatio(e) {
     gameConfig.ratio = parseFloat(e.target.value);
     setText('ratioValue', gameConfig.ratio.toFixed(2));
@@ -95,4 +113,5 @@ export function bindGameplayControls(gameConfig) {
   on(get('ratio'), 'input', updateRatio);
   on(get('playerName'), 'input', updatePlayerName);
   on(get('missPenaltyEnabled'), 'change', updateMissPenaltyEnabled);
+  on(get('volume'), 'input', updateVolume);
 }

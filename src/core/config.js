@@ -24,6 +24,7 @@ export const GAME_CONFIG_DEFAULTS = {
   DEFAULT_CAPTION_COLOR: '#ffffff',
   DEFAULT_CAPTION_SIZE: 18,
   DEFAULT_CAPTION_MAX_TOKENS: 5,
+  DEFAULT_VOLUME: 0.5,
   DEFAULT_TARGET_TRANSPARENCY: 1.0,
   DEFAULT_FRIENDLY_TRANSPARENCY: 1.0,
   DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY: 1.0,
@@ -69,6 +70,7 @@ export function createDefaultGameConfig() {
     captionColor: D.DEFAULT_CAPTION_COLOR,
     captionSize: D.DEFAULT_CAPTION_SIZE,
     captionMaxTokens: D.DEFAULT_CAPTION_MAX_TOKENS,
+  volume: D.DEFAULT_VOLUME,
     targetTransparency: D.DEFAULT_TARGET_TRANSPARENCY,
     friendlyTransparency: D.DEFAULT_FRIENDLY_TRANSPARENCY,
     friendlyImagesTransparency: D.DEFAULT_FRIENDLY_IMAGES_TRANSPARENCY,
@@ -76,5 +78,7 @@ export function createDefaultGameConfig() {
     objectShadows: D.DEFAULT_OBJECT_SHADOWS,
     backgroundColor: D.DEFAULT_BACKGROUND_COLOR,
     useRandomColors: false,
+  // Theme persistence
+  themeId: null,
   };
 }

@@ -19,7 +19,7 @@ export const imageFiles = {
 export const soundFiles = {
   gameStart: 'game-start.mp3',
   gameOver: 'game-over.mp3',
-  oww: 'oww.mp3',
-  cymbal: 'cymbal.mp3',
-  snare: 'snare.mp3',
+  obstacleHit: 'obstacle-hit.mp3',
+  friendlyHit: 'friendly-hit.mp3',
+  targetHit: 'target-hit.mp3',
 };

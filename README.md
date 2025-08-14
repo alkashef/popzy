@@ -114,6 +114,8 @@ Additionally, the engine enforces time limits via both requestAnimationFrame and
 - src/ui/*.js — Modular UI (dom, caption, scoreboard, overlay, canvas, settings, scores, about)
 	- Settings tabs: settings-gameplay.js, settings-limits.js, settings-words.js, settings-captions.js, settings-visuals.js; entry: settings.js; helpers: settings-helpers.js
 - src/services/*.js — Assets/audio/storage/stats + manifest
+	- src/services/themeManifest.js — declarative theme definitions
+	- src/services/themes.js — theme application and boot initialization
 - assets/** — Images and sounds
 - partials/*.html — Modular HTML fragments (title, right-panel, settings, scores, about, game-over)
 
@@ -123,6 +125,12 @@ Additionally, the engine enforces time limits via both requestAnimationFrame and
 - Click targets to score; hitting a friendly ends the game immediately.
 - Optional caption shows collected words.
 - Scores dashboard: latest ranks (score/rate/accuracy), aggregates, and end-reason histogram.
+
+## Themes
+
+- Themes tab lets you preview/apply a theme (forest, volcano, skies).
+- A theme sets game colors, transparencies, background (color/image), cursor, and sound pack.
+- Assets live under `assets/themes/<themeId>/` (backgrounds/, sounds/, cursors/). You can still override visuals afterwards.
 
 ## Configuration and UI controls
 
@@ -151,6 +159,12 @@ Notes
 - Update src/services/assetManifest.js to add/remove filenames.
 - Loaders resolve paths using GAME_CONFIG_DEFAULTS.ASSETS base folders.
 - Images: PNG with transparency recommended; Sounds: MP3.
+
+### Audio
+- Background music plays during gameplay (looped) from `assets/sounds/background.mp3`.
+- Global Volume control is available in Settings → Gameplay; it affects SFX and background music.
+- SFX files (base pack): `game-start.mp3`, `game-over.mp3`, `target-hit.mp3`, `friendly-hit.mp3`, `obstacle-hit.mp3`.
+- Themes may override SFX via their own `assets/themes/<theme>/sounds/` files.
 
 ## Testing
 

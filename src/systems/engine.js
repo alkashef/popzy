@@ -186,12 +186,12 @@ export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets,
         state.hits++;
 
         if (obj.isFriendlyImage) {
-          hooks?.onPlaySound?.('oww');
+          hooks?.onPlaySound?.('obstacleHit');
           return stop('friendly_shot');
         } else {
           if (obj.word && obj.type === 'target') hooks?.onAddCaptionWord?.(obj.word);
-          if (obj.type === 'target') hooks?.onPlaySound?.('snare');
-          else if (obj.type === 'friendly' && obj.word) hooks?.onPlaySound?.('cymbal');
+          if (obj.type === 'target') hooks?.onPlaySound?.('targetHit');
+          else if (obj.type === 'friendly' && obj.word) hooks?.onPlaySound?.('friendlyHit');
 
           state.score += obj.points;
           hooks?.onScoreChange?.(state.score);

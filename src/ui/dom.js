@@ -76,6 +76,8 @@ export function initUIRefs() {
     objectSizeValue: byId('object-size-value'),
     sizeVariation: byId('size-variation'),
     sizeVariationValue: byId('size-variation-value'),
+  volume: byId('volume'),
+  volumeValue: byId('volume-value'),
     ratio: byId('ratio'),
     ratioValue: byId('ratio-value'),
 

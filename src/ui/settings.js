@@ -17,6 +17,7 @@ import { updateSettingsUIGameplay, bindGameplayControls } from './settings-gamep
 import { updateSettingsUILimits, bindLimitsControls } from './settings-limits.js';
 import { updateSettingsUIWords, bindWordsControls } from './settings-words.js';
 import { formatSeconds as _formatSeconds } from './settings-helpers.js';
+import { updateSettingsUIThemes, bindThemesControls } from './settings-themes.js';
 
 export function updateSettingsUI(gameConfig) {
   // Delegate to submodules by tab
@@ -25,6 +26,7 @@ export function updateSettingsUI(gameConfig) {
   updateSettingsUIWords(gameConfig);
   updateSettingsUICaptions(gameConfig);
   updateSettingsUIVisuals(gameConfig);
+  updateSettingsUIThemes(gameConfig);
 }
 
 export function bindSettingsControls(gameConfig) {
@@ -41,6 +43,7 @@ export function bindSettingsControls(gameConfig) {
   bindWordsControls(gameConfig);
   bindCaptionsControls(gameConfig);
   bindVisualsControls(gameConfig);
+  bindThemesControls(gameConfig);
 
   // Presets and tabs
   setupTabSwitching();

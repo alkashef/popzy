@@ -19,7 +19,7 @@ export async function loadAllAssets() {
     state.targetImages = target;
     state.friendlyImages = friendly;
 
-    state.sounds = await loadAudioMap(GAME_CONFIG_DEFAULTS.ASSETS.SOUNDS_FOLDER, SOUND_MANIFEST);
+  state.sounds = await loadAudioMap(GAME_CONFIG_DEFAULTS.ASSETS.SOUNDS_FOLDER, SOUND_MANIFEST);
 
     // Always ensure both object types are enabled
     state.gameConfig.targetsEnabled = true;

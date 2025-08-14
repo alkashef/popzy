@@ -10,6 +10,7 @@
         <button class="settings-tab" data-tab="content">Content</button>
         <button class="settings-tab" data-tab="caption">Caption</button>
         <button class="settings-tab" data-tab="game-end">Game End</button>
+  <button class="settings-tab" data-tab="themes">Themes</button>
       </div>
       <div class="settings-tab-content active" id="tab-gameplay">
         <div class="settings-grid">
@@ -32,6 +33,10 @@
             </div>
           </div>
           <div class="settings-column">
+            <div class="setting-group">
+              <label for="volume">Volume:</label>
+              <div class="control-wrapper"><input type="range" id="volume" min="0" max="1" step="0.05" value="0.5"><span id="volume-value">50%</span></div>
+            </div>
             <div class="setting-group">
               <label for="ratio">Target/Friendly Ratio:</label>
               <div class="control-wrapper"><input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5"><span id="ratio-value">0.50</span></div>
@@ -101,6 +106,7 @@
           </div>
         </div>
       </div>
+  <div class="settings-tab-content" id="tab-themes"></div>
     </div>
     <div class="settings-footer"><button id="reset-settings-button" class="reset-settings-btn">Reset to Defaults</button><button id="settings-ok-button" class="settings-ok-btn">OK</button></div>
   </div>
