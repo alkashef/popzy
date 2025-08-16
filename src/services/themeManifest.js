@@ -16,12 +16,19 @@ export const THEMES = {
       transparency: { target: 0.9, friendly: 0.8, friendlyImages: 0.8 },
     },
     ui: {
-      btnBg: '#ffffff',               // buttons background white
+      // Friendly forest palette: warm browns and sunny ochres
+      btnBg: '#ffffff',
       btnBgHover: '#f3f3f3',
       btnBgActive: '#e6e6e6',
-      btnText: '#8B4513',             // brown text
-      modalBg: '#f3e5ab',             // light pale ochre yellow
-  modalText: '#8B4513',           // brown text in modals
+      btnText: '#8B4513',
+      modalBg: '#f3e5ab',
+      modalText: '#8B4513',
+      controlBg: '#ffffff',
+      controlTrackBg: '#ffffff',
+      surface: 'rgba(255,255,255,0.06)',
+      surfaceStrong: 'rgba(255,255,255,0.10)',
+      surfaceBorder: 'rgba(139,69,19,0.35)',
+      scoreColor: '#8B4513'
     },
     assets: {
       background: 'assets/themes/forest/backgrounds/main',
@@ -47,6 +54,21 @@ export const THEMES = {
       backgroundColor: '#2b0b0b',
       transparency: { target: 0.9, friendly: 0.85, friendlyImages: 0.8 },
     },
+    ui: {
+      // Bold lava palette: oranges/reds with high contrast
+      modalBg: 'linear-gradient(135deg, #ffb74d 0%, #ff7043 100%)',
+      modalText: '#3b0b0b',
+      btnBg: '#ff7043',
+      btnBgHover: '#ff8a65',
+      btnBgActive: '#ff5722',
+      btnText: '#1a0a07',
+      controlBg: '#fff7f0',
+      controlTrackBg: '#ffe0cc',
+      surface: 'rgba(255, 140, 102, 0.12)',
+      surfaceStrong: 'rgba(255, 140, 102, 0.18)',
+      surfaceBorder: 'rgba(255, 112, 67, 0.45)',
+      scoreColor: '#ffb300'
+    },
     assets: {
       background: 'assets/themes/volcano/backgrounds/main',
       cursor: 'assets/themes/volcano/cursors/cursor.png',
@@ -70,6 +92,21 @@ export const THEMES = {
       captionColor: '#e0f7fa',
       backgroundColor: '#0a1a3a',
       transparency: { target: 0.8, friendly: 0.8, friendlyImages: 0.7 },
+    },
+    ui: {
+      // Airy sky palette: soft blues and friendly whites
+      modalBg: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
+      modalText: '#0a1a3a',
+      btnBg: '#90caf9',
+      btnBgHover: '#64b5f6',
+      btnBgActive: '#42a5f5',
+      btnText: '#06203a',
+      controlBg: '#ffffff',
+      controlTrackBg: '#e3f2fd',
+      surface: 'rgba(187, 222, 251, 0.18)',
+      surfaceStrong: 'rgba(144, 202, 249, 0.24)',
+      surfaceBorder: 'rgba(66, 165, 245, 0.45)',
+      scoreColor: '#0d47a1'
     },
     assets: {
       background: 'assets/themes/skies/backgrounds/main',

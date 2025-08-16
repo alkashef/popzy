@@ -58,7 +58,9 @@ export async function applyTheme(gameConfig, themeId, opts = {}) {
     root.style.setProperty('--ui-text', uiText);
     root.style.setProperty('--ui-muted', isLight ? '#333333' : '#bbbbbb');
     root.style.setProperty('--ui-border', isLight ? '#cccccc' : '#666666');
-    root.style.setProperty('--panel-bg', 'linear-gradient(135deg, rgba(74,74,74,0.3), rgba(42,42,42,0.3))');
+  // Panel surface respects theme surface if provided
+  const surface = theme.ui?.surface || 'linear-gradient(135deg, rgba(74,74,74,0.3), rgba(42,42,42,0.3))';
+  root.style.setProperty('--panel-bg', surface);
     // Allow theme override for modal background (solid color supported)
   const modalBg = theme.ui?.modalBg || 'linear-gradient(135deg, #4a4a4a, #2a2a2a)';
     root.style.setProperty('--modal-bg', modalBg);
@@ -70,14 +72,14 @@ export async function applyTheme(gameConfig, themeId, opts = {}) {
     if (theme.id === 'forest') {
       root.style.setProperty('--modal-border', accent);
       root.style.setProperty('--hover-text', '#ff0000');
-      root.style.setProperty('--control-bg', '#ffffff');
-      root.style.setProperty('--control-track-bg', '#ffffff');
+      root.style.setProperty('--control-bg', theme.ui?.controlBg || '#ffffff');
+      root.style.setProperty('--control-track-bg', theme.ui?.controlTrackBg || '#ffffff');
     } else {
-      // Clear customizations for non-forest themes
-      root.style.removeProperty('--modal-border');
-      root.style.removeProperty('--hover-text');
-      root.style.removeProperty('--control-bg');
-      root.style.removeProperty('--control-track-bg');
+      // Non-forest themes: still provide sensible defaults and allow theme override
+      root.style.setProperty('--modal-border', theme.ui?.surfaceBorder || (isLight ? '#bbbbbb' : '#888888'));
+      root.style.setProperty('--hover-text', pickTextColor(theme.ui?.btnBg || accent, '#ff1744', '#d50000'));
+      root.style.setProperty('--control-bg', theme.ui?.controlBg || (isLight ? '#ffffff' : '#f9f9f9'));
+      root.style.setProperty('--control-track-bg', theme.ui?.controlTrackBg || (isLight ? '#f3f3f3' : '#ececec'));
     }
     // Buttons based on accent
     const btnText = pickTextColor(accent, '#000', '#fff');
@@ -89,8 +91,8 @@ export async function applyTheme(gameConfig, themeId, opts = {}) {
     root.style.setProperty('--btn-border', isLight ? '#bbbbbb' : '#888888');
     root.style.setProperty('--accent', accent);
     root.style.setProperty('--accent-contrast', pickTextColor(accent, '#000', '#fff'));
-  // Score number color variable (theme may override via ui.scoreColor later if needed)
-  const scoreColor = theme.id === 'forest' ? (theme.ui?.btnText || '#8B4513') : 'var(--btn-text)';
+  // Score number color variable per theme
+  const scoreColor = theme.ui?.scoreColor || (theme.id === 'forest' ? (theme.ui?.btnText || '#8B4513') : 'var(--btn-text)');
   root.style.setProperty('--score-number', scoreColor);
     // Forest-specific: score number brown when requested via ui.btnText
   // (no direct DOM write needed thanks to CSS var)
