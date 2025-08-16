@@ -64,8 +64,22 @@ export async function applyTheme(gameConfig, themeId, opts = {}) {
     root.style.setProperty('--modal-bg', modalBg);
   const modalText = theme.ui?.modalText || uiText;
   root.style.setProperty('--modal-text', modalText);
-    // Buttons based on accent
+    // Forest-specific: accent modal borders and hover text; white control backgrounds
+    // Modal border color
     const accent = theme.accent || colors?.targetColor || '#00ff88';
+    if (theme.id === 'forest') {
+      root.style.setProperty('--modal-border', accent);
+      root.style.setProperty('--hover-text', '#ff0000');
+      root.style.setProperty('--control-bg', '#ffffff');
+      root.style.setProperty('--control-track-bg', '#ffffff');
+    } else {
+      // Clear customizations for non-forest themes
+      root.style.removeProperty('--modal-border');
+      root.style.removeProperty('--hover-text');
+      root.style.removeProperty('--control-bg');
+      root.style.removeProperty('--control-track-bg');
+    }
+    // Buttons based on accent
     const btnText = pickTextColor(accent, '#000', '#fff');
     // Allow theme-specific overrides
     root.style.setProperty('--btn-bg', theme.ui?.btnBg || mix(bg, accent, 0.25));
