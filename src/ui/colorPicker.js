@@ -7,7 +7,6 @@
  */
 import { UI } from './dom.js';
 
-let _docClickHandler = null;
 let _escHandler = null;
 let _returnFocusEl = null;
 
@@ -55,9 +54,11 @@ export function openColorPicker({ title, value, includeRandom = true, onPick, re
     if (!c.rainbow) btn.style.setProperty('--swatch', c.value);
     btn.title = c.title;
     if (value && value === c.value) btn.classList.add('selected');
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', () => { 
+      // toggle selection visual state
+      grid.querySelectorAll('.color-swatch-button').forEach(b => b.classList.toggle('selected', b === btn));
+      // live update selection in caller without closing the picker
       if (typeof onPick === 'function') onPick(c.value);
-      closeColorPicker();
     });
     frag.appendChild(btn);
   });
@@ -73,24 +74,15 @@ export function openColorPicker({ title, value, includeRandom = true, onPick, re
     const onClose = () => { closeColorPicker(); closeBtn.removeEventListener('click', onClose); };
     closeBtn.addEventListener('click', onClose);
   }
-  // outside click (capture one-off)
-  const onDoc = (e) => {
-    // if target is inside modal content, ignore (we already stopped propagation above)
-    if (modal.contains(e.target)) return;
-    closeColorPicker();
-  };
-  _docClickHandler = onDoc;
-  setTimeout(() => document.addEventListener('click', _docClickHandler, true), 0);
-  // ESC to close
-  _escHandler = (ev) => { if (ev.key === 'Escape') closeColorPicker(); };
-  document.addEventListener('keydown', _escHandler);
+  // Do not close on outside click or ESC; only Close button should dismiss.
 }
 
 export function closeColorPicker() {
   const { colorPickerModal } = ensureRefs();
   if (colorPickerModal) colorPickerModal.classList.add('hidden');
-  if (_docClickHandler) { document.removeEventListener('click', _docClickHandler, true); _docClickHandler = null; }
-  if (_escHandler) { document.removeEventListener('keydown', _escHandler); _escHandler = null; }
+  // Clean up event listeners for outside click and ESC
+  // if (_docClickHandler) { document.removeEventListener('click', _docClickHandler, true); _docClickHandler = null; }
+  // if (_escHandler) { document.removeEventListener('keydown', _escHandler); _escHandler = null; }
   // restore focus
   try { _returnFocusEl && _returnFocusEl.focus && _returnFocusEl.focus(); } catch {}
   _returnFocusEl = null;

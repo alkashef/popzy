@@ -13,6 +13,8 @@
 
 /* Size presets per window */
 .settings-modal-content { max-width: 1100px; height: 80vh; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; }
+.settings-modal-content .settings-content { overflow: hidden; min-height: 0; }
+.settings-modal-content .settings-tab-content.active { overflow: auto; }
 .color-picker-modal-content { max-width: 520px; height: auto; display: grid; grid-template-rows: auto 1fr auto; }
 .scores-modal-content { max-width: 1100px; height: 80vh; overflow: hidden; }
 .about-modal-content { max-width: 800px; height: 70vh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; }

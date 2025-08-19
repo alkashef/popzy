@@ -37,7 +37,7 @@ export function updateSettingsUICaptions(gameConfig) {
 
   const captionColorSelect = get('captionColorSelect');
   if (captionColorSelect) captionColorSelect.value = gameConfig.captionColor;
-  reflectCaptionSwatches(captionColorSelect?.value);
+  try { document.getElementById('caption-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', captionColorSelect?.value || '#ffffff'); } catch {}
 
   const captionSize = get('captionSize');
   if (captionSize) captionSize.value = gameConfig.captionSize;
@@ -88,21 +88,22 @@ export function bindCaptionsControls(gameConfig) {
   on(get('captionMaxTokens'), 'input', updateCaptionMaxTokens);
   on(get('captionColorSelect'), 'change', (e) => { updateCaptionColorSelect(e); reflectCaptionSwatches(e.target.value); });
   on(get('captionSize'), 'input', updateCaptionSize);
-  // Bind caption swatch clicks
-  const captionGrid = document.querySelector('.color-swatch-grid[data-for="caption-color-select"]');
-  if (captionGrid) {
-    captionGrid.addEventListener('click', () => {
+  // Single choose button for caption color
+  const captionBtn = document.getElementById('caption-color-button');
+  if (captionBtn) {
+    captionBtn.addEventListener('click', () => {
       const sel = document.getElementById('caption-color-select');
       if (!sel) return;
       openColorPicker({
         title: 'Pick Caption Color',
         value: sel.value,
         includeRandom: false,
-        returnFocusTo: captionGrid,
+        returnFocusTo: captionBtn,
         onPick: (val) => {
           sel.value = val;
           updateCaptionColorSelect({ target: sel });
           reflectCaptionSwatches(sel.value);
+          try { captionBtn.querySelector('.swatch-preview').style.setProperty('--swatch', val); } catch {}
         }
       });
     });

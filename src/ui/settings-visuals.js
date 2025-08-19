@@ -28,9 +28,9 @@ export function updateSettingsUIVisuals(gameConfig) {
   const friendlyColorSelect = get('friendlyColorSelect');
   if (targetColorSelect) targetColorSelect.value = gameConfig.useRandomColors ? 'random' : gameConfig.targetColor;
   if (friendlyColorSelect) friendlyColorSelect.value = gameConfig.useRandomColors ? 'random' : gameConfig.friendlyColor;
-  // reflect to swatches
-  reflectColorSwatches('target-color-select', targetColorSelect?.value);
-  reflectColorSwatches('friendly-color-select', friendlyColorSelect?.value);
+  // reflect to preview buttons
+  try { document.getElementById('target-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (targetColorSelect?.value === 'random' ? '#ffffff' : targetColorSelect?.value || '#ffffff')); } catch {}
+  try { document.getElementById('friendly-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (friendlyColorSelect?.value === 'random' ? '#ffffff' : friendlyColorSelect?.value || '#ffffff')); } catch {}
 
   const targetTransparency = get('targetTransparency');
   if (targetTransparency) targetTransparency.value = gameConfig.targetTransparency;
@@ -89,8 +89,8 @@ export function bindVisualsControls(gameConfig) {
     const friendlySel = get('friendlyColorSelect');
     if (targetSel) targetSel.value = gameConfig.useRandomColors ? 'random' : gameConfig.targetColor;
     if (friendlySel) friendlySel.value = gameConfig.useRandomColors ? 'random' : (friendlySel.value === 'random' ? '#ffffff' : friendlySel.value);
-  reflectColorSwatches('target-color-select', targetSel?.value);
-  reflectColorSwatches('friendly-color-select', friendlySel?.value);
+  try { document.getElementById('target-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (targetSel?.value === 'random' ? '#ffffff' : targetSel?.value || '#ffffff')); } catch {}
+  try { document.getElementById('friendly-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (friendlySel?.value === 'random' ? '#ffffff' : friendlySel?.value || '#ffffff')); } catch {}
     storageSaveConfig(gameConfig);
   }
   function updateFriendlyColorSelect(e) {
@@ -101,8 +101,8 @@ export function bindVisualsControls(gameConfig) {
     const friendlySel = get('friendlyColorSelect');
     if (targetSel) targetSel.value = gameConfig.useRandomColors ? 'random' : (targetSel.value === 'random' ? '#ffffff' : targetSel.value);
     if (friendlySel) friendlySel.value = gameConfig.useRandomColors ? 'random' : gameConfig.friendlyColor;
-  reflectColorSwatches('target-color-select', targetSel?.value);
-  reflectColorSwatches('friendly-color-select', friendlySel?.value);
+  try { document.getElementById('target-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (targetSel?.value === 'random' ? '#ffffff' : targetSel?.value || '#ffffff')); } catch {}
+  try { document.getElementById('friendly-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (friendlySel?.value === 'random' ? '#ffffff' : friendlySel?.value || '#ffffff')); } catch {}
     storageSaveConfig(gameConfig);
   }
 
@@ -117,27 +117,42 @@ export function bindVisualsControls(gameConfig) {
   on(get('friendlyImagesTransparency'), 'input', updateFriendlyImagesTransparency);
   // removed bindings for showObjectPaths and objectShadows
 
-  // presets removed; selection is via dropdowns
-  // Bind swatch grids
-  const swatchGrids = document.querySelectorAll('.color-swatch-grid[data-for]');
-  swatchGrids.forEach(grid => {
-    grid.addEventListener('click', (e) => {
-      const forId = grid.getAttribute('data-for');
-      const sel = document.getElementById(forId);
+  // Single choose buttons open color picker
+  const targetBtn = document.getElementById('target-color-button');
+  const friendlyBtn = document.getElementById('friendly-color-button');
+  if (targetBtn) {
+    targetBtn.addEventListener('click', () => {
+      const sel = document.getElementById('target-color-select');
       if (!sel) return;
-      const includeRandom = (forId !== 'caption-color-select');
-      const current = sel.value;
       openColorPicker({
-        title: forId.includes('target') ? 'Pick Target Color' : 'Pick Friendly Color',
-        value: current,
-        includeRandom,
-        returnFocusTo: grid,
+        title: 'Pick Target Color',
+        value: sel.value,
+        includeRandom: true,
+        returnFocusTo: targetBtn,
         onPick: (val) => {
           sel.value = val;
-          if (forId === 'target-color-select') updateTargetColorSelect({ target: sel });
-          else if (forId === 'friendly-color-select') updateFriendlyColorSelect({ target: sel });
-        }
+          updateTargetColorSelect({ target: sel });
+          // reflect preview
+          try { targetBtn.querySelector('.swatch-preview').style.setProperty('--swatch', val === 'random' ? '#ffffff' : val); } catch {}
+        },
       });
     });
-  });
+  }
+  if (friendlyBtn) {
+    friendlyBtn.addEventListener('click', () => {
+      const sel = document.getElementById('friendly-color-select');
+      if (!sel) return;
+      openColorPicker({
+        title: 'Pick Friendly Color',
+        value: sel.value,
+        includeRandom: true,
+        returnFocusTo: friendlyBtn,
+        onPick: (val) => {
+          sel.value = val;
+          updateFriendlyColorSelect({ target: sel });
+          try { friendlyBtn.querySelector('.swatch-preview').style.setProperty('--swatch', val === 'random' ? '#ffffff' : val); } catch {}
+        },
+      });
+    });
+  }
 }
