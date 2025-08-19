@@ -4,7 +4,7 @@
  * - Pure rendering helpers for the canvas: background and game objects.
  * - No state; all inputs are explicit (ctx, canvas, config, objects).
  * Data Model Expectations:
- * - gameConfig includes colors, transparency, and flags like showObjectPaths, objectShadows.
+ * - gameConfig includes colors and transparency; shadows are always on.
  * - gameObjects: Array<{
  *     x:number, y:number, vx:number, vy:number,
  *     type:'target'|'friendly', radius:number,
@@ -105,19 +105,7 @@ export function drawObjects(ctx, canvas, gameConfig, gameObjects) {
   gameObjects.forEach(object => {
     ctx.save();
 
-    // Draw object path if enabled
-    if (gameConfig.showObjectPaths && object.path) {
-      ctx.strokeStyle = object.type === 'target'
-        ? `${gameConfig.targetColor}33`
-        : `${gameConfig.friendlyColor}33`; // Add transparency to color
-      ctx.lineWidth = 1;
-      ctx.setLineDash([5, 5]);
-      ctx.beginPath();
-      ctx.moveTo(object.path.startX, object.path.startY);
-      ctx.lineTo(object.path.endX, object.path.endY);
-      ctx.stroke();
-      ctx.setLineDash([]); // Reset dash
-    }
+    // Object path debug drawing removed
 
     // Apply transparency and pastel color palette
     if (object.type === 'target') {
@@ -136,8 +124,7 @@ export function drawObjects(ctx, canvas, gameConfig, gameObjects) {
       }
     }
 
-    // Draw shadow if enabled
-    if (gameConfig.objectShadows) {
+  // Draw shadow (always enabled)
       ctx.save();
       ctx.globalAlpha = 0.6; // Shadow opacity - more pronounced
       ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
@@ -167,7 +154,6 @@ export function drawObjects(ctx, canvas, gameConfig, gameObjects) {
           ctx.globalAlpha = gameConfig.friendlyTransparency;
         }
       }
-    }
 
     // Use the image stored in the object if available
     if (object.image) {

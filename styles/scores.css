@@ -2,7 +2,7 @@
 .scores-content { padding: 20px; background: var(--window-bg-strong); border-radius: 12px; }
 .scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
 .scores-section { background: var(--tab-bg); border-radius: 12px; border: 1px solid var(--champagne-pink); padding: 16px; box-shadow: none; }
-.scores-section-title { color: var(--modal-text, var(--ui-text)); font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.3); }
+.scores-section-title { color: var(--modal-text, var(--ui-text)); font-size: 16px; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.3); }
 .stat-item { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
 .stat-label { color: var(--modal-text, var(--ui-text)); }
 /* Theme color for secondary text lines in Latest Game Rankings */

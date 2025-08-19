@@ -16,9 +16,8 @@ export function updateSettingsUIGameplay(gameConfig) {
   if (speed) speed.value = gameConfig.speed;
   setText('speedValue', `${gameConfig.speed.toFixed(1)}x`);
 
-  const randomness = get('randomness');
-  if (randomness) randomness.value = gameConfig.randomness;
-  setText('randomnessValue', gameConfig.randomness.toFixed(1));
+  // randomness control removed; enforce max internally
+  gameConfig.randomness = 1;
 
   const spawnRate = get('spawnRate');
   if (spawnRate) spawnRate.value = gameConfig.spawnRate;
@@ -38,7 +37,7 @@ export function updateSettingsUIGameplay(gameConfig) {
 
   const ratio = get('ratio');
   if (ratio) ratio.value = gameConfig.ratio;
-  setText('ratioValue', gameConfig.ratio.toFixed(2));
+  setText('ratioValue', gameConfig.ratio.toFixed(1));
 
   const playerName = get('playerName');
   if (playerName) playerName.value = gameConfig.playerName || '';
@@ -60,11 +59,7 @@ export function bindGameplayControls(gameConfig) {
     setText('speedValue', `${gameConfig.speed.toFixed(1)}x`);
     storageSaveConfig(gameConfig);
   }
-  function updateRandomness(e) {
-    gameConfig.randomness = parseFloat(e.target.value);
-    setText('randomnessValue', gameConfig.randomness.toFixed(1));
-    storageSaveConfig(gameConfig);
-  }
+  // randomness control removed; no binding
   function updateSpawnRate(e) {
     gameConfig.spawnRate = parseInt(e.target.value);
     setText('spawnRateValue', gameConfig.spawnRate);
@@ -96,7 +91,7 @@ export function bindGameplayControls(gameConfig) {
   }
   function updateRatio(e) {
     gameConfig.ratio = parseFloat(e.target.value);
-    setText('ratioValue', gameConfig.ratio.toFixed(2));
+    setText('ratioValue', gameConfig.ratio.toFixed(1));
     storageSaveConfig(gameConfig);
   }
   function updatePlayerName(e) {
@@ -106,7 +101,7 @@ export function bindGameplayControls(gameConfig) {
   function updateMissPenaltyEnabled(e) { gameConfig.missPenaltyEnabled = e.target.checked; storageSaveConfig(gameConfig); }
 
   on(get('speed'), 'input', updateSpeed);
-  on(get('randomness'), 'input', updateRandomness);
+  // randomness control removed
   on(get('spawnRate'), 'input', updateSpawnRate);
   on(get('objectSize'), 'input', updateObjectSize);
   on(get('sizeVariation'), 'input', updateSizeVariation);

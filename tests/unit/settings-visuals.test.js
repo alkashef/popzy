@@ -21,21 +21,17 @@ function makeEl(initial = {}) {
 }
 
 module.exports = {
-  'settings-visuals: update and bind handlers, presets': async () => {
+  'settings-visuals: update and bind handlers (dropdown colors)': async () => {
   // Ensure clean UI.el cache to avoid using stale cached nodes without addEventListener
   const { UI } = await importUI();
   UI.el = {};
     const { updateSettingsUIVisuals, bindVisualsControls } = await importVisuals();
     const els = {
-      targetColor: makeEl(), friendlyColor: makeEl(),
+      targetColorSelect: makeEl(), friendlyColorSelect: makeEl(),
       targetTransparency: makeEl(), targetTransparencyValue: makeEl(),
       friendlyTransparency: makeEl(), friendlyTransparencyValue: makeEl(),
       friendlyImagesTransparency: makeEl(), friendlyImagesTransparencyValue: makeEl(),
-      showObjectPaths: makeEl(), objectShadows: makeEl(),
-      backgroundColor: makeEl(),
-      targetColorPresets: { childElementCount: 0, appendChild: () => {} },
-      friendlyColorPresets: { childElementCount: 0, appendChild: () => {} },
-      backgroundColorPresets: { childElementCount: 0, appendChild: () => {} },
+      // removed controls: showObjectPaths, objectShadows, backgroundColor, presets
     };
     global.document = {
       getElementById: (id) => els[id] || null,
@@ -45,7 +41,7 @@ module.exports = {
     const cfg = {
       targetColor: '#f00', friendlyColor: '#0f0',
       targetTransparency: 0.8, friendlyTransparency: 0.5, friendlyImagesTransparency: 0.7,
-      showObjectPaths: false, objectShadows: false, backgroundColor: '#000', useRandomColors: false,
+      useRandomColors: false,
     };
     updateSettingsUIVisuals(cfg);
     bindVisualsControls(cfg);
@@ -54,9 +50,10 @@ module.exports = {
     if (cfg.targetTransparency !== 0.4) throw new Error('targetTransparency not updated');
     els.friendlyTransparency._fire('input', { target: { value: '0.9' } });
     if (cfg.friendlyTransparency !== 0.9) throw new Error('friendlyTransparency not updated');
-    els.showObjectPaths._fire('change', { target: { checked: true } });
-    if (!cfg.showObjectPaths) throw new Error('showObjectPaths not updated');
-    els.backgroundColor._fire('input', { target: { value: '#123456' } });
-    if (cfg.backgroundColor !== '#123456') throw new Error('backgroundColor not updated');
+    // color selects
+    els.targetColorSelect._fire('change', { target: { value: '#abcdef' } });
+    if (cfg.useRandomColors || cfg.targetColor !== '#abcdef') throw new Error('targetColor select not updated');
+    els.friendlyColorSelect._fire('change', { target: { value: 'random' } });
+    if (!cfg.useRandomColors) throw new Error('useRandomColors not toggled by random');
   },
 };

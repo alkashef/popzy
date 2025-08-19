@@ -15,7 +15,7 @@ npm install
 												 │     ├── src/ui/canvas.js             # canvas init + CSS-var sizing
 Visuals
 -------
-* The UI uses a soft pastel palette by default. Use Settings → Visual to adjust background image/color and object colors.
+* The UI uses a soft pastel palette by default. Use Settings → Visual to adjust object colors and transparencies.
 												 │     ├── src/ui/settings-limits.js    # time & score limits
 												 │     ├── src/ui/settings-words.js     # target/friendly words & mode
 												 │     ├── src/ui/settings-captions.js  # caption enable/direction/size/color/max tokens
@@ -55,8 +55,8 @@ Visuals
 		- settings-gameplay.js: speed, randomness, spawnRate, objectSize, sizeVariation, ratio, playerName, missPenaltyEnabled.
 		- settings-limits.js: timeLimitEnabled/timeLimit and scoreLimitEnabled/scoreLimit (uses formatSeconds).
 		- settings-words.js: targetWords, friendlyWords, friendlyMode.
-		- settings-captions.js: captionEnabled, captionDirection, captionMaxTokens, captionColor, captionSize; dispatches caption:configChanged.
-		- settings-visuals.js: target/friendly/background colors, transparency, showObjectPaths, objectShadows, background image/color; includes color presets.
+		- settings-captions.js: captionEnabled, captionDirection, captionMaxTokens, captionColor (dropdown), captionSize; dispatches caption:configChanged.
+		- settings-visuals.js: target/friendly colors (dropdown), transparencies; paths/shadows/background controls removed.
 		- settings-helpers.js: small shared helpers (formatSeconds).
 	- scores.js: renders dashboard sections; open/close modal.
 	- about.js: open/close modal; tab switching; exposes window.showAboutTab for inline onclick.
@@ -126,9 +126,9 @@ Settings map to these controls (IDs):
 - scoreLimitEnabled → #score-limit-enabled, scoreLimit → #score-limit (label: #score-limit-value)
 - captionEnabled → #caption-enabled, captionDirection → #caption-direction
 - captionMaxTokens → #caption-max-tokens (label: #caption-max-tokens-value)
-- captionColor → #caption-color (presets: #caption-color-presets), captionSize → #caption-size (label: #caption-size-value)
-- targetColor → #target-color (presets: #target-color-presets), friendlyColor → #friendly-color (presets: #friendly-color-presets)
-- backgroundColor → #background-color (presets: #background-color-presets), background image → #background-image
+- captionColor → #caption-color-select, captionSize → #caption-size (label: #caption-size-value)
+- targetColor → #target-color-select, friendlyColor → #friendly-color-select
+	(Random Rainbow option toggles useRandomColors)
 
 Notes
 - Targets/friendlies are always enabled; `ratio` controls frequency.

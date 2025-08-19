@@ -23,10 +23,6 @@
               <div class="control-wrapper"><input type="range" id="speed" min="0.5" max="3" step="0.1" value="1"><span id="speed-value">1.0x</span></div>
             </div>
             <div class="setting-group">
-              <label for="randomness">Path Randomness:</label>
-              <div class="control-wrapper"><input type="range" id="randomness" min="0" max="1" step="0.1" value="0.5"><span id="randomness-value">0.5</span></div>
-            </div>
-            <div class="setting-group">
               <label for="spawnRate">Objects / min:</label>
               <div class="control-wrapper"><input type="range" id="spawnRate" min="10" max="120" step="5" value="60"><span id="spawnRate-value">60</span></div>
             </div>
@@ -38,16 +34,13 @@
             </div>
             <div class="setting-group">
               <label for="ratio">Target/Friendly Ratio:</label>
-              <div class="control-wrapper"><input type="range" id="ratio" min="0" max="1" step="0.01" value="0.5"><span id="ratio-value">0.50</span></div>
+              <div class="control-wrapper"><input type="range" id="ratio" min="0" max="1" step="0.1" value="0.5"><span id="ratio-value">0.5</span></div>
             </div>
             <div class="setting-group">
               <label>Miss Penalty:</label>
               <div class="checkbox-group"><input type="checkbox" id="miss-penalty-enabled"><label for="miss-penalty-enabled">Enable</label></div>
             </div>
-            <div class="setting-group">
-              <label>Show Object Paths:</label>
-              <div class="checkbox-group"><input type="checkbox" id="show-object-paths"><label for="show-object-paths">Enable</label></div>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -56,16 +49,16 @@
           <div class="settings-column">
             <div class="setting-group"><label for="object-size">Object Size:</label><input type="range" id="object-size" min="10" max="80" step="1" value="20"><span id="object-size-value">20</span></div>
             <div class="setting-group"><label for="size-variation">Size Variation:</label><input type="range" id="size-variation" min="0" max="0.8" step="0.1" value="0.3"><span id="size-variation-value">0.3</span></div>
-            <div class="setting-group"><label for="background-image">Background Image:</label><input type="file" id="background-image" accept="image/*"></div>
-            <div class="setting-group"><label for="background-color">Background Color:</label><div class="color-options"><input type="color" id="background-color" value="#4444ff"><div class="color-presets" id="background-color-presets"></div></div></div>
+            
+            
             <div class="setting-group"><label for="target-transparency">Target Transparency:</label><input type="range" id="target-transparency" min="0.1" max="1.0" step="0.1" value="1.0"><span id="target-transparency-value">100%</span></div>
             <div class="setting-group"><label for="friendly-transparency">Friendly Transparency:</label><input type="range" id="friendly-transparency" min="0.1" max="1.0" step="0.1" value="1.0"><span id="friendly-transparency-value">100%</span></div>
             <div class="setting-group"><label for="friendly-images-transparency">Friendly Images Transparency:</label><input type="range" id="friendly-images-transparency" min="0.1" max="1.0" step="0.1" value="1.0"><span id="friendly-images-transparency-value">100%</span></div>
-            <div class="setting-group"><div class="checkbox-group"><label for="object-shadows"><input type="checkbox" id="object-shadows">Object Shadows</label></div></div>
+            
           </div>
           <div class="settings-column">
-            <div class="setting-group"><label>Target Color:</label><div class="color-options"><input type="color" id="target-color" value="#ff4444"><div class="color-presets" id="target-color-presets"></div></div></div>
-            <div class="setting-group"><label>Friendly Color:</label><div class="color-options"><input type="color" id="friendly-color" value="#4444ff"><div class="color-presets" id="friendly-color-presets"></div></div></div>
+            <div class="setting-group"><label for="target-color-select">Target Color:</label><div class="control-wrapper"><select id="target-color-select" class="visually-hidden"><option value="random">Random Rainbow</option><option value="#ffffff">White</option><option value="#ff0000">Red</option><option value="#ff8800">Orange</option><option value="#ffff00">Yellow</option><option value="#88ff00">Lime</option><option value="#00ff00">Green</option><option value="#00ffff">Cyan</option><option value="#0088ff">Sky</option><option value="#0000ff">Blue</option><option value="#8800ff">Purple</option><option value="#ff00ff">Magenta</option><option value="#ff0088">Pink</option><option value="#888888">Grey</option></select><div class="color-swatch-grid" data-for="target-color-select"><button type="button" class="color-swatch-button rainbow" data-value="random" title="Random Rainbow"></button><button type="button" class="color-swatch-button" data-value="#ffffff" style="--swatch:#ffffff" title="White"></button><button type="button" class="color-swatch-button" data-value="#ff0000" style="--swatch:#ff0000" title="Red"></button><button type="button" class="color-swatch-button" data-value="#ff8800" style="--swatch:#ff8800" title="Orange"></button><button type="button" class="color-swatch-button" data-value="#ffff00" style="--swatch:#ffff00" title="Yellow"></button><button type="button" class="color-swatch-button" data-value="#88ff00" style="--swatch:#88ff00" title="Lime"></button><button type="button" class="color-swatch-button" data-value="#00ff00" style="--swatch:#00ff00" title="Green"></button><button type="button" class="color-swatch-button" data-value="#00ffff" style="--swatch:#00ffff" title="Cyan"></button><button type="button" class="color-swatch-button" data-value="#0088ff" style="--swatch:#0088ff" title="Sky"></button><button type="button" class="color-swatch-button" data-value="#0000ff" style="--swatch:#0000ff" title="Blue"></button><button type="button" class="color-swatch-button" data-value="#8800ff" style="--swatch:#8800ff" title="Purple"></button><button type="button" class="color-swatch-button" data-value="#ff00ff" style="--swatch:#ff00ff" title="Magenta"></button><button type="button" class="color-swatch-button" data-value="#ff0088" style="--swatch:#ff0088" title="Pink"></button><button type="button" class="color-swatch-button" data-value="#888888" style="--swatch:#888888" title="Grey"></button></div></div></div>
+            <div class="setting-group"><label for="friendly-color-select">Friendly Color:</label><div class="control-wrapper"><select id="friendly-color-select" class="visually-hidden"><option value="random">Random Rainbow</option><option value="#ffffff">White</option><option value="#ff0000">Red</option><option value="#ff8800">Orange</option><option value="#ffff00">Yellow</option><option value="#88ff00">Lime</option><option value="#00ff00">Green</option><option value="#00ffff">Cyan</option><option value="#0088ff">Sky</option><option value="#0000ff">Blue</option><option value="#8800ff">Purple</option><option value="#ff00ff">Magenta</option><option value="#ff0088">Pink</option><option value="#888888">Grey</option></select><div class="color-swatch-grid" data-for="friendly-color-select"><button type="button" class="color-swatch-button rainbow" data-value="random" title="Random Rainbow"></button><button type="button" class="color-swatch-button" data-value="#ffffff" style="--swatch:#ffffff" title="White"></button><button type="button" class="color-swatch-button" data-value="#ff0000" style="--swatch:#ff0000" title="Red"></button><button type="button" class="color-swatch-button" data-value="#ff8800" style="--swatch:#ff8800" title="Orange"></button><button type="button" class="color-swatch-button" data-value="#ffff00" style="--swatch:#ffff00" title="Yellow"></button><button type="button" class="color-swatch-button" data-value="#88ff00" style="--swatch:#88ff00" title="Lime"></button><button type="button" class="color-swatch-button" data-value="#00ff00" style="--swatch:#00ff00" title="Green"></button><button type="button" class="color-swatch-button" data-value="#00ffff" style="--swatch:#00ffff" title="Cyan"></button><button type="button" class="color-swatch-button" data-value="#0088ff" style="--swatch:#0088ff" title="Sky"></button><button type="button" class="color-swatch-button" data-value="#0000ff" style="--swatch:#0000ff" title="Blue"></button><button type="button" class="color-swatch-button" data-value="#8800ff" style="--swatch:#8800ff" title="Purple"></button><button type="button" class="color-swatch-button" data-value="#ff00ff" style="--swatch:#ff00ff" title="Magenta"></button><button type="button" class="color-swatch-button" data-value="#ff0088" style="--swatch:#ff0088" title="Pink"></button><button type="button" class="color-swatch-button" data-value="#888888" style="--swatch:#888888" title="Grey"></button></div></div></div>
           </div>
         </div>
       </div>
@@ -76,7 +69,7 @@
           </div>
           <div class="settings-column">
             <div class="setting-group"><label for="friendly-words">Friendly Words:</label><textarea id="friendly-words" rows="3" placeholder="Enter words separated by spaces (e.g. friend buddy ally)"></textarea></div>
-            <div class="setting-group"><label for="friendly-mode">Friendly Display Mode:</label><select id="friendly-mode"><option value="images">Images Only</option><option value="words">Words Only</option><option value="both">Images & Words</option></select></div>
+            
           </div>
         </div>
       </div>
@@ -84,11 +77,11 @@
         <div class="settings-grid">
           <div class="settings-column">
             <div class="setting-group"><div class="checkbox-group"><label for="caption-enabled"><input type="checkbox" id="caption-enabled">Enable Captions</label></div></div>
-            <div class="setting-group"><label for="caption-direction">Caption Direction:</label><select id="caption-direction"><option value="left">Right to Left</option><option value="right">Left to Right</option></select></div>
+            <div class="setting-group"><label for="caption-direction">Caption Direction:</label><div class="control-wrapper"><select id="caption-direction" class="visually-hidden"><option value="left">Right to Left</option><option value="right">Left to Right</option></select><div class="custom-select" data-for="caption-direction" aria-haspopup="listbox" aria-expanded="false"><button type="button" class="custom-select-trigger" aria-label="Caption direction">Right to Left</button><ul class="custom-select-menu" role="listbox"><li role="option" data-value="left" class="selected">Right to Left</li><li role="option" data-value="right">Left to Right</li></ul></div></div></div>
             <div class="setting-group"><label for="caption-max-tokens">Max Tokens on Screen:</label><input type="range" id="caption-max-tokens" min="1" max="10" step="1" value="5"><span id="caption-max-tokens-value">5</span></div>
           </div>
           <div class="settings-column">
-            <div class="setting-group"><label for="caption-color">Caption Color:</label><div class="color-options"><input type="color" id="caption-color" value="#ffffff"><div class="color-presets" id="caption-color-presets"></div></div></div>
+            <div class="setting-group"><label for="caption-color-select">Caption Color:</label><div class="control-wrapper"><select id="caption-color-select" class="visually-hidden"><option value="#ffffff">White</option><option value="#ff0000">Red</option><option value="#ff8800">Orange</option><option value="#ffff00">Yellow</option><option value="#88ff00">Lime</option><option value="#00ff00">Green</option><option value="#00ffff">Cyan</option><option value="#0088ff">Sky</option><option value="#0000ff">Blue</option><option value="#8800ff">Purple</option><option value="#ff00ff">Magenta</option><option value="#ff0088">Pink</option><option value="#888888">Grey</option></select><div class="color-swatch-grid" data-for="caption-color-select"><button type="button" class="color-swatch-button" data-value="#ffffff" style="--swatch:#ffffff" title="White"></button><button type="button" class="color-swatch-button" data-value="#ff0000" style="--swatch:#ff0000" title="Red"></button><button type="button" class="color-swatch-button" data-value="#ff8800" style="--swatch:#ff8800" title="Orange"></button><button type="button" class="color-swatch-button" data-value="#ffff00" style="--swatch:#ffff00" title="Yellow"></button><button type="button" class="color-swatch-button" data-value="#88ff00" style="--swatch:#88ff00" title="Lime"></button><button type="button" class="color-swatch-button" data-value="#00ff00" style="--swatch:#00ff00" title="Green"></button><button type="button" class="color-swatch-button" data-value="#00ffff" style="--swatch:#00ffff" title="Cyan"></button><button type="button" class="color-swatch-button" data-value="#0088ff" style="--swatch:#0088ff" title="Sky"></button><button type="button" class="color-swatch-button" data-value="#0000ff" style="--swatch:#0000ff" title="Blue"></button><button type="button" class="color-swatch-button" data-value="#8800ff" style="--swatch:#8800ff" title="Purple"></button><button type="button" class="color-swatch-button" data-value="#ff00ff" style="--swatch:#ff00ff" title="Magenta"></button><button type="button" class="color-swatch-button" data-value="#ff0088" style="--swatch:#ff0088" title="Pink"></button><button type="button" class="color-swatch-button" data-value="#888888" style="--swatch:#888888" title="Grey"></button></div></div></div>
             <div class="setting-group"><label for="caption-size">Caption Text Size:</label><input type="range" id="caption-size" min="12" max="36" step="2" value="18"><span id="caption-size-value">18px</span></div>
           </div>
         </div>

@@ -27,7 +27,7 @@
 	--btn-text: var(--accent-contrast);
 	--btn-border: #a7cfe5;
 	/* Other */
-	--score-number: #0d47a1;
+	--score-number: #6b6b6b;
 	/* Windows base backgrounds */
 	--window-bg: var(--dutch-white);
 	--window-bg-strong: color-mix(in srgb, var(--dutch-white) 75%, white);

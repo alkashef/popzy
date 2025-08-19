@@ -1,10 +1,7 @@
 /* Settings UI */
 .settings-content { padding: 0; overflow: hidden; min-height: 0; height: 100%; display: flex; flex-direction: column; }
 .settings-tabs { display: flex; border-bottom: 1px solid var(--surfaceBorder, rgba(255,255,255,0.25)); margin-bottom: 12px; gap: 6px; }
-.settings-tab { background: var(--tab-bg); border: 1px solid var(--champagne-pink); border-bottom: none; border-radius: 10px 10px 0 0; padding: 8px 14px; cursor: pointer; color: var(--text-grey); transition: all 0.25s ease; min-width: 96px; text-align: center; font-size: 14px; }
-.settings-tab.active { background: var(--window-bg-strong); color: var(--text-grey); border-color: var(--champagne-pink); }
-.settings-tab:hover:not(.active) { background: var(--eggshell); color: var(--text-grey); }
-.settings-tab-content { display: none; flex: 1 1 auto; background: var(--window-bg-strong); border: 1px solid var(--champagne-pink); border-top: none; border-radius: 0 12px 12px 12px; padding: 12px; }
+.settings-tab-content { display: none; flex: 1 1 auto; }
 .settings-tab-content.active { display: block; height: 100%; }
 .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 12px; min-height: 350px; padding: 10px; overflow: hidden; height: calc(100% - 60px); }
 .settings-column { display: flex; flex-direction: column; gap: 10px; }
@@ -26,26 +23,49 @@
 .setting-group input[type="range"]::-webkit-slider-runnable-track { height: 8px; background: var(--eggshell); border-radius: 6px; }
 .setting-group input[type="range"]::-moz-range-track { height: 8px; background: var(--eggshell); border-radius: 6px; }
 .setting-group select { width: 100%; background: var(--control-bg, rgba(255,255,255,0.1)); border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; color: var(--modal-text, var(--ui-text)); padding: 8px; font-family: inherit; font-size: 14px; }
-.setting-group select option { background: #222; color: var(--ui-text); }
+.setting-group select option { background: var(--dropdown-bg, #1e1e28); color: var(--modal-text, var(--ui-text)); }
+.setting-group select option:hover,
+.setting-group select option:focus,
+.setting-group select option:active { background: var(--dutch-white); color: var(--text-grey); }
+/* Improve contrast for selected/active items */
+.setting-group select option:checked { background: var(--light-blue); color: var(--text-grey); }
+/* Hint browsers to render controls in dark color scheme inside the settings modal */
+.settings-modal-content, .settings-content { color-scheme: dark; }
+/* Ensure caption direction dropdown follows scheme explicitly */
+#tab-caption select { background: var(--control-bg, rgba(255,255,255,0.1)); color: var(--modal-text, var(--ui-text)); border-color: rgba(0,0,0,0.25); }
+
+/* Custom dropdown for caption direction */
+.custom-select { position: relative; min-width: 200px; }
+.custom-select-trigger { width: 100%; text-align: left; background: var(--control-bg, rgba(255,255,255,0.1)); color: var(--modal-text, var(--ui-text)); border: 1px solid rgba(0,0,0,0.25); border-radius: 4px; padding: 8px; cursor: pointer; }
+.custom-select-trigger:after { content: '\25BC'; float: right; opacity: 0.8; }
+.custom-select[aria-expanded="true"] .custom-select-trigger:after { transform: rotate(180deg); }
+.custom-select-menu { position: absolute; z-index: 10; left: 0; right: 0; top: calc(100% + 4px); background: var(--dropdown-bg, #1e1e28); color: var(--modal-text, var(--ui-text)); border: 1px solid rgba(0,0,0,0.3); border-radius: 6px; padding: 4px; list-style: none; margin: 0; display: none; max-height: 200px; overflow-y: auto; }
+.custom-select[aria-expanded="true"] .custom-select-menu { display: block; }
+.custom-select-menu li { padding: 8px; border-radius: 4px; cursor: pointer; }
+.custom-select-menu li:hover, .custom-select-menu li:focus { background: var(--dutch-white); color: var(--text-grey); }
+.custom-select-menu li.selected { background: var(--light-blue); color: var(--text-grey); }
 .setting-group textarea { width: 100%; background: var(--control-bg, rgba(255,255,255,0.1)); border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; color: var(--modal-text, var(--ui-text)); padding: 8px; font-family: inherit; resize: vertical; }
 .setting-group span { display: inline-block; background: var(--control-bg, rgba(255,255,255,0.1)); padding: 4px 8px; border-radius: 4px; font-size: 12px; min-width: 40px; text-align: center; color: var(--modal-text, var(--ui-text)); border: 1px solid rgba(0,0,0,0.1); }
 .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
 .checkbox-group label { display: flex; align-items: center; gap: 8px; font-weight: normal; color: var(--modal-text, var(--ui-text)); cursor: pointer; }
 .checkbox-group input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); }
-/* Color pickers */
-.color-pickers { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
-.color-picker-container { display: flex; flex-direction: column; gap: 5px; }
-.color-picker-container label { margin: 0; color: var(--ui-text); font-size: 0.9em; }
-.color-options { display: flex; flex-direction: row; align-items: center; gap: 10px; }
-input[type="color"] { width: 40px; height: 25px; padding: 0; border: none; border-radius: 3px; cursor: pointer; background: transparent; }
-.color-presets { display: flex; flex-wrap: wrap; gap: 5px; max-width: var(--right-panel-width); }
-.color-preset { width: 20px; height: 20px; border-radius: 3px; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); transition: transform 0.1s ease; }
-.color-preset:hover { transform: scale(1.1); box-shadow: 0 0 5px rgba(255,255,255,0.5); }
-.random-color-preset { background-image: linear-gradient(45deg, #ff0000 0%, #ff8800 14%, #ffff00 28%, #00ff00 42%, #00ffff 56%, #0000ff 70%, #ff00ff 84%, #ff0088 100%); border: 2px solid white; position: relative; }
-.random-color-preset:hover { transform: scale(1.1); box-shadow: 0 0 10px rgba(255,255,255,0.8); }
+/* Color presets removed; selections now via dropdowns */
 
 /* Visuals tab: compact layout to avoid vertical scrolling */
 #tab-visual .settings-grid { height: auto; min-height: 0; gap: 12px; }
 #tab-visual .settings-column { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 #tab-visual .setting-group { margin-bottom: 6px; }
 #tab-visual .setting-group label { min-width: 120px; font-size: 14px; }
+
+/* Visual color swatches */
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.color-swatch-grid { display: grid; grid-template-columns: repeat(7, 24px); gap: 6px; align-items: center; }
+.color-swatch-button { width: 24px; height: 24px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.3); background: var(--swatch, #000); cursor: pointer; position: relative; }
+.color-swatch-button:focus { outline: 2px solid var(--light-blue); outline-offset: 1px; }
+.color-swatch-button:hover { transform: scale(1.06); }
+.color-swatch-button::after { content: ''; position: absolute; inset: 0; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35); }
+.color-swatch-button.rainbow { background: linear-gradient(45deg, #ff0000 0%, #ff8800 14%, #ffff00 28%, #00ff00 42%, #00ffff 56%, #0000ff 70%, #ff00ff 84%, #ff0088 100%); border-width: 2px; }
+.color-swatch-button.selected { box-shadow: 0 0 0 2px #fff, 0 0 6px rgba(255,255,255,0.7); }
+
+/* Caption swatch grid width */
+#tab-caption .color-swatch-grid { grid-template-columns: repeat(7, 24px); }

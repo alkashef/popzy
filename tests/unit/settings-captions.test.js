@@ -23,8 +23,7 @@ module.exports = {
     const { updateSettingsUICaptions, bindCaptionsControls } = await importCaptions();
     const els = {
       captionEnabled: makeEl(), captionDirection: makeEl(), captionMaxTokens: makeEl(),
-      captionMaxTokensValue: makeEl(), captionColor: makeEl(), captionSize: makeEl(), captionSizeValue: makeEl(),
-      captionColorPresets: { childElementCount: 0, appendChild: () => {} },
+      captionMaxTokensValue: makeEl(), captionColorSelect: makeEl(), captionSize: makeEl(), captionSizeValue: makeEl(),
     };
     global.CustomEvent = function (type, detail) { return { type, ...detail }; };
     global.document = {
@@ -32,12 +31,14 @@ module.exports = {
       dispatchEvent: () => {},
       createElement: () => ({ className: '', style: {}, addEventListener: () => {} }),
     };
-    const cfg = { captionEnabled: true, captionDirection: 'left', captionMaxTokens: 5, captionColor: '#fff', captionSize: 18 };
+  const cfg = { captionEnabled: true, captionDirection: 'left', captionMaxTokens: 5, captionColor: '#fff', captionSize: 18 };
     updateSettingsUICaptions(cfg);
     bindCaptionsControls(cfg);
     els.captionMaxTokens._fire('input', { target: { value: '3' } });
     if (cfg.captionMaxTokens !== 3) throw new Error('max tokens not updated');
-    els.captionSize._fire('input', { target: { value: '24' } });
+  els.captionSize._fire('input', { target: { value: '24' } });
     if (cfg.captionSize !== 24) throw new Error('size not updated');
+  els.captionColorSelect._fire('change', { target: { value: '#00ff00' } });
+  if (cfg.captionColor !== '#00ff00') throw new Error('caption color not updated');
   },
 };

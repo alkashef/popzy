@@ -67,8 +67,7 @@ export function initUIRefs() {
     // Settings controls
     speed: byId('speed'),
     speedValue: byId('speed-value'),
-    randomness: byId('randomness'),
-    randomnessValue: byId('randomness-value'),
+  // randomness removed
     spawnRate: byId('spawnRate'),
     spawnRateValue: byId('spawnRate-value'),
 
@@ -85,9 +84,9 @@ export function initUIRefs() {
     targetWords: byId('target-words'),
     friendlyWords: byId('friendly-words'),
 
-    targetColor: byId('target-color'),
-    friendlyColor: byId('friendly-color'),
-    friendlyMode: byId('friendly-mode'),
+  targetColorSelect: byId('target-color-select'),
+  friendlyColorSelect: byId('friendly-color-select'),
+  // friendlyMode removed
 
     missPenaltyEnabled: byId('miss-penalty-enabled'),
 
@@ -103,7 +102,7 @@ export function initUIRefs() {
     captionDirection: byId('caption-direction'),
     captionMaxTokens: byId('caption-max-tokens'),
     captionMaxTokensValue: byId('caption-max-tokens-value'),
-    captionColor: byId('caption-color'),
+  captionColorSelect: byId('caption-color-select'),
     captionSize: byId('caption-size'),
     captionSizeValue: byId('caption-size-value'),
 
@@ -114,20 +113,15 @@ export function initUIRefs() {
     friendlyImagesTransparency: byId('friendly-images-transparency'),
     friendlyImagesTransparencyValue: byId('friendly-images-transparency-value'),
 
-    showObjectPaths: byId('show-object-paths'),
-    objectShadows: byId('object-shadows'),
-
-    backgroundColor: byId('background-color'),
-    backgroundImage: byId('background-image'),
-
-    // Preset containers
-    targetColorPresets: byId('target-color-presets'),
-    friendlyColorPresets: byId('friendly-color-presets'),
-    captionColorPresets: byId('caption-color-presets'),
-    backgroundColorPresets: byId('background-color-presets'),
+  // showObjectPaths, objectShadows, backgroundColor, backgroundImage, and color preset containers removed
 
     // Misc
     resetSettingsButton: byId('reset-settings-button'),
+
+  // Color picker modal
+  colorPickerModal: byId('color-picker-modal'),
+  colorPickerGrid: byId('color-picker-grid'),
+  colorPickerClose: byId('color-picker-close'),
   };
 
   return UI;

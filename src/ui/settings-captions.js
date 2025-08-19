@@ -5,7 +5,18 @@
  */
 import { UI } from './dom.js';
 import { saveConfig as storageSaveConfig } from '../services/storage.js';
+import { openColorPicker } from './colorPicker.js';
 import { clearCaption } from './caption.js';
+
+function reflectCaptionSwatches(value) {
+  try {
+    const grid = document.querySelector('.color-swatch-grid[data-for="caption-color-select"]');
+    if (!grid) return;
+    grid.querySelectorAll('.color-swatch-button').forEach(btn => {
+      btn.classList.toggle('selected', (btn.dataset.value === value));
+    });
+  } catch {}
+}
 
 export function updateSettingsUICaptions(gameConfig) {
   const get = (id) => UI?.el?.[id] || document.getElementById(id);
@@ -24,8 +35,9 @@ export function updateSettingsUICaptions(gameConfig) {
   if (captionMaxTokens) captionMaxTokens.value = gameConfig.captionMaxTokens;
   setText('captionMaxTokensValue', gameConfig.captionMaxTokens);
 
-  const captionColor = get('captionColor');
-  if (captionColor) captionColor.value = gameConfig.captionColor;
+  const captionColorSelect = get('captionColorSelect');
+  if (captionColorSelect) captionColorSelect.value = gameConfig.captionColor;
+  reflectCaptionSwatches(captionColorSelect?.value);
 
   const captionSize = get('captionSize');
   if (captionSize) captionSize.value = gameConfig.captionSize;
@@ -58,7 +70,7 @@ export function bindCaptionsControls(gameConfig) {
     emitConfigChanged();
     storageSaveConfig(gameConfig);
   }
-  function updateCaptionColor(e) {
+  function updateCaptionColorSelect(e) {
     gameConfig.captionColor = e.target.value;
     emitConfigChanged();
     storageSaveConfig(gameConfig);
@@ -74,27 +86,57 @@ export function bindCaptionsControls(gameConfig) {
   on(get('captionEnabled'), 'change', updateCaptionEnabled);
   on(get('captionDirection'), 'change', updateCaptionDirection);
   on(get('captionMaxTokens'), 'input', updateCaptionMaxTokens);
-  on(get('captionColor'), 'input', updateCaptionColor);
+  on(get('captionColorSelect'), 'change', (e) => { updateCaptionColorSelect(e); reflectCaptionSwatches(e.target.value); });
   on(get('captionSize'), 'input', updateCaptionSize);
-
-  // Caption color presets
-  const colors = [
-    '#ffffff', '#ff0000', '#ff8800', '#ffff00', '#88ff00', '#00ff00',
-    '#00ffff', '#0088ff', '#0000ff', '#8800ff', '#ff00ff', '#ff0088', '#888888'
-  ];
-  const captionPresets = UI?.el?.captionColorPresets || document.getElementById('caption-color-presets');
-  if (captionPresets && captionPresets.childElementCount === 0) {
-    colors.forEach((color) => {
-      const c = document.createElement('div');
-      c.className = 'color-preset';
-      c.style.backgroundColor = color;
-      c.addEventListener('click', () => {
-        gameConfig.captionColor = color;
-        (UI?.el?.captionColor || document.getElementById('caption-color')).value = color;
-        emitConfigChanged();
-        storageSaveConfig(gameConfig);
+  // Bind caption swatch clicks
+  const captionGrid = document.querySelector('.color-swatch-grid[data-for="caption-color-select"]');
+  if (captionGrid) {
+    captionGrid.addEventListener('click', () => {
+      const sel = document.getElementById('caption-color-select');
+      if (!sel) return;
+      openColorPicker({
+        title: 'Pick Caption Color',
+        value: sel.value,
+        includeRandom: false,
+        returnFocusTo: captionGrid,
+        onPick: (val) => {
+          sel.value = val;
+          updateCaptionColorSelect({ target: sel });
+          reflectCaptionSwatches(sel.value);
+        }
       });
-      captionPresets.appendChild(c);
     });
   }
+  // Custom dropdown wiring for caption direction (OS/browser independent)
+  try {
+    const custom = document.querySelector('.custom-select[data-for="caption-direction"]');
+    const native = get('captionDirection') || document.getElementById('caption-direction');
+    if (custom && native) {
+      const trigger = custom.querySelector('.custom-select-trigger');
+      const items = Array.from(custom.querySelectorAll('[role="option"][data-value]'));
+      const syncFromValue = (val) => {
+        items.forEach(li => li.classList.toggle('selected', li.dataset.value === val));
+        if (trigger) trigger.textContent = items.find(li => li.dataset.value === val)?.textContent || '';
+      };
+      // init
+      syncFromValue(native.value);
+      trigger?.addEventListener('click', () => {
+        const expanded = custom.getAttribute('aria-expanded') === 'true';
+        custom.setAttribute('aria-expanded', String(!expanded));
+      });
+      items.forEach(li => li.addEventListener('click', () => {
+        const val = li.dataset.value;
+        native.value = val;
+        updateCaptionDirection({ target: native });
+        syncFromValue(val);
+        custom.setAttribute('aria-expanded', 'false');
+      }));
+      document.addEventListener('click', (e) => {
+        const picker = document.getElementById('color-picker-modal');
+        if (picker && picker.contains(e.target)) return;
+        if (!custom.contains(e.target)) custom.setAttribute('aria-expanded', 'false');
+      });
+    }
+  } catch {}
+  // Caption presets removed; using dropdown instead
 }

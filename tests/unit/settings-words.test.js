@@ -21,14 +21,13 @@ module.exports = {
   const { UI } = await importUI();
   UI.el = {};
     const { updateSettingsUIWords, bindWordsControls } = await importWords();
-    const els = { targetWords: makeEl(), friendlyWords: makeEl(), friendlyMode: makeEl() };
+  const els = { targetWords: makeEl(), friendlyWords: makeEl() };
     global.document = { getElementById: (id) => els[id] || null };
-    const cfg = { targetWords: 'a b', friendlyWords: 'x y', friendlyMode: 'both' };
+  const cfg = { targetWords: 'a b', friendlyWords: 'x y', friendlyMode: 'both' };
     updateSettingsUIWords(cfg);
     bindWordsControls(cfg);
     els.targetWords._fire('input', { target: { value: 'c d e' } });
     if (cfg.targetWords !== 'c d e') throw new Error('target words not updated');
-    els.friendlyMode._fire('change', { target: { value: 'images' } });
-    if (cfg.friendlyMode !== 'images') throw new Error('mode not updated');
+  // friendlyMode UI control removed; programmatic changes only
   },
 };

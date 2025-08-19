@@ -1,0 +1,118 @@
+/* Shared UI components for consistent look & feel across windows */
+
+/* Window shells */
+.ui-window,
+.settings-modal-content,
+.scores-modal-content,
+.about-modal-content,
+.game-over-content {
+  background: var(--champagne-pink);
+  border: 2px solid var(--dutch-white);
+  border-radius: 18px;
+  padding: 22px;
+  width: 90%;
+  height: auto;
+  color: var(--text-grey);
+  box-shadow: none;
+  position: relative;
+}
+
+/* Paper overlay removed to match right panel's flat background */
+
+/* Tab bars & tabs */
+.ui-tabs,
+.settings-tabs,
+.about-tabs { 
+  display: flex; 
+  border-bottom: 1px solid var(--surfaceBorder, rgba(255,255,255,0.25)); 
+  margin-bottom: 12px; 
+  gap: 6px; 
+}
+
+.ui-tab,
+.settings-tab,
+.tab-button {
+  background: var(--tab-bg);
+  border: 1px solid var(--champagne-pink);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text-grey);
+  transition: all 0.25s ease;
+  min-width: 96px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.ui-tab:hover:not(.active),
+.settings-tab:hover:not(.active),
+.tab-button:hover:not(.active) {
+  background: var(--eggshell);
+  color: var(--text-grey);
+}
+
+.ui-tab.active,
+.settings-tab.active,
+.tab-button.active {
+  background: var(--window-bg-strong);
+  color: var(--text-grey);
+  border-color: var(--champagne-pink);
+}
+
+/* Tab content */
+.ui-tab-content,
+.settings-tab-content,
+.tab-content {
+  display: none;
+  background: var(--window-bg-strong);
+  border: 1px solid var(--champagne-pink);
+  border-top: none;
+  border-radius: 0 12px 12px 12px;
+  padding: 12px;
+}
+.ui-tab-content.active,
+.settings-tab-content.active,
+.tab-content.active { display: block; }
+
+/* Buttons */
+.btn,
+.btn--window,
+.settings-ok-btn,
+.reset-settings-btn,
+.game-over-ok-btn,
+.close-btn {
+  background: var(--light-blue);
+  color: var(--text-grey);
+  border: 2px solid var(--champagne-pink);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: normal;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover,
+.btn--window:hover,
+.settings-ok-btn:hover,
+.reset-settings-btn:hover,
+.game-over-ok-btn:hover,
+.close-btn:hover {
+  background: var(--dutch-white);
+  border-color: var(--champagne-pink);
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+  color: var(--text-grey);
+}
+
+.btn:active,
+.btn--window:active,
+.settings-ok-btn:active,
+.reset-settings-btn:active,
+.game-over-ok-btn:active,
+.close-btn:active {
+  background: var(--eggshell);
+  transform: translateY(0);
+}

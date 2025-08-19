@@ -4,6 +4,18 @@
  */
 import { UI } from './dom.js';
 import { saveConfig as storageSaveConfig } from '../services/storage.js';
+import { openColorPicker } from './colorPicker.js';
+
+// Helper: reflect selected value onto swatch grid
+function reflectColorSwatches(selectId, value) {
+  try {
+    const grid = document.querySelector(`.color-swatch-grid[data-for="${selectId}"]`);
+    if (!grid) return;
+    grid.querySelectorAll('.color-swatch-button').forEach(btn => {
+      btn.classList.toggle('selected', (btn.dataset.value === value));
+    });
+  } catch {}
+}
 
 export function updateSettingsUIVisuals(gameConfig) {
   const get = (id) => UI?.el?.[id] || document.getElementById(id);
@@ -12,10 +24,13 @@ export function updateSettingsUIVisuals(gameConfig) {
     if (el) el.textContent = text;
   };
 
-  const targetColor = get('targetColor');
-  const friendlyColor = get('friendlyColor');
-  if (targetColor) targetColor.value = gameConfig.targetColor;
-  if (friendlyColor) friendlyColor.value = gameConfig.friendlyColor;
+  const targetColorSelect = get('targetColorSelect');
+  const friendlyColorSelect = get('friendlyColorSelect');
+  if (targetColorSelect) targetColorSelect.value = gameConfig.useRandomColors ? 'random' : gameConfig.targetColor;
+  if (friendlyColorSelect) friendlyColorSelect.value = gameConfig.useRandomColors ? 'random' : gameConfig.friendlyColor;
+  // reflect to swatches
+  reflectColorSwatches('target-color-select', targetColorSelect?.value);
+  reflectColorSwatches('friendly-color-select', friendlyColorSelect?.value);
 
   const targetTransparency = get('targetTransparency');
   if (targetTransparency) targetTransparency.value = gameConfig.targetTransparency;
@@ -29,18 +44,13 @@ export function updateSettingsUIVisuals(gameConfig) {
   if (friendlyImagesTransparency) friendlyImagesTransparency.value = gameConfig.friendlyImagesTransparency;
   setText('friendlyImagesTransparencyValue', `${Math.round(gameConfig.friendlyImagesTransparency * 100)}%`);
 
-  const showObjectPaths = get('showObjectPaths');
-  if (showObjectPaths) showObjectPaths.checked = gameConfig.showObjectPaths;
+  // show object paths control removed; force disable internally
+  gameConfig.showObjectPaths = false;
 
-  const objectShadows = get('objectShadows');
-  if (objectShadows) objectShadows.checked = gameConfig.objectShadows;
+  // object shadows control removed; always enable internally
+  gameConfig.objectShadows = true;
 
-  const backgroundColor = get('backgroundColor');
-  if (backgroundColor) {
-    backgroundColor.value = gameConfig.backgroundColor;
-    // Only set backgroundColor to avoid clearing any theme backgroundImage
-    document.body.style.backgroundColor = gameConfig.backgroundColor;
-  }
+  // background color selector removed
 }
 
 export function bindVisualsControls(gameConfig) {
@@ -66,119 +76,68 @@ export function bindVisualsControls(gameConfig) {
     setText('friendlyImagesTransparencyValue', `${Math.round(gameConfig.friendlyImagesTransparency * 100)}%`);
     storageSaveConfig(gameConfig);
   }
-  function updateShowObjectPaths(e) { gameConfig.showObjectPaths = e.target.checked; storageSaveConfig(gameConfig); }
-  function updateObjectShadows(e) { gameConfig.objectShadows = e.target.checked; storageSaveConfig(gameConfig); }
-  function updateTargetColor(e) { gameConfig.targetColor = e.target.value; storageSaveConfig(gameConfig); }
-  function updateFriendlyColor(e) { gameConfig.friendlyColor = e.target.value; storageSaveConfig(gameConfig); }
-
-  function updateBackgroundColor(e) {
-    gameConfig.backgroundColor = e.target.value;
-    // Only set backgroundColor to avoid clearing any theme backgroundImage
-    document.body.style.backgroundColor = gameConfig.backgroundColor;
+  // removed controls; enforce defaults
+  gameConfig.showObjectPaths = false;
+  gameConfig.objectShadows = true;
+  storageSaveConfig(gameConfig);
+  function updateTargetColorSelect(e) {
+    const val = e.target.value;
+    if (val === 'random') gameConfig.useRandomColors = true;
+    else { gameConfig.useRandomColors = false; gameConfig.targetColor = val; }
+    // reflect selection on both
+    const targetSel = get('targetColorSelect');
+    const friendlySel = get('friendlyColorSelect');
+    if (targetSel) targetSel.value = gameConfig.useRandomColors ? 'random' : gameConfig.targetColor;
+    if (friendlySel) friendlySel.value = gameConfig.useRandomColors ? 'random' : (friendlySel.value === 'random' ? '#ffffff' : friendlySel.value);
+  reflectColorSwatches('target-color-select', targetSel?.value);
+  reflectColorSwatches('friendly-color-select', friendlySel?.value);
+    storageSaveConfig(gameConfig);
+  }
+  function updateFriendlyColorSelect(e) {
+    const val = e.target.value;
+    if (val === 'random') gameConfig.useRandomColors = true;
+    else { gameConfig.useRandomColors = false; gameConfig.friendlyColor = val; }
+    const targetSel = get('targetColorSelect');
+    const friendlySel = get('friendlyColorSelect');
+    if (targetSel) targetSel.value = gameConfig.useRandomColors ? 'random' : (targetSel.value === 'random' ? '#ffffff' : targetSel.value);
+    if (friendlySel) friendlySel.value = gameConfig.useRandomColors ? 'random' : gameConfig.friendlyColor;
+  reflectColorSwatches('target-color-select', targetSel?.value);
+  reflectColorSwatches('friendly-color-select', friendlySel?.value);
     storageSaveConfig(gameConfig);
   }
 
-  // Background image logic (module-scoped)
-  let backgroundImage = null;
-  function updateBackgroundImage(e) {
-    const file = e.target.files && e.target.files[0];
-    if (!file) {
-      backgroundImage = null;
-      document.body.style.backgroundImage = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-      backgroundImage = new window.Image();
-      backgroundImage.src = ev.target.result;
-      document.body.style.backgroundImage = `url('${ev.target.result}')`;
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundRepeat = 'no-repeat';
-      document.body.style.backgroundPosition = 'center';
-    };
-    reader.readAsDataURL(file);
-  }
+  // background color removed
 
-  on(get('backgroundImage'), 'change', updateBackgroundImage);
-  on(get('backgroundColor'), 'input', updateBackgroundColor);
-  on(get('targetColor'), 'input', updateTargetColor);
-  on(get('friendlyColor'), 'input', updateFriendlyColor);
+  // Background image selection removed
+
+  on(get('targetColorSelect'), 'change', updateTargetColorSelect);
+  on(get('friendlyColorSelect'), 'change', updateFriendlyColorSelect);
   on(get('targetTransparency'), 'input', updateTargetTransparency);
   on(get('friendlyTransparency'), 'input', updateFriendlyTransparency);
   on(get('friendlyImagesTransparency'), 'input', updateFriendlyImagesTransparency);
-  on(get('showObjectPaths'), 'change', updateShowObjectPaths);
-  on(get('objectShadows'), 'change', updateObjectShadows);
+  // removed bindings for showObjectPaths and objectShadows
 
-  // Color presets (targets, friendlies, background)
-  const colors = [
-    '#ffffff', '#ff0000', '#ff8800', '#ffff00', '#88ff00', '#00ff00',
-    '#00ffff', '#0088ff', '#0000ff', '#8800ff', '#ff00ff', '#ff0088', '#888888'
-  ];
-  const targetPresets = UI?.el?.targetColorPresets || document.getElementById('target-color-presets');
-  const friendlyPresets = UI?.el?.friendlyColorPresets || document.getElementById('friendly-color-presets');
-  const backgroundPresets = UI?.el?.backgroundColorPresets || document.getElementById('background-color-presets');
-
-  if (targetPresets && targetPresets.childElementCount === 0) {
-    const targetRandomPreset = document.createElement('div');
-    targetRandomPreset.className = 'color-preset random-color-preset';
-    targetRandomPreset.title = 'Use random colors';
-    targetRandomPreset.addEventListener('click', () => {
-      gameConfig.useRandomColors = true;
-      storageSaveConfig(gameConfig);
-    });
-    targetPresets.appendChild(targetRandomPreset);
-
-    colors.forEach((color) => {
-      const t = document.createElement('div');
-      t.className = 'color-preset';
-      t.style.backgroundColor = color;
-      t.addEventListener('click', () => {
-        gameConfig.targetColor = color;
-        gameConfig.useRandomColors = false;
-        (UI?.el?.targetColor || document.getElementById('target-color')).value = color;
-        storageSaveConfig(gameConfig);
+  // presets removed; selection is via dropdowns
+  // Bind swatch grids
+  const swatchGrids = document.querySelectorAll('.color-swatch-grid[data-for]');
+  swatchGrids.forEach(grid => {
+    grid.addEventListener('click', (e) => {
+      const forId = grid.getAttribute('data-for');
+      const sel = document.getElementById(forId);
+      if (!sel) return;
+      const includeRandom = (forId !== 'caption-color-select');
+      const current = sel.value;
+      openColorPicker({
+        title: forId.includes('target') ? 'Pick Target Color' : 'Pick Friendly Color',
+        value: current,
+        includeRandom,
+        returnFocusTo: grid,
+        onPick: (val) => {
+          sel.value = val;
+          if (forId === 'target-color-select') updateTargetColorSelect({ target: sel });
+          else if (forId === 'friendly-color-select') updateFriendlyColorSelect({ target: sel });
+        }
       });
-      targetPresets.appendChild(t);
     });
-  }
-
-  if (friendlyPresets && friendlyPresets.childElementCount === 0) {
-    const friendlyRandomPreset = document.createElement('div');
-    friendlyRandomPreset.className = 'color-preset random-color-preset';
-    friendlyRandomPreset.title = 'Use random colors';
-    friendlyRandomPreset.addEventListener('click', () => {
-      gameConfig.useRandomColors = true;
-      storageSaveConfig(gameConfig);
-    });
-    friendlyPresets.appendChild(friendlyRandomPreset);
-
-    colors.forEach((color) => {
-      const f = document.createElement('div');
-      f.className = 'color-preset';
-      f.style.backgroundColor = color;
-      f.addEventListener('click', () => {
-        gameConfig.friendlyColor = color;
-        gameConfig.useRandomColors = false;
-        (UI?.el?.friendlyColor || document.getElementById('friendly-color')).value = color;
-        storageSaveConfig(gameConfig);
-      });
-      friendlyPresets.appendChild(f);
-    });
-  }
-
-  if (backgroundPresets && backgroundPresets.childElementCount === 0) {
-    colors.forEach((color) => {
-      const b = document.createElement('div');
-      b.className = 'color-preset';
-      b.style.backgroundColor = color;
-      b.addEventListener('click', () => {
-        gameConfig.backgroundColor = color;
-        (UI?.el?.backgroundColor || document.getElementById('background-color')).value = color;
-  // Only set backgroundColor to avoid clearing any theme backgroundImage
-  document.body.style.backgroundColor = color;
-        storageSaveConfig(gameConfig);
-      });
-      backgroundPresets.appendChild(b);
-    });
-  }
+  });
 }
