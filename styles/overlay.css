@@ -1,14 +1,14 @@
 /* Game Over Overlay */
-#game-over-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center; z-index: 2500; transition: opacity 0.25s ease; overflow: hidden; }
+#game-over-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 2500; transition: opacity 0.25s ease; overflow: hidden; }
 #game-over-overlay.hidden { opacity: 0; pointer-events: none; display: none; }
-.game-over-content { background: var(--modal-bg); border: 2px solid var(--modal-border, var(--ui-border)); border-radius: 18px; padding: 30px 50px; text-align: center; color: var(--modal-text, var(--ui-text)); box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2); max-width: 80%; min-width: 400px; backdrop-filter: blur(10px) saturate(120%); }
-.game-over-content h2 { color: var(--modal-text, var(--ui-text)); font-size: 28px; margin-bottom: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 12px; letter-spacing: 0.4px; }
-#final-player-name { font-size: 20px; margin-bottom: 15px; color: var(--modal-text, var(--ui-text)); }
-#final-score { font-size: 24px; color: var(--modal-text, var(--accent)); margin-bottom: 20px; font-weight: bold; }
-.game-over-message { font-size: 18px; opacity: 0.8; margin-top: 20px; font-style: italic; }
-#game-statistics { margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
+.game-over-content { background: var(--champagne-pink); border: 2px solid var(--dutch-white); border-radius: 18px; padding: 30px 50px; text-align: center; color: var(--text-grey); box-shadow: none; max-width: 80%; min-width: 400px; }
+.game-over-content h2 { color: var(--text-grey); font-size: 28px; margin-bottom: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 12px; letter-spacing: 0.4px; }
+#final-player-name { font-size: 20px; margin-bottom: 15px; color: var(--text-grey); }
+#final-score { font-size: 24px; color: var(--text-grey); margin-bottom: 20px; }
+.game-over-message { font-size: 18px; opacity: 0.85; margin-top: 20px; font-style: italic; }
+#game-statistics { margin: 20px 0; padding: 15px; background: var(--window-bg-strong); border-radius: 8px; border: 1px solid var(--champagne-pink); text-align: left; }
 #game-statistics div { margin: 8px 0; font-size: 16px; }
 #game-statistics strong { color: var(--accent); }
-.game-over-ok-btn { background: var(--btn-bg); color: var(--btn-text); border: 2px solid var(--btn-border); border-radius: 8px; padding: 12px 30px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: all 0.3s ease; min-width: 120px; }
-.game-over-ok-btn:hover { background: var(--btn-bg-hover); border-color: var(--btn-border); transform: translateY(-2px); color: var(--hover-text, var(--btn-text)); }
-.game-over-ok-btn:active { background: var(--btn-bg-active); transform: translateY(0); }
+.game-over-ok-btn { background: var(--light-blue); color: var(--text-grey); border: 2px solid var(--champagne-pink); border-radius: 8px; padding: 12px 30px; font-size: 16px; font-weight: normal; cursor: pointer; margin-top: 25px; transition: all 0.2s ease; min-width: 120px; box-shadow: none; }
+.game-over-ok-btn:hover { background: var(--dutch-white); border-color: var(--champagne-pink); transform: translateY(-1px); }
+.game-over-ok-btn:active { background: var(--eggshell); transform: translateY(0); }

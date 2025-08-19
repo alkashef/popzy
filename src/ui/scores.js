@@ -27,20 +27,20 @@ export function renderScoresDashboard(gameStats, getEndReasonText) {
       const scoreRank = calculateScoreRank(gameStats, latestGame.score);
       const accuracyRank = calculateAccuracyRank(gameStats, latestGame.accuracy || 0);
 
-      latestRankingsElement.innerHTML = `
-            <div class="rank-item">
-                <strong>Score Rank:</strong> ${scoreRank} of ${gameStats.gameSessionStats.length} games<br>
-                <span style="color: #00ff88;">Score: ${latestGame.score}</span>
-            </div>
-            <div class="rank-item">
-                <strong>Rate Rank:</strong> ${rateRank} of ${gameStats.gameSessionStats.length} games<br>
-                <span style="color: #00ff88;">Rate: ${latestGame.averageHitRate} hits/min</span>
-            </div>
-            <div class="rank-item">
-                <strong>Accuracy Rank:</strong> ${accuracyRank} of ${gameStats.gameSessionStats.length} games<br>
-                <span style="color: #00ff88;">Accuracy: ${(latestGame.accuracy || 0).toFixed(1)}%</span>
-            </div>
-        `;
+    latestRankingsElement.innerHTML = `
+      <div class="rank-item">
+        <strong>Score Rank:</strong> ${scoreRank} of ${gameStats.gameSessionStats.length} games<br>
+        <span class="rank-secondary">Score: ${latestGame.score}</span>
+      </div>
+      <div class="rank-item">
+        <strong>Rate Rank:</strong> ${rateRank} of ${gameStats.gameSessionStats.length} games<br>
+        <span class="rank-secondary">Rate: ${latestGame.averageHitRate} hits/min</span>
+      </div>
+      <div class="rank-item">
+        <strong>Accuracy Rank:</strong> ${accuracyRank} of ${gameStats.gameSessionStats.length} games<br>
+        <span class="rank-secondary">Accuracy: ${(latestGame.accuracy || 0).toFixed(1)}%</span>
+      </div>
+    `;
     } else {
       latestRankingsElement.innerHTML = '<div class="rank-item">No games played yet</div>';
     }

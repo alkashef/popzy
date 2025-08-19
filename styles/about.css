@@ -1,9 +1,9 @@
 /* About Modal */
 .about-tabs { display: flex; border-bottom: 1px solid var(--surfaceBorder, rgba(255,255,255,0.25)); margin-bottom: 12px; gap: 6px; }
-.tab-button { background: var(--tab-bg); border: 1px solid var(--champagne-pink); border-bottom: none; border-radius: 10px 10px 0 0; padding: 8px 14px; cursor: pointer; color: var(--text-grey); font-size: 13px; transition: all 0.25s ease; min-width: 96px; text-align: center; }
+.tab-button { background: var(--tab-bg); border: 1px solid var(--champagne-pink); border-bottom: none; border-radius: 10px 10px 0 0; padding: 8px 14px; cursor: pointer; color: var(--text-grey); font-size: 14px; transition: all 0.25s ease; min-width: 96px; text-align: center; }
 .tab-button:hover { background: var(--eggshell); color: var(--text-grey); }
-.tab-button.active { background: var(--window-bg-strong); color: var(--text-grey); border-color: var(--champagne-pink); font-weight: 600; }
-.tab-content { display: none; background: var(--surfaceStrong, rgba(255,255,255,0.85)); border: 1px solid var(--champagne-pink); border-top: none; border-radius: 0 12px 12px 12px; padding: 12px; }
+.tab-button.active { background: var(--window-bg-strong); color: var(--text-grey); border-color: var(--champagne-pink); }
+.tab-content { display: none; background: var(--window-bg-strong); border: 1px solid var(--champagne-pink); border-top: none; border-radius: 0 12px 12px 12px; padding: 12px; }
 .tab-content.active { display: block; }
 .tab-content h3 { color: var(--modal-text, var(--ui-text)); margin-bottom: 15px; font-size: 18px; }
 .tab-content ul { list-style: none; padding-left: 0; }

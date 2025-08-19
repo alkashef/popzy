@@ -74,14 +74,13 @@ export function drawBackground(ctx, canvas) {
   }
 
 
-  // Scale and center the image so the whole image fits (contain)
-  const scale = Math.min(canvas.width / backgroundImage.width, canvas.height / backgroundImage.height);
-  const imgW = backgroundImage.width * scale;
-  const imgH = backgroundImage.height * scale;
-  const x = (canvas.width - imgW) / 2;
-  const y = (canvas.height - imgH) / 2;
+  // Scale so the image width fits exactly into the play area (canvas width)
+  const scale = canvas.width / backgroundImage.width;
+  const imgW = canvas.width;
+  const imgH = Math.round(backgroundImage.height * scale);
+  const x = 0; // align to left edge of play area
+  const y = Math.round((canvas.height - imgH) / 2); // center vertically
 
-  // No scrolling: just draw the image centered and fully visible
   ctx.drawImage(backgroundImage, x, y, imgW, imgH);
 
   // Paper-like effect: subtle noise overlay
