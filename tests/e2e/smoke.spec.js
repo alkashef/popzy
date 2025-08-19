@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 // Basic smoke test covering start, click, and an end condition
 
-test.describe('Shoot the Unicorn - Smoke', () => {
+test.describe('Popzy - Smoke', () => {
   test('start game, click a few times, and reach an end state', async ({ page }) => {
     await page.goto('/');
 

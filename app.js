@@ -1,5 +1,5 @@
 /**
- * Shoot the Unicorn Game
+ * Popzy Game
  * Copyright © 2025 Ahmad Alkashef (alkashef@gmail.com)
  * All rights reserved.
  * 

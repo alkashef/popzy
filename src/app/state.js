@@ -1,5 +1,5 @@
 /**
- * Centralized mutable game state for Shoot the Unicorn
+ * Centralized mutable game state for Popzy
  */
 import { createDefaultGameConfig } from '../core/config.js';
 

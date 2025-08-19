@@ -8,9 +8,8 @@
         <button class="settings-tab active" data-tab="gameplay">Gameplay</button>
         <button class="settings-tab" data-tab="visual">Visual</button>
         <button class="settings-tab" data-tab="content">Content</button>
-        <button class="settings-tab" data-tab="caption">Caption</button>
-        <button class="settings-tab" data-tab="game-end">Game End</button>
-  <button class="settings-tab" data-tab="themes">Themes</button>
+  <button class="settings-tab" data-tab="caption">Caption</button>
+  <button class="settings-tab" data-tab="game-end">Game End</button>
       </div>
       <div class="settings-tab-content active" id="tab-gameplay">
         <div class="settings-grid">
@@ -98,15 +97,21 @@
         <div class="settings-grid">
           <div class="settings-column">
             <div class="setting-group"><div class="checkbox-group"><label for="time-limit-enabled"><input type="checkbox" id="time-limit-enabled">Time Limit</label></div></div>
-            <label for="time-limit">Duration (seconds):</label><input type="range" id="time-limit" min="30" max="600" step="30" value="120"><span id="time-limit-value">2:00</span>
+            <div class="setting-group">
+              <label for="time-limit">Duration (seconds):</label>
+              <div class="control-wrapper"><input type="range" id="time-limit" min="30" max="600" step="30" value="120"><span id="time-limit-value">2:00</span></div>
+            </div>
           </div>
           <div class="settings-column">
             <div class="setting-group"><div class="checkbox-group"><label for="score-limit-enabled"><input type="checkbox" id="score-limit-enabled">Score Limit</label></div></div>
-            <label for="score-limit">Target Score:</label><input type="range" id="score-limit" min="10" max="200" step="5" value="50"><span id="score-limit-value">50</span>
+            <div class="setting-group">
+              <label for="score-limit">Target Score:</label>
+              <div class="control-wrapper"><input type="range" id="score-limit" min="10" max="200" step="5" value="50"><span id="score-limit-value">50</span></div>
+            </div>
           </div>
         </div>
       </div>
-  <div class="settings-tab-content" id="tab-themes"></div>
+  
     </div>
     <div class="settings-footer"><button id="reset-settings-button" class="reset-settings-btn">Reset to Defaults</button><button id="settings-ok-button" class="settings-ok-btn">OK</button></div>
   </div>

@@ -1,24 +1,59 @@
 :root {
 	--right-panel-width: 200px;
-	/* Themeable UI variables (defaults approximate current styling) */
-	--ui-text: #e0e0e0;
-	--ui-muted: #999999;
-	--ui-border: #666666;
-	--panel-bg: linear-gradient(135deg, rgba(74,74,74,0.3), rgba(42,42,42,0.3));
-	--modal-bg: linear-gradient(135deg, #4a4a4a, #2a2a2a);
-	--modal-text: #ffffff;
-	--btn-bg: #666666;
-	--btn-bg-hover: #777777;
-	--btn-bg-active: #555555;
-	--btn-text: #ffffff;
-	--btn-border: #888888;
-	--accent: #00ff88;
-	--accent-contrast: #000000;
-	--surface: rgba(255,255,255,0.06);
-	--surfaceStrong: rgba(255,255,255,0.10);
-	--surfaceBorder: rgba(255,255,255,0.15);
+	/* Pastel palette */
+	--base-bg: #F7FAFF;            /* sky wash */
+	--accent: #7DC4E4;             /* sky blue */
+	--accent-contrast: #0b2530;    /* readable on accent */
+	--accent-2: #F4B4D6;           /* cotton candy pink */
+	--accent-3: #B4E1C5;           /* mint */
+	--accent-4: #F9D28E;           /* peach */
+	/* Text and borders (high contrast on light pastels) */
+	--ui-text: #213547;
+	--ui-muted: #5f6c7b;
+	--ui-border: #c9d5e1;
+	/* Surfaces */
+	--panel-bg: linear-gradient(135deg, rgba(125,196,228,0.18), rgba(244,180,214,0.18));
+	--surface: rgba(255,255,255,0.70);
+	--surfaceStrong: rgba(255,255,255,0.85);
+	--surfaceBorder: rgba(125,196,228,0.45);
+	/* Modals */
+	--modal-bg: linear-gradient(135deg, #e3f2fd 0%, #ffe4f2 100%);
+	--modal-text: var(--ui-text);
+	--modal-border: var(--surfaceBorder);
+	/* Buttons */
+	--btn-bg: var(--accent);
+	--btn-bg-hover: #9bd3ec;
+	--btn-bg-active: #69b9dc;
+	--btn-text: var(--accent-contrast);
+	--btn-border: #a7cfe5;
+	/* Other */
+	--score-number: #0d47a1;
+	/* Windows base backgrounds */
+	--window-bg: var(--dutch-white);
+	--window-bg-strong: color-mix(in srgb, var(--dutch-white) 75%, white);
+	--tab-bg: color-mix(in srgb, var(--dutch-white) 85%, white);
+	/* Custom palette */
+	--eggshell: #ECEBDBff;
+	--dutch-white: #F7E9C2ff;
+	--light-blue: #BBD9E3ff;
+	--champagne-pink: #F4DCCFff;
+	--eggshell-hsl: hsla(56, 31%, 89%, 1);
+	--dutch-white-hsl: hsla(44, 77%, 86%, 1);
+	--light-blue-hsl: hsla(195, 42%, 81%, 1);
+	--champagne-pink-hsl: hsla(21, 63%, 88%, 1);
+	--text-grey: #444444;
+	--text-grey-light: #888888;
+	--gradient-top: linear-gradient(0deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-right: linear-gradient(90deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-bottom: linear-gradient(180deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-left: linear-gradient(270deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-top-right: linear-gradient(45deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-bottom-right: linear-gradient(135deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-top-left: linear-gradient(225deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-bottom-left: linear-gradient(315deg, #ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
+	--gradient-radial: radial-gradient(#ECEBDBff, #F7E9C2ff, #BBD9E3ff, #F4DCCFff);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Arial', sans-serif; /* background set by theme service */ overflow: hidden; height: 100vh; color: var(--ui-text); }
-#game-container { position: relative; width: 100vw; height: 100vh; }
-#gameCanvas { display: block; cursor: crosshair; z-index: 1; position: relative; margin-right: var(--right-panel-width); width: calc(100vw - var(--right-panel-width)); height: 100vh; }
+body { font-family: 'Arial', sans-serif; background-color: var(--eggshell); overflow: hidden; height: 100vh; color: var(--text-grey); }
+#game-container { position: relative; width: 100vw; height: 100vh; background: var(--dutch-white); }
+#gameCanvas { display: block; cursor: crosshair; z-index: 1; position: relative; margin-right: var(--right-panel-width); width: calc(100vw - var(--right-panel-width)); height: 100vh; background: var(--light-blue); }

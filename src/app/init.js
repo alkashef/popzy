@@ -9,7 +9,7 @@ import { state, setCanvas } from './state.js';
 import { initUIRefs } from '../ui/dom.js';
 import { initCanvas } from '../ui/canvas.js';
 import { loadAllAssets } from './assets.js';
-import { renderFrame } from '../render/draw.js';
+import { renderFrame, preloadBackgroundImage } from '../render/draw.js';
 import { createGameEngine } from '../systems/engine.js';
 import { addWordToCaption } from '../ui/caption.js';
 import { setScoreDisplay, setTimerText, setPlayerNameDisplay } from '../ui/scoreboard.js';
@@ -19,13 +19,15 @@ import { bindEvents } from './events.js';
 import { loadConfig as storageLoadConfig, loadStats as storageLoadStats, addSession as storageAddSession, saveStats as storageSaveStats } from '../services/storage.js';
 import { playSound, getEndReasonMessage, getEndReasonText, startGame } from './controls.js';
 import { ensureBackgroundAudio, setGlobalVolume, playBackground, pauseBackground, resolveAudioSrc, hasAudioExt } from '../services/audio.js';
-import { initThemeOnBoot } from '../services/themes.js';
+// Theme system removed
 
 /**
  * Initialize the game application. Safe to call after DOM is ready and
  * HTML partials are included. Idempotent in practice for a single-page load.
  */
 export async function initApp() {
+  // Preload background image immediately
+  preloadBackgroundImage();
   // Load config first
   const savedConfig = storageLoadConfig();
   if (savedConfig) {
@@ -34,10 +36,7 @@ export async function initApp() {
         state.gameConfig[k] = savedConfig[k];
       }
     });
-    // Restore theme sound pack early if present
-    if (savedConfig.__themeSoundPack) {
-      try { (await import('../services/themes.js')).setSoundPack(savedConfig.__themeSoundPack); } catch {}
-    }
+  // Theme sound pack removed
   }
   if (state.__pendingTestConfig) {
     Object.assign(state.gameConfig, state.__pendingTestConfig);
@@ -54,8 +53,7 @@ export async function initApp() {
   // assets
   await loadAllAssets();
 
-  // apply theme if present (await ensures background image is set before first render)
-  await initThemeOnBoot(state.gameConfig);
+  // No theme to apply; visuals come from CSS variables and Visual settings
 
   // engine
   state.engine = createGameEngine({

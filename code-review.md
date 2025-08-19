@@ -1,4 +1,4 @@
-# Code Review Report — Shoot the Unicorn
+# Code Review Report — Popzy
 
 Date: 2025-08-14
 

@@ -8,19 +8,8 @@ import { clearCaption } from '../ui/caption.js';
 import { setScoreDisplay, setTimerText, setPlayerNameDisplay } from '../ui/scoreboard.js';
 import { hideGameOver } from '../ui/overlay.js';
 import { playSound as playAudio, playBackground, pauseBackground } from '../services/audio.js';
-import { getSoundPack } from '../services/themes.js';
 
-export function playSound(key) {
-  const themed = getSoundPack();
-  if (themed && themed[key]) {
-    // Create or reuse an Audio object for the themed sound lazily
-  const a = new Audio(themed[key]);
-  try { a.volume = Math.max(0, Math.min(1, state.gameConfig.volume ?? 0.5)); } catch {}
-    try { a.currentTime = 0; a.play().catch(() => {}); } catch {}
-    return;
-  }
-  playAudio(state.sounds, key);
-}
+export function playSound(key) { playAudio(state.sounds, key); }
 
 export function getEndReasonText(reason) {
   switch (reason) {

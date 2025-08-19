@@ -18,28 +18,81 @@
  * @param {CanvasRenderingContext2D} ctx - 2D context of the canvas.
  * @param {HTMLCanvasElement} canvas - Canvas element to draw onto.
  */
+/**
+ * Draw a horizontally scrolling background image.
+ * @param {CanvasRenderingContext2D} ctx - 2D context of the canvas.
+ * @param {HTMLCanvasElement} canvas - Canvas element to draw onto.
+ */
+
+const backgroundImageFolder = 'assets/images/backgrounds/';
+const backgroundImageFiles = [
+  'beach.png', 'coral.png', 'desert.png', 'hills.png', 'meadow.png',
+  'mountain range.png', 'oasis.png', 'rainforest.png', 'savannah.png', 'snow.png'
+];
+let backgroundImage = null;
+let backgroundLoaded = false;
+let scrollX = 0;
+const SCROLL_SPEED = 1.2; // pixels per frame
+
+// Randomly select a background image on each game load
+function getRandomBackgroundImageSrc() {
+  const idx = Math.floor(Math.random() * backgroundImageFiles.length);
+  return backgroundImageFolder + backgroundImageFiles[idx];
+}
+
+export function preloadBackgroundImage() {
+  if (!backgroundImage) {
+    const src = getRandomBackgroundImageSrc();
+    backgroundImage = new window.Image();
+    backgroundImage.src = src;
+    backgroundImage.onload = () => { backgroundLoaded = true; };
+  }
+}
+
+function loadBackgroundImage() {
+  if (!backgroundImage) {
+    preloadBackgroundImage();
+  }
+}
+
 export function drawBackground(ctx, canvas) {
-  // Create a subtle grid pattern
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-  ctx.lineWidth = 1;
-
-  const gridSize = 50;
-
-  // Draw vertical lines
-  for (let x = 0; x <= canvas.width; x += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvas.height);
-    ctx.stroke();
+  loadBackgroundImage();
+  if (!backgroundLoaded || !backgroundImage) {
+    // fallback: fill with pastel color and subtle paper texture
+  ctx.fillStyle = '#DAE8E3'; // Mint cream
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Paper-like effect: subtle noise overlay
+    ctx.globalAlpha = 0.08;
+    for (let i = 0; i < 1000; i++) {
+      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.08})`;
+      ctx.beginPath();
+      ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+    return;
   }
 
-  // Draw horizontal lines
-  for (let y = 0; y <= canvas.height; y += gridSize) {
+
+  // Scale and center the image so the whole image fits (contain)
+  const scale = Math.min(canvas.width / backgroundImage.width, canvas.height / backgroundImage.height);
+  const imgW = backgroundImage.width * scale;
+  const imgH = backgroundImage.height * scale;
+  const x = (canvas.width - imgW) / 2;
+  const y = (canvas.height - imgH) / 2;
+
+  // No scrolling: just draw the image centered and fully visible
+  ctx.drawImage(backgroundImage, x, y, imgW, imgH);
+
+  // Paper-like effect: subtle noise overlay
+  ctx.globalAlpha = 0.08;
+  for (let i = 0; i < 1000; i++) {
+    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.08})`;
     ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvas.width, y);
-    ctx.stroke();
+    ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2, 0, Math.PI * 2);
+    ctx.fill();
   }
+  ctx.globalAlpha = 1.0;
 }
 
 /**
@@ -67,14 +120,20 @@ export function drawObjects(ctx, canvas, gameConfig, gameObjects) {
       ctx.setLineDash([]); // Reset dash
     }
 
-    // Apply transparency based on object type and settings
+    // Apply transparency and pastel color palette
     if (object.type === 'target') {
       ctx.globalAlpha = gameConfig.targetTransparency;
+      ctx.shadowColor = 'rgba(173,216,230,0.3)'; // pastel blue shadow
+      ctx.shadowBlur = 8;
     } else if (object.type === 'friendly') {
       if (object.image) {
         ctx.globalAlpha = gameConfig.friendlyImagesTransparency;
+        ctx.shadowColor = 'rgba(255,182,193,0.3)'; // pastel pink shadow
+        ctx.shadowBlur = 8;
       } else {
         ctx.globalAlpha = gameConfig.friendlyTransparency;
+        ctx.shadowColor = 'rgba(255,182,193,0.3)'; // pastel pink shadow
+        ctx.shadowBlur = 8;
       }
     }
 
@@ -116,14 +175,14 @@ export function drawObjects(ctx, canvas, gameConfig, gameObjects) {
       const size = object.radius * 2;
       ctx.drawImage(object.image, object.x - object.radius, object.y - object.radius, size, size);
     } else {
-      // Fallback to colored circles - use object.color if available (random color mode)
+      // Fallback to pastel colored circles - use object.color if available (random color mode)
       if (object.type === 'target') {
-        ctx.fillStyle = object.color || gameConfig.targetColor;
-        ctx.strokeStyle = '#ffffff';
+  ctx.fillStyle = object.color || '#C9DBE0'; // Columbia blue
+  ctx.strokeStyle = '#ECEBDB'; // Eggshell
         ctx.lineWidth = 2;
       } else {
-        ctx.fillStyle = object.color || gameConfig.friendlyColor;
-        ctx.strokeStyle = '#ffffff';
+  ctx.fillStyle = object.color || '#ECE1DA'; // Linen
+  ctx.strokeStyle = '#F3EAC9'; // Parchment
         ctx.lineWidth = 2;
       }
 
@@ -134,8 +193,8 @@ export function drawObjects(ctx, canvas, gameConfig, gameObjects) {
 
       // Draw word if available (either target word or friendly word)
       if (object.word) {
-        ctx.fillStyle = '#ffffff';
-        ctx.font = `bold ${Math.max(14, object.radius * 0.8)}px Arial`;
+  ctx.fillStyle = '#F3EAC9'; // Parchment
+  ctx.font = `bold ${Math.max(14, object.radius * 0.8)}px 'Segoe UI', 'Arial', sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(object.word, object.x, object.y);

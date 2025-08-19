@@ -10,8 +10,10 @@ export const GAME_CONFIG_DEFAULTS = {
   DEFAULT_PLAYER_NAME: 'player 1',
   DEFAULT_TARGET_WORDS: '2 4 6 8 10',
   DEFAULT_FRIENDLY_WORDS: '1 3 5 7 9',
-  DEFAULT_TARGET_COLOR: '#ffff00',
-  DEFAULT_FRIENDLY_COLOR: '#ffff00',
+  DEFAULT_TARGET_COLOR: '#C9DBE0', // Columbia blue
+  DEFAULT_FRIENDLY_COLOR: '#ECEBDB', // Eggshell
+  DEFAULT_CAPTION_COLOR: '#F3EAC9', // Parchment
+  DEFAULT_BACKGROUND_COLOR: '#DAE8E3', // Mint cream
   DEFAULT_FRIENDLY_MODE: 'both',
   DEFAULT_SIZE_VARIATION: 0.3,
   DEFAULT_MISS_PENALTY_ENABLED: false,
@@ -38,7 +40,7 @@ export const GAME_CONFIG_DEFAULTS = {
   },
   ASSETS: {
     TARGET_FOLDER: 'assets/target/',
-    FRIENDLY_FOLDER: 'assets/friendly/',
+  FRIENDLY_FOLDER: 'assets/images/friendly/',
     SOUNDS_FOLDER: 'assets/sounds/'
   },
 };
@@ -78,7 +80,6 @@ export function createDefaultGameConfig() {
     objectShadows: D.DEFAULT_OBJECT_SHADOWS,
     backgroundColor: D.DEFAULT_BACKGROUND_COLOR,
     useRandomColors: false,
-  // Theme persistence
-  themeId: null,
+  // Theme removed
   };
 }

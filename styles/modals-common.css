@@ -1,9 +1,13 @@
+.game-over-content h2 { color: var(--text-grey); margin-bottom: 10px; }
+#final-player-name, #final-score, .game-over-message { color: var(--text-grey); margin: 8px 0; }
+.game-over-ok-btn { background: var(--light-blue); color: var(--text-grey); border: 2px solid var(--champagne-pink); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: bold; }
+.game-over-ok-btn:hover { background: var(--dutch-white); }
 /* Common modal overlays and content shells */
 #settings-modal, #scores-modal, #about-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center; z-index: 3000; transition: opacity 0.25s ease; overflow: hidden; }
 #settings-modal.hidden, #scores-modal.hidden, #about-modal.hidden { opacity: 0; pointer-events: none; display: none; }
-.settings-modal-content, .scores-modal-content, .about-modal-content { 
-	background: var(--modal-bg);
-	border: 2px solid var(--modal-border, var(--ui-border));
+.settings-modal-content, .scores-modal-content, .about-modal-content, .gameover-modal-content {
+	background: var(--surface, rgba(255,255,255,0.70));
+	border: 2px solid var(--modal-border, var(--surfaceBorder, rgba(255,255,255,0.15)));
 	border-radius: 18px;
 	padding: 22px;
 	width: 90%;
@@ -13,6 +17,42 @@
 	position: relative;
 	backdrop-filter: blur(10px) saturate(120%);
 }
+#settings-modal, #scores-modal, #about-modal, #game-over-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center; z-index: 3000; transition: opacity 0.25s ease; overflow: hidden; }
+#settings-modal.hidden, #scores-modal.hidden, #about-modal.hidden, #game-over-overlay.hidden { opacity: 0; pointer-events: none; display: none; }
+
+.settings-modal-content, .scores-modal-content, .about-modal-content, .game-over-content {
+		background: var(--window-bg);
+		border: 2px solid var(--champagne-pink);
+	border-radius: 18px;
+		padding: 22px;
+	width: 90%;
+	height: auto;
+		color: var(--text-grey);
+		box-shadow: 0 10px 30px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.15);
+	position: relative;
+		backdrop-filter: blur(6px) saturate(110%);
+}
+
+/* Paper collage effect overlay */
+.settings-modal-content::before, .scores-modal-content::before, .about-modal-content::before, .game-over-content::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background-image:
+			radial-gradient(ellipse at top left, rgba(255,255,255,0.35), transparent 60%),
+			radial-gradient(ellipse at bottom right, rgba(0,0,0,0.05), transparent 60%),
+			linear-gradient(135deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+		background-size: 400px 400px, 400px 400px, 16px 16px;
+		mix-blend-mode: overlay;
+		opacity: 0.35;
+}
+
+/* Size presets per window */
+.settings-modal-content { max-width: 1100px; height: 80vh; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; }
+.scores-modal-content { max-width: 1100px; height: 80vh; overflow: hidden; }
+.about-modal-content { max-width: 800px; height: 70vh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; }
+.game-over-content { max-width: 600px; padding: 28px; text-align: center; }
 .settings-modal-content { max-width: 1100px; height: 80vh; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; }
 .scores-modal-content { max-width: 1100px; height: 80vh; overflow: hidden; }
 .about-modal-content { max-width: 800px; height: 70vh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; }

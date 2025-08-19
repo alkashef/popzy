@@ -1,4 +1,4 @@
-# Shoot the Unicorn
+# Popzy
 
 A 2D browser game for kids: shoot targets, avoid friendlies, and learn along the way. Pure HTML/CSS/JS with ES modules—no build step. UI is composed from HTML partials at runtime.
 
@@ -6,34 +6,16 @@ A 2D browser game for kids: shoot targets, avoid friendlies, and learn along the
 
 ## Quick start
 
-Prerequisites: Node.js installed.
-
 Windows (cmd):
 
 ```cmd
 npm install
-npm start
-```
-
-Open http://127.0.0.1:8080 in your browser. Use Ctrl+F5 to hard-refresh after edits.
-
-## Architecture overview
-
-```
-index.html (UI shell + partial loader) ──▶ app.js (orchestrator)
-												 │
-												 ├── Systems
-												 │     └── src/systems/engine.js        # game loop, spawn/update, timer, pointer hits
-												 ├── Render
 												 │     └── src/render/draw.js           # renderFrame(ctx, canvas, config, objects)
 												 ├── UI
-												 │     ├── src/ui/dom.js                # DOM cache (UI.el)
-												 │     ├── src/ui/scoreboard.js         # score/timer/player-name display
-												 │     ├── src/ui/overlay.js            # game-over overlay
 												 │     ├── src/ui/canvas.js             # canvas init + CSS-var sizing
-												 │     ├── src/ui/caption.js            # caption line (words)
-												 │     ├── src/ui/settings.js           # settings entry (composes tabs)
-												 │     ├── src/ui/settings-gameplay.js  # speed/randomness/spawn/size/ratio/name/penalty
+Visuals
+-------
+* The UI uses a soft pastel palette by default. Use Settings → Visual to adjust background image/color and object colors.
 												 │     ├── src/ui/settings-limits.js    # time & score limits
 												 │     ├── src/ui/settings-words.js     # target/friendly words & mode
 												 │     ├── src/ui/settings-captions.js  # caption enable/direction/size/color/max tokens
@@ -114,8 +96,7 @@ Additionally, the engine enforces time limits via both requestAnimationFrame and
 - src/ui/*.js — Modular UI (dom, caption, scoreboard, overlay, canvas, settings, scores, about)
 	- Settings tabs: settings-gameplay.js, settings-limits.js, settings-words.js, settings-captions.js, settings-visuals.js; entry: settings.js; helpers: settings-helpers.js
 - src/services/*.js — Assets/audio/storage/stats + manifest
-	- src/services/themeManifest.js — declarative theme definitions
-	- src/services/themes.js — theme application and boot initialization
+  
 - assets/** — Images and sounds
 - partials/*.html — Modular HTML fragments (title, right-panel, settings, scores, about, game-over)
 
@@ -130,7 +111,7 @@ Additionally, the engine enforces time limits via both requestAnimationFrame and
 
 - Themes tab lets you preview/apply a theme (forest, volcano, skies).
 - A theme sets game colors, transparencies, background (color/image), cursor, and sound pack.
-- Assets live under `assets/themes/<themeId>/` (backgrounds/, sounds/, cursors/). You can still override visuals afterwards.
+  
 
 ## Configuration and UI controls
 
@@ -164,7 +145,7 @@ Notes
 - Background music plays during gameplay (looped) from `assets/sounds/background.mp3`.
 - Global Volume control is available in Settings → Gameplay; it affects SFX and background music.
 - SFX files (base pack): `game-start.mp3`, `game-over.mp3`, `target-hit.mp3`, `friendly-hit.mp3`, `obstacle-hit.mp3`.
-- Themes may override SFX via their own `assets/themes/<theme>/sounds/` files.
+
 
 ## Testing
 
