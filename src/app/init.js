@@ -9,7 +9,7 @@ import { state, setCanvas } from './state.js';
 import { initUIRefs } from '../ui/dom.js';
 import { initCanvas } from '../ui/canvas.js';
 import { loadAllAssets } from './assets.js';
-import { renderFrame, preloadBackgroundImage } from '../render/draw.js';
+import { renderFrame, preloadBackgroundImage, initBackgrounds } from '../render/draw.js';
 import { createGameEngine } from '../systems/engine.js';
 import { addWordToCaption } from '../ui/caption.js';
 import { setScoreDisplay, setTimerText, setPlayerNameDisplay } from '../ui/scoreboard.js';
@@ -26,7 +26,8 @@ import { ensureBackgroundAudio, setGlobalVolume, playBackground, pauseBackground
  * HTML partials are included. Idempotent in practice for a single-page load.
  */
 export async function initApp() {
-  // Preload background image immediately
+  // Discover available backgrounds and preload one image immediately
+  initBackgrounds();
   preloadBackgroundImage();
   // Load config first
   const savedConfig = storageLoadConfig();

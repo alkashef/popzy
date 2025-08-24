@@ -47,6 +47,12 @@ import { GAME_CONFIG_DEFAULTS } from '../core/config.js';
  * @returns {EngineAPI}
  */
 export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets, hooks }) {
+  // Keep a reference to the external config object and use a per-session snapshot
+  // so settings changes apply on the next game start, not mid-session.
+  let sourceConfig = gameConfig;
+  function cloneConfig(obj) {
+    try { return JSON.parse(JSON.stringify(obj || {})); } catch { return { ...(obj || {}) }; }
+  }
   const state = {
     gameObjects: [],
     score: 0,
@@ -73,11 +79,14 @@ export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets,
   }
 
   function setConfig(nextConfig) {
-    Object.assign(gameConfig, nextConfig);
+    // Update the source (to be applied on next start)
+    Object.assign(sourceConfig, nextConfig || {});
   }
 
   function start() {
     if (state.started && state.paused) return resume();
+    // Snapshot current settings for this session
+    gameConfig = cloneConfig(sourceConfig);
     state.started = true;
     state.paused = false;
     state.gameStartTime = Date.now();
@@ -189,7 +198,8 @@ export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets,
           hooks?.onPlaySound?.('obstacleHit');
           return stop('friendly_shot');
         } else {
-          if (obj.word && obj.type === 'target') hooks?.onAddCaptionWord?.(obj.word);
+          // Reflect all hits in caption when a word is present (targets and friendlies)
+          if (obj.word) hooks?.onAddCaptionWord?.(obj.word);
           if (obj.type === 'target') hooks?.onPlaySound?.('targetHit');
           else if (obj.type === 'friendly' && obj.word) hooks?.onPlaySound?.('friendlyHit');
 
@@ -268,6 +278,10 @@ export function createGameEngine({ canvas, ctx, gameConfig, renderFrame, assets,
     if (gameConfig.useRandomColors) {
       const colors = ['#ff0000','#ff8800','#ffff00','#88ff00','#00ff00','#00ffff','#0088ff','#0000ff','#8800ff','#ff00ff','#ff0088'];
       obj.color = colors[Math.floor(Math.random() * colors.length)];
+    } else {
+      // Apply configured static colors for non-random mode
+      if (type === 'target') obj.color = gameConfig.targetColor;
+      else obj.color = gameConfig.friendlyColor;
     }
 
     if (type === 'target' && gameConfig.targetWords) {

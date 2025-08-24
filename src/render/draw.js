@@ -25,10 +25,78 @@
  */
 
 const backgroundImageFolder = 'assets/images/backgrounds/';
-const backgroundImageFiles = [
+// Start with a sensible fallback list; will be replaced if discovery succeeds.
+let backgroundImageFiles = [
   'beach.png', 'coral.png', 'desert.png', 'hills.png', 'meadow.png',
-  'mountain range.png', 'oasis.png', 'rainforest.png', 'savannah.png', 'snow.png'
+  'mountain range.png', 'oasis.png', 'rainforest.png', 'savannah.png', 'snow.png',
+  // extra images present in the folder but not in the legacy list
+  'volcano.png', 'Wetland.png',
 ];
+const ALLOWED_EXTS = ['.png', '.jpg', '.jpeg'];
+const hasAllowedExt = (name) => /\.(png|jpg|jpeg)$/i.test(name);
+const isFileNameOnly = (name) => name && !name.includes('/') && !name.endsWith('/');
+
+let backgroundListDiscovering = false;
+let backgroundListDiscovered = false;
+
+/**
+ * Try to discover background images at runtime by fetching a manifest or parsing
+ * a directory index. This works on servers that expose either a JSON file or
+ * an auto-index. Falls back to the baked-in list when unavailable.
+ */
+async function discoverBackgroundImages() {
+  if (backgroundListDiscovering || backgroundListDiscovered) return;
+  backgroundListDiscovering = true;
+  const base = backgroundImageFolder;
+
+  const applyList = (arr) => {
+    const filtered = (arr || [])
+      .filter(isFileNameOnly)
+      .filter(hasAllowedExt)
+      .sort((a, b) => a.localeCompare(b));
+    if (filtered.length) {
+      backgroundImageFiles = filtered;
+    }
+  };
+
+  try {
+    // 1) Preferred: fetch JSON manifest
+    const manifestUrls = ['manifest.json', 'index.json'].map(n => base + n);
+    for (const url of manifestUrls) {
+      try {
+        const r = await fetch(url, { cache: 'no-cache' });
+        if (r.ok) {
+          const data = await r.json();
+          if (Array.isArray(data)) {
+            applyList(data);
+            backgroundListDiscovered = true;
+            backgroundListDiscovering = false;
+            return;
+          }
+        }
+      } catch {}
+    }
+
+    // 2) Fallback: fetch directory listing HTML and parse hrefs
+    try {
+      const r = await fetch(base, { cache: 'no-cache' });
+      if (r.ok) {
+        const text = await r.text();
+        const hrefs = Array.from(text.matchAll(/href="([^"]+)"/gi)).map(m => m[1]);
+        // Normalize hrefs that may be absolute or relative
+        const names = hrefs
+          .map(h => decodeURIComponent(h))
+          .map(h => h.split('?')[0])
+          .map(h => h.replace(/^\/?assets\/images\/backgrounds\//, ''))
+          .filter(isFileNameOnly);
+        applyList(names);
+      }
+    } catch {}
+  } finally {
+    backgroundListDiscovered = true; // prevent repeated attempts every frame
+    backgroundListDiscovering = false;
+  }
+}
 let backgroundImage = null;
 let backgroundLoaded = false;
 let scrollX = 0;
@@ -40,7 +108,14 @@ function getRandomBackgroundImageSrc() {
   return backgroundImageFolder + backgroundImageFiles[idx];
 }
 
+/**
+ * Kick off background discovery (non-blocking) and preload one image.
+ */
 export function preloadBackgroundImage() {
+  // Non-blocking discovery: improves coverage when the server exposes a list
+  // while keeping first paint fast.
+  // If discovery finishes before selection, it will use the updated list.
+  try { discoverBackgroundImages(); } catch {}
   if (!backgroundImage) {
     const src = getRandomBackgroundImageSrc();
     backgroundImage = new window.Image();
@@ -49,27 +124,38 @@ export function preloadBackgroundImage() {
   }
 }
 
+/**
+ * Explicit initializer to be called on program start to attempt discovery ASAP.
+ * Safe to call multiple times.
+ */
+export function initBackgrounds() {
+  try { discoverBackgroundImages(); } catch {}
+}
+
 function loadBackgroundImage() {
   if (!backgroundImage) {
     preloadBackgroundImage();
   }
 }
 
-export function drawBackground(ctx, canvas) {
+export function drawBackground(ctx, canvas, opts = {}) {
+  const { withNoise = true } = opts;
   loadBackgroundImage();
   if (!backgroundLoaded || !backgroundImage) {
     // fallback: fill with pastel color and subtle paper texture
   ctx.fillStyle = '#DAE8E3'; // Mint cream
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // Paper-like effect: subtle noise overlay
-    ctx.globalAlpha = 0.08;
-    for (let i = 0; i < 1000; i++) {
-      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.08})`;
-      ctx.beginPath();
-      ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2, 0, Math.PI * 2);
-      ctx.fill();
+    if (withNoise) {
+      // Paper-like effect: subtle noise overlay
+      ctx.globalAlpha = 0.08;
+      for (let i = 0; i < 1000; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.08})`;
+        ctx.beginPath();
+        ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1.0;
     }
-    ctx.globalAlpha = 1.0;
     return;
   }
 
@@ -83,15 +169,17 @@ export function drawBackground(ctx, canvas) {
 
   ctx.drawImage(backgroundImage, x, y, imgW, imgH);
 
-  // Paper-like effect: subtle noise overlay
-  ctx.globalAlpha = 0.08;
-  for (let i = 0; i < 1000; i++) {
-    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.08})`;
-    ctx.beginPath();
-    ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2, 0, Math.PI * 2);
-    ctx.fill();
+  if (withNoise) {
+    // Paper-like effect: subtle noise overlay
+    ctx.globalAlpha = 0.08;
+    for (let i = 0; i < 1000; i++) {
+      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.08})`;
+      ctx.beginPath();
+      ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
   }
-  ctx.globalAlpha = 1.0;
 }
 
 /**
@@ -160,14 +248,16 @@ export function drawObjects(ctx, canvas, gameConfig, gameObjects) {
       const size = object.radius * 2;
       ctx.drawImage(object.image, object.x - object.radius, object.y - object.radius, size, size);
     } else {
-      // Fallback to pastel colored circles - use object.color if available (random color mode)
+      // Use random color if provided; otherwise fall back to configured colors
       if (object.type === 'target') {
-  ctx.fillStyle = object.color || '#C9DBE0'; // Columbia blue
-  ctx.strokeStyle = '#ECEBDB'; // Eggshell
+        const fill = object.color || (gameConfig?.targetColor || '#C9DBE0');
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = '#ECEBDB'; // subtle border
         ctx.lineWidth = 2;
       } else {
-  ctx.fillStyle = object.color || '#ECE1DA'; // Linen
-  ctx.strokeStyle = '#F3EAC9'; // Parchment
+        const fill = object.color || (gameConfig?.friendlyColor || '#ECE1DA');
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = '#F3EAC9';
         ctx.lineWidth = 2;
       }
 
@@ -203,10 +293,10 @@ export function renderFrame(ctx, canvas, gameConfig, gameObjects, gameStarted) {
   // Clear canvas every frame
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (!gameStarted) {
-    drawBackground(ctx, canvas);
-    return;
-  }
+  // Always draw background first so it remains visible after game starts
+  drawBackground(ctx, canvas, { withNoise: !gameStarted });
 
-  drawObjects(ctx, canvas, gameConfig, gameObjects);
+  if (gameStarted) {
+    drawObjects(ctx, canvas, gameConfig, gameObjects);
+  }
 }

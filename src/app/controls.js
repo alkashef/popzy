@@ -68,6 +68,8 @@ export function startGame() {
     resumeGame();
     return;
   }
+  // Ensure engine uses the most recent settings for the new session
+  try { state.engine?.setConfig?.(state.gameConfig); } catch {}
   state.gameStarted = true;
   state.gamePaused = false;
   playSound('gameStart');
