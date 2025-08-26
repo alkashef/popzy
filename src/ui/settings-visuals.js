@@ -3,7 +3,7 @@
  * - Colors, transparency, paths, shadows, background image/color
  */
 import { UI } from './dom.js';
-import { saveConfig as storageSaveConfig } from '../services/storage.js';
+import { saveGameConfig } from '../services/configPersister.js';
 import { openColorPicker } from './colorPicker.js';
 
 // Helper: reflect selected value onto swatch grid
@@ -63,23 +63,23 @@ export function bindVisualsControls(gameConfig) {
 
   function updateTargetTransparency(e) {
     gameConfig.targetTransparency = parseFloat(e.target.value);
-    setText('targetTransparencyValue', `${Math.round(gameConfig.targetTransparency * 100)}%`);
-    storageSaveConfig(gameConfig);
+  setText('targetTransparencyValue', `${Math.round(gameConfig.targetTransparency * 100)}%`);
+  saveGameConfig(gameConfig);
   }
   function updateFriendlyTransparency(e) {
     gameConfig.friendlyTransparency = parseFloat(e.target.value);
-    setText('friendlyTransparencyValue', `${Math.round(gameConfig.friendlyTransparency * 100)}%`);
-    storageSaveConfig(gameConfig);
+  setText('friendlyTransparencyValue', `${Math.round(gameConfig.friendlyTransparency * 100)}%`);
+  saveGameConfig(gameConfig);
   }
   function updateFriendlyImagesTransparency(e) {
     gameConfig.friendlyImagesTransparency = parseFloat(e.target.value);
-    setText('friendlyImagesTransparencyValue', `${Math.round(gameConfig.friendlyImagesTransparency * 100)}%`);
-    storageSaveConfig(gameConfig);
+  setText('friendlyImagesTransparencyValue', `${Math.round(gameConfig.friendlyImagesTransparency * 100)}%`);
+  saveGameConfig(gameConfig);
   }
   // removed controls; enforce defaults
   gameConfig.showObjectPaths = false;
   gameConfig.objectShadows = true;
-  storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   function updateTargetColorSelect(e) {
     const val = e.target.value;
     if (val === 'random') gameConfig.useRandomColors = true;
@@ -91,7 +91,7 @@ export function bindVisualsControls(gameConfig) {
     if (friendlySel) friendlySel.value = gameConfig.useRandomColors ? 'random' : (friendlySel.value === 'random' ? '#ffffff' : friendlySel.value);
   try { document.getElementById('target-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (targetSel?.value === 'random' ? '#ffffff' : targetSel?.value || '#ffffff')); } catch {}
   try { document.getElementById('friendly-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (friendlySel?.value === 'random' ? '#ffffff' : friendlySel?.value || '#ffffff')); } catch {}
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   function updateFriendlyColorSelect(e) {
     const val = e.target.value;
@@ -103,7 +103,7 @@ export function bindVisualsControls(gameConfig) {
     if (friendlySel) friendlySel.value = gameConfig.useRandomColors ? 'random' : gameConfig.friendlyColor;
   try { document.getElementById('target-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (targetSel?.value === 'random' ? '#ffffff' : targetSel?.value || '#ffffff')); } catch {}
   try { document.getElementById('friendly-color-button')?.querySelector('.swatch-preview')?.style.setProperty('--swatch', (friendlySel?.value === 'random' ? '#ffffff' : friendlySel?.value || '#ffffff')); } catch {}
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
 
   // background color removed

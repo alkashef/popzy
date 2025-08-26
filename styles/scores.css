@@ -1,6 +1,8 @@
 /* Scores Dashboard Modal */
 .scores-content { padding: 20px; background: var(--window-bg-strong); border-radius: 12px; }
 .scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.scores-player-card { background: var(--tab-bg); border-radius: 12px; border: 1px solid var(--champagne-pink); padding: 16px; margin-bottom: 16px; }
+.scores-player-name { text-align: center; font-size: 18px; font-weight: 700; color: var(--modal-text, var(--ui-text)); }
 .scores-section { background: var(--tab-bg); border-radius: 12px; border: 1px solid var(--champagne-pink); padding: 16px; box-shadow: none; }
 .scores-section-title { color: var(--modal-text, var(--ui-text)); font-size: 16px; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.3); }
 .stat-item { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
@@ -14,3 +16,10 @@
 .histogram-visual { flex: 1; height: 20px; background: var(--surfaceStrong, rgba(255,255,255,0.1)); border-radius: 10px; margin: 0 10px; position: relative; overflow: hidden; }
 .histogram-fill { height: 100%; background: linear-gradient(90deg, var(--light-blue), color-mix(in srgb, var(--light-blue) 65%, #888)); border-radius: 10px; transition: width 0.3s ease; box-shadow: inset 0 0 10px rgba(0,0,0,0.15); }
 .scores-footer { justify-content: flex-end !important; }
+/* Table for Last Games */
+.scores-table { width: 100%; border-collapse: collapse; font-size: 14px; border: 1px solid #ffffff; }
+.scores-table th, .scores-table td { border: 1px solid #ffffff; padding: 6px 8px; text-align: left; }
+.scores-table thead th { position: sticky; top: 0; background: var(--tab-bg); color: var(--modal-text, var(--ui-text)); vertical-align: top; }
+.scores-table thead th .th-label { font-weight: 700; }
+.scores-table thead th .th-unit { font-weight: normal; font-size: 12px; color: rgba(255,255,255,0.7) !important; line-height: 1.1; }
+.scores-table tbody tr:hover { background: rgba(255,255,255,0.04); }

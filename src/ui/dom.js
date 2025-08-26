@@ -47,6 +47,8 @@ export function initUIRefs() {
     scoresOkButton: byId('scores-ok-button'),
     scoresModal: byId('scores-modal'),
     latestGameRankings: byId('latest-game-rankings'),
+  playerSummary: byId('player-summary'),
+  sessionsList: byId('sessions-list'),
     overallStatistics: byId('overall-statistics'),
     topPerformers: byId('top-performers'),
     gameEndHistogram: byId('game-end-histogram'),

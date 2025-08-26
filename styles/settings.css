@@ -79,3 +79,46 @@
 .color-choose-btn:hover { background: var(--dutch-white); }
 .color-choose-btn .swatch-preview { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.3); background: var(--swatch, #000); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35); }
 .color-choose-btn .swatch-label { font-size: 14px; }
+
+/* Player grid in the Players modal */
+.player-grid { 
+	display: grid; 
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+	gap: 12px; 
+	align-content: start; 
+}
+.player-tile { 
+	position: relative; 
+	aspect-ratio: 1 / 1; 
+	border-radius: 12px; 
+	border: 2px solid var(--dutch-white); 
+	background: var(--light-blue); 
+	color: var(--text-grey);
+	display: flex; 
+	align-items: center; 
+	justify-content: center;
+	padding: 8px; 
+	cursor: pointer; 
+	transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease; 
+	box-shadow: none; 
+	text-align: center;
+}
+.player-tile:hover { transform: translateY(-2px); filter: brightness(1.03); }
+.player-tile.selected { outline: 3px solid var(--accent); box-shadow: 0 0 0 2px #fff, 0 0 8px rgba(0,0,0,0.15); filter: brightness(1.06); }
+.player-name { 
+	font-weight: 800; 
+	font-size: 16px; 
+	line-height: 1.1; 
+	max-height: 2.2em; 
+	overflow: hidden; 
+	display: -webkit-box; 
+	line-clamp: 2; 
+	-webkit-line-clamp: 2; 
+	-webkit-box-orient: vertical; 
+	word-break: break-word; 
+	text-shadow: 0 1px 0 rgba(0,0,0,0.2); 
+}
+.player-tile.new-player { background: var(--eggshell); border-style: dashed; }
+/* Make action buttons sit side-by-side under the grid */
+.player-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.player-actions .settings-btn { width: auto; min-width: 120px; }

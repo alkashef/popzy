@@ -9,7 +9,6 @@
  */
 
 import { UI } from './dom.js';
-import { saveConfig as storageSaveConfig } from '../services/storage.js';
 // import { clearCaption } from './caption.js';
 import { updateSettingsUICaptions, bindCaptionsControls } from './settings-captions.js';
 import { updateSettingsUIVisuals, bindVisualsControls } from './settings-visuals.js';

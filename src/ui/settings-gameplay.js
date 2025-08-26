@@ -3,7 +3,7 @@
  * - Speed, randomness, spawn rate, size, variation, ratio, player name, miss penalty
  */
 import { UI } from './dom.js';
-import { saveConfig as storageSaveConfig } from '../services/storage.js';
+import { saveGameConfig } from '../services/configPersister.js';
 
 export function updateSettingsUIGameplay(gameConfig) {
   const get = (key) => UI?.el?.[key] || document.getElementById(key);
@@ -57,29 +57,29 @@ export function bindGameplayControls(gameConfig) {
   function updateSpeed(e) {
     gameConfig.speed = parseFloat(e.target.value);
     setText('speedValue', `${gameConfig.speed.toFixed(1)}x`);
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   // randomness control removed; no binding
   function updateSpawnRate(e) {
     gameConfig.spawnRate = parseInt(e.target.value);
     setText('spawnRateValue', gameConfig.spawnRate);
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   function updateObjectSize(e) {
     gameConfig.objectSize = parseInt(e.target.value);
     setText('objectSizeValue', gameConfig.objectSize);
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   function updateSizeVariation(e) {
     gameConfig.sizeVariation = parseFloat(e.target.value);
     setText('sizeVariationValue', gameConfig.sizeVariation.toFixed(1));
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   function updateVolume(e) {
     const v = parseFloat(e.target.value);
     gameConfig.volume = isNaN(v) ? 0.5 : v;
     setText('volumeValue', `${Math.round(gameConfig.volume * 100)}%`);
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
     try {
       const { setGlobalVolume } = require('../services/audio.js');
       // dynamic import not needed in browser; tests use Node require shim
@@ -92,13 +92,13 @@ export function bindGameplayControls(gameConfig) {
   function updateRatio(e) {
     gameConfig.ratio = parseFloat(e.target.value);
     setText('ratioValue', gameConfig.ratio.toFixed(1));
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   function updatePlayerName(e) {
     gameConfig.playerName = e.target.value;
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
-  function updateMissPenaltyEnabled(e) { gameConfig.missPenaltyEnabled = e.target.checked; storageSaveConfig(gameConfig); }
+  function updateMissPenaltyEnabled(e) { gameConfig.missPenaltyEnabled = e.target.checked; saveGameConfig(gameConfig); }
 
   on(get('speed'), 'input', updateSpeed);
   // randomness control removed

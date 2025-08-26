@@ -17,6 +17,8 @@ import { updateSettingsUI, bindSettingsControls } from '../ui/settings.js';
 import { showGameOver } from '../ui/overlay.js';
 import { bindEvents } from './events.js';
 import { loadConfig as storageLoadConfig, loadStats as storageLoadStats, addSession as storageAddSession, saveStats as storageSaveStats } from '../services/storage.js';
+import { listPlayers, getCurrentPlayerId, setCurrentPlayer, createPlayer, loadPlayerConfig, savePlayerConfig, loadPlayerStats, addPlayerSession } from '../services/player.js';
+import { bindPlayerUI, showPlayerModal } from '../ui/player.js';
 import { playSound, getEndReasonMessage, getEndReasonText, startGame } from './controls.js';
 import { ensureBackgroundAudio, setGlobalVolume, playBackground, pauseBackground, resolveAudioSrc, hasAudioExt } from '../services/audio.js';
 // Theme system removed
@@ -29,22 +31,42 @@ export async function initApp() {
   // Discover available backgrounds and preload one image immediately
   initBackgrounds();
   preloadBackgroundImage();
-  // Load config first
-  const savedConfig = storageLoadConfig();
-  if (savedConfig) {
-    Object.keys(savedConfig).forEach((k) => {
-      if (Object.prototype.hasOwnProperty.call(state.gameConfig, k)) {
-        state.gameConfig[k] = savedConfig[k];
-      }
+  // Player init: ensure there is a selected player or prompt
+  bindPlayerUI();
+  let playerId = getCurrentPlayerId();
+  if (!playerId) {
+    const roster = listPlayers();
+    if (!roster.length) {
+      // Start fresh: require user to create/select
+      showPlayerModal();
+    } else {
+      // Preselect last-used (stored in localStorage)
+      setCurrentPlayer(roster[0].id);
+      playerId = roster[0].id;
+    }
+  }
+
+  // Load per-player config if selected
+  if (playerId) {
+    const cfg = loadPlayerConfig(playerId) || {};
+    Object.keys(cfg).forEach((k) => {
+      if (Object.prototype.hasOwnProperty.call(state.gameConfig, k)) state.gameConfig[k] = cfg[k];
     });
-  // Theme sound pack removed
+    // Sync name display and config to roster name
+    try {
+      const p = listPlayers().find(p => p.id === playerId);
+      if (p) {
+        state.gameConfig.playerName = p.name;
+        savePlayerConfig(playerId, { ...cfg, playerName: p.name });
+      }
+    } catch {}
   }
   if (state.__pendingTestConfig) {
     Object.assign(state.gameConfig, state.__pendingTestConfig);
   }
 
-  // Load statistics
-  state.gameStats = storageLoadStats();
+  // Load per-player statistics (current player only)
+  state.gameStats = playerId ? loadPlayerStats(playerId) : { totals:{}, sessions:[], gameSessionStats: [] };
 
   // DOM & canvas
   initUIRefs();
@@ -73,8 +95,11 @@ export async function initApp() {
       onPlaySound: (key) => playSound(key),
       onStop: (reason, session) => {
         state.currentGameEndReason = reason;
-        state.gameStats = storageAddSession(state.gameStats, session);
-        try { storageSaveStats(state.gameStats); } catch {}
+        // Save per-player session and stats
+        const curId = getCurrentPlayerId();
+        if (curId) {
+          state.gameStats = addPlayerSession(curId, session);
+        }
         showGameOver({
           playerName: state.gameConfig.playerName || 'player 1',
           score: session.score,
@@ -95,9 +120,41 @@ export async function initApp() {
   // apply settings to UI
   updateSettingsUI(state.gameConfig);
   bindSettingsControls(state.gameConfig);
+  // reflect player name (use roster name if available)
+  try {
+    const pid = getCurrentPlayerId();
+    const p = pid ? listPlayers().find(p => p.id === pid) : null;
+    setPlayerNameDisplay(p?.name || state.gameConfig.playerName || 'player 1');
+  } catch { setPlayerNameDisplay(state.gameConfig.playerName || 'player 1'); }
 
   // events
   bindEvents();
+
+  // React to player changes: reload config & stats and reflect UI
+  try {
+    document.addEventListener('player:changed', (ev) => {
+      const pid = getCurrentPlayerId();
+      if (pid) {
+        const cfg = loadPlayerConfig(pid) || {};
+        Object.keys(cfg).forEach((k) => {
+          if (Object.prototype.hasOwnProperty.call(state.gameConfig, k)) state.gameConfig[k] = cfg[k];
+        });
+        state.gameStats = loadPlayerStats(pid);
+        // Ensure playerName reflects the selected player's roster name
+        try {
+          const p = listPlayers().find(p => p.id === pid);
+          if (p) {
+            state.gameConfig.playerName = p.name;
+            savePlayerConfig(pid, { ...cfg, playerName: p.name });
+            setPlayerNameDisplay(p.name);
+          } else {
+            setPlayerNameDisplay(state.gameConfig.playerName || 'player 1');
+          }
+        } catch { setPlayerNameDisplay(state.gameConfig.playerName || 'player 1'); }
+        updateSettingsUI(state.gameConfig);
+      }
+    });
+  } catch {}
 
   // initial idle render
   renderFrame(state.ctx, state.canvas, state.gameConfig, [], false);

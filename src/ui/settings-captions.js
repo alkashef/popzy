@@ -4,7 +4,7 @@
  * - Bind caption controls and dispatch caption:configChanged
  */
 import { UI } from './dom.js';
-import { saveConfig as storageSaveConfig } from '../services/storage.js';
+import { saveGameConfig } from '../services/configPersister.js';
 import { openColorPicker } from './colorPicker.js';
 import { clearCaption } from './caption.js';
 
@@ -55,32 +55,32 @@ export function bindCaptionsControls(gameConfig) {
   function updateCaptionEnabled(e) {
     gameConfig.captionEnabled = e.target.checked;
     emitConfigChanged();
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   function updateCaptionDirection(e) {
     gameConfig.captionDirection = e.target.value;
-    clearCaption(gameConfig);
-    emitConfigChanged();
-    storageSaveConfig(gameConfig);
+  clearCaption(gameConfig);
+  emitConfigChanged();
+  saveGameConfig(gameConfig);
   }
   function updateCaptionMaxTokens(e) {
     gameConfig.captionMaxTokens = parseInt(e.target.value);
-    const el = UI?.el?.captionMaxTokensValue || document.getElementById('caption-max-tokens-value');
+  const el = UI?.el?.captionMaxTokensValue || document.getElementById('caption-max-tokens-value');
     if (el) el.textContent = gameConfig.captionMaxTokens;
     emitConfigChanged();
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
   function updateCaptionColorSelect(e) {
     gameConfig.captionColor = e.target.value;
-    emitConfigChanged();
-    storageSaveConfig(gameConfig);
+  emitConfigChanged();
+  saveGameConfig(gameConfig);
   }
   function updateCaptionSize(e) {
     gameConfig.captionSize = parseInt(e.target.value);
-    const el = UI?.el?.captionSizeValue || document.getElementById('caption-size-value');
+  const el = UI?.el?.captionSizeValue || document.getElementById('caption-size-value');
     if (el) el.textContent = `${gameConfig.captionSize}px`;
     emitConfigChanged();
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
 
   on(get('captionEnabled'), 'change', updateCaptionEnabled);

@@ -3,11 +3,11 @@
 .game-over-ok-btn { background: var(--light-blue); color: var(--text-grey); border: 2px solid var(--champagne-pink); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: normal; }
 .game-over-ok-btn:hover { background: var(--dutch-white); }
 /* Common modal overlays and content shells */
-#settings-modal, #scores-modal, #about-modal, #color-picker-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 3000; transition: opacity 0.25s ease; overflow: hidden; }
+#settings-modal, #scores-modal, #about-modal, #color-picker-modal, #player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 3000; transition: opacity 0.25s ease; overflow: hidden; }
 #color-picker-modal { z-index: 4000; }
-#settings-modal.hidden, #scores-modal.hidden, #about-modal.hidden, #color-picker-modal.hidden { opacity: 0; pointer-events: none; display: none; }
-#settings-modal, #scores-modal, #about-modal, #color-picker-modal, #game-over-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 3000; transition: opacity 0.25s ease; overflow: hidden; }
-#settings-modal.hidden, #scores-modal.hidden, #about-modal.hidden, #color-picker-modal.hidden, #game-over-overlay.hidden { opacity: 0; pointer-events: none; display: none; }
+#settings-modal.hidden, #scores-modal.hidden, #about-modal.hidden, #color-picker-modal.hidden, #player-modal.hidden { opacity: 0; pointer-events: none; display: none; }
+#settings-modal, #scores-modal, #about-modal, #color-picker-modal, #player-modal, #game-over-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 3000; transition: opacity 0.25s ease; overflow: hidden; }
+#settings-modal.hidden, #scores-modal.hidden, #about-modal.hidden, #color-picker-modal.hidden, #player-modal.hidden, #game-over-overlay.hidden { opacity: 0; pointer-events: none; display: none; }
 
 /* Window shells and paper overlay are defined in ui-components.css */
 

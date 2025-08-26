@@ -3,7 +3,7 @@
  * - targetWords, friendlyWords, friendlyMode
  */
 import { UI } from './dom.js';
-import { saveConfig as storageSaveConfig } from '../services/storage.js';
+import { saveGameConfig } from '../services/configPersister.js';
 
 export function updateSettingsUIWords(gameConfig) {
   const get = (key) => UI?.el?.[key] || document.getElementById(key);
@@ -21,8 +21,8 @@ export function bindWordsControls(gameConfig) {
   const on = (el, type, fn) => el && el.addEventListener(type, fn);
   const get = (key) => UI?.el?.[key] || document.getElementById(key);
 
-  function updateTargetWords(e) { gameConfig.targetWords = e.target.value; storageSaveConfig(gameConfig); }
-  function updateFriendlyWords(e) { gameConfig.friendlyWords = e.target.value; storageSaveConfig(gameConfig); }
+  function updateTargetWords(e) { gameConfig.targetWords = e.target.value; saveGameConfig(gameConfig); }
+  function updateFriendlyWords(e) { gameConfig.friendlyWords = e.target.value; saveGameConfig(gameConfig); }
   // removed friendly mode binding; value forced to 'both'
 
   on(get('targetWords'), 'input', updateTargetWords);

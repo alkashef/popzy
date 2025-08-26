@@ -3,7 +3,7 @@
  * - Time/score limits
  */
 import { UI } from './dom.js';
-import { saveConfig as storageSaveConfig } from '../services/storage.js';
+import { saveGameConfig } from '../services/configPersister.js';
 import { formatSeconds } from './settings-helpers.js';
 
 export function updateSettingsUILimits(gameConfig) {
@@ -36,17 +36,17 @@ export function bindLimitsControls(gameConfig) {
     if (el) el.textContent = text;
   };
 
-  function updateTimeLimitEnabled(e) { gameConfig.timeLimitEnabled = e.target.checked; storageSaveConfig(gameConfig); }
+  function updateTimeLimitEnabled(e) { gameConfig.timeLimitEnabled = e.target.checked; saveGameConfig(gameConfig); }
   function updateTimeLimit(e) {
     gameConfig.timeLimit = parseInt(e.target.value);
     setText('timeLimitValue', formatSeconds(gameConfig.timeLimit));
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
-  function updateScoreLimitEnabled(e) { gameConfig.scoreLimitEnabled = e.target.checked; storageSaveConfig(gameConfig); }
+  function updateScoreLimitEnabled(e) { gameConfig.scoreLimitEnabled = e.target.checked; saveGameConfig(gameConfig); }
   function updateScoreLimit(e) {
     gameConfig.scoreLimit = parseInt(e.target.value);
     setText('scoreLimitValue', gameConfig.scoreLimit);
-    storageSaveConfig(gameConfig);
+  saveGameConfig(gameConfig);
   }
 
   on(get('timeLimitEnabled'), 'change', updateTimeLimitEnabled);
